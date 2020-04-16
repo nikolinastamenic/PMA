@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Test Application</string>
+    <string name="registration_title">Registration</string>
+    <string name="registration_name">Name</string>
+    <string name="registration_lastname">Lastname</string>
+    <string name="registration_email">E-mail</string>
+    <string name="registration_username">Username</string>
+    <string name="registration_password">Password</string>
+    <string name="registration_register">Register</string>
+
+</resources>
