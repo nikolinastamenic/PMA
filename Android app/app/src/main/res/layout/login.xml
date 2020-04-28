@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context = ".activities.LoginActivity"
+    android:background="@color/colorBackground">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorForeground"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme" />
+
+    <ImageButton
+        android:id="@+id/backButton"
+        android:layout_width="75dp"
+        android:layout_height="55dp"
+        android:src="@drawable/backicon"
+        android:background="@null"/>
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="96dp"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@id/backButton"
+        android:layout_alignRight="@id/backButton"
+        android:layout_alignBottom="@id/toolbar2"
+        android:layout_marginEnd="-106dp"
+        android:layout_marginRight="-106dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/login_singIn"
+        android:textAlignment="center"
+        android:textColor="@color/colorTextField"
+        android:textSize="29dp" />
+
+    <Button
+        android:id="@+id/login_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorForeground"
+        android:layout_alignParentBottom="true"
+        android:text="@string/login_singIn"
+        android:textColor="@color/colorTextField">
+
+    </Button>
+
+
+    <EditText
+        android:id="@+id/login_username"
+        android:layout_width="match_parent"
+        android:layout_marginLeft="65dp"
+        android:layout_height="40dp"
+        android:layout_above="@id/login_password"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="31dp"
+        android:background="@color/colorTextField"
+        android:ems="10"
+        android:inputType="text"
+        android:hint="@string/login_username"
+        android:textColorHint="@color/colorHintText" />
+
+    <EditText
+        android:id="@+id/login_password"
+        android:layout_width="match_parent"
+        android:layout_marginLeft="65dp"
+        android:layout_height="40dp"
+        android:layout_centerInParent="true"
+        android:background="@color/colorTextField"
+        android:ems="10"
+        android:hint="@string/login_password"
+        android:inputType="textPassword"
+        android:textColorHint="@color/colorHintText"
+
+        />
+
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <CheckBox
+        android:id="@+id/checkBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/login_password"
+        android:layout_marginLeft="32dp"
+        android:layout_marginBottom="-67dp"
+        android:text="@string/login_rememberMe"
+        android:textColor="@color/colorTextField"
+        android:textSize="13dp"/>
+
+    <Button
+        android:id="@+id/buttonForgotPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/login_password"
+        android:layout_marginLeft="240dp"
+        android:layout_marginBottom="-79dp"
+        android:background="@null"
+        android:text="@string/login_forgotPassword"
+        android:textColor="@color/colorTextField"
+        android:textSize="10dp" />
+
+
+</RelativeLayout>

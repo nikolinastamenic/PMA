@@ -5,18 +5,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 
+import com.example.myapplication.activities.LoginActivity;
 import com.example.myapplication.activities.TestActivity;
 
 public class MainActivity extends AppCompatActivity {
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         System.out.println("main activity ON CREATE");
+
 
     }
 
@@ -31,6 +32,12 @@ public class MainActivity extends AppCompatActivity {
 
         System.out.println("main activity ON CLICK BUTTON");
 
+    }
+
+    public void onClickLogin(View view) {
+        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+
+        startActivity(intent);
     }
 
     @Override
