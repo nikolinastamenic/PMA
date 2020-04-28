@@ -33,7 +33,7 @@
         android:layout_marginEnd="-106dp"
         android:layout_marginRight="-106dp"
         android:layout_marginBottom="8dp"
-        android:text="@string/login_singIn"
+        android:text="@string/login_signIn"
         android:textAlignment="center"
         android:textColor="@color/colorTextField"
         android:textSize="29dp" />
@@ -44,7 +44,7 @@
         android:layout_height="wrap_content"
         android:background="@color/colorForeground"
         android:layout_alignParentBottom="true"
-        android:text="@string/login_singIn"
+        android:text="@string/login_signIn"
         android:textColor="@color/colorTextField">
 
     </Button>
