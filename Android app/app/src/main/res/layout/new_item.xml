@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".activities.NewItemActivity"
+    android:background="@color/colorBackground">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/newItemToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorForeground"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme" />
+
+    <ImageButton
+        android:id="@+id/backButtonItem"
+        android:layout_width="75dp"
+        android:layout_height="55dp"
+        android:src="@drawable/backicon"
+        android:background="@null"/>
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@id/backButtonItem"
+        android:layout_alignRight="@id/backButtonItem"
+        android:layout_alignBottom="@id/newItemToolbar"
+        android:layout_marginEnd="-173dp"
+        android:layout_marginRight="-173dp"
+        android:layout_marginBottom="7dp"
+        android:text="@string/item_new"
+        android:textAlignment="center"
+        android:textColor="@color/colorTextField"
+        android:textSize="29dp" />
+
+    <Button
+        android:id="@+id/finishButtonanewItem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorForeground"
+        android:layout_alignParentBottom="true"
+        android:text="@string/report_finish"
+        android:textColor="@color/colorTextField">
+    </Button>
+
+    <TextView
+        android:id="@+id/nameOfFaultTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/item_fault_name"
+        android:textSize="20dp"
+        android:layout_below="@id/backButtonItem"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="28dp"/>
+    <TextView
+        android:id="@+id/descriotionOfFaultTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/item_description"
+        android:textSize="20dp"
+        android:layout_below="@id/nameOfFaultTextView"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="28dp"/>
+
+    <TextView
+        android:id="@+id/pictureOfFaultTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/item_picture"
+        android:layout_below="@id/descriotionOfFaultTextView"
+        android:layout_marginTop="90dp"
+        android:layout_marginLeft="30dp"
+        android:textSize="20dp"/>
+
+
+    <EditText
+        android:id="@+id/nameOfFaultEditText"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_marginLeft="150dp"
+        android:layout_marginTop="85dp"
+        android:layout_marginRight="30dp"
+        android:background="@color/colorTextField"
+        android:inputType="text">
+
+    </EditText>
+
+    <EditText
+        android:id="@+id/descriptionOfFaultEditText"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="@color/colorTextField"
+        android:layout_marginTop="140dp"
+        android:layout_marginLeft="150dp"
+        android:inputType="textMultiLine"
+        android:layout_marginRight="30dp">
+
+    </EditText>
+
+    <ImageButton
+        android:id="@+id/cameraButtonItem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/descriptionOfFaultEditText"
+        android:layout_marginLeft="120dp"
+        android:layout_marginTop="4dp"
+        android:background="@null"
+        android:src="@drawable/camera" />
+    <ImageButton
+        android:id="@+id/galleryButtonItem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/descriptionOfFaultEditText"
+        android:layout_marginLeft="180dp"
+        android:layout_marginTop="4dp"
+        android:background="@null"
+        android:src="@drawable/gallery" />
+</RelativeLayout>

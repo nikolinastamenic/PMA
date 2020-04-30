@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.Button;
 
 import com.example.myapplication.activities.LoginActivity;
+import com.example.myapplication.activities.ReportActivity;
+import com.example.myapplication.activities.SettingsActivity;
 import com.example.myapplication.activities.TestActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -40,6 +42,17 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void onClickReport(View view) {
+        Intent intent = new Intent(MainActivity.this, ReportActivity.class);
+
+        startActivity(intent);
+    }
+
+    public void onClickSettings(View view) {
+        Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+
+        startActivity(intent);
+    }
     @Override
     protected void onStop() {
         super.onStop();

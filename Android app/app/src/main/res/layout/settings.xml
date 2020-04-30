@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorBackground">
+
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/settingsToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorForeground"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme" />
+
+    <ImageButton
+        android:id="@+id/backButtonSettings"
+        android:layout_width="75dp"
+        android:layout_height="55dp"
+        android:src="@drawable/backicon"
+        android:background="@null"/>
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="110dp"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@id/backButtonSettings"
+        android:layout_alignRight="@id/backButtonSettings"
+        android:layout_alignBottom="@id/settingsToolbar"
+        android:layout_marginEnd="-110dp"
+        android:layout_marginRight="-110dp"
+        android:layout_marginBottom="7dp"
+        android:text="@string/settings"
+        android:textAlignment="center"
+        android:textColor="@color/colorTextField"
+        android:textSize="29dp" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@android:dimen/notification_large_icon_width"
+        android:layout_marginTop="55dp">
+
+        <ImageView
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:src="@drawable/account">
+        </ImageView>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/backButtonSettings"
+            android:layout_marginLeft="65dp"
+            android:layout_marginTop="15dp"
+            android:text="@string/settings_account"
+            android:textSize="20dp"
+            tools:ignore="NotSibling" />
+
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@android:dimen/notification_large_icon_width"
+        android:layout_marginTop="120dp">
+
+        <ImageView
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:src="@drawable/language">
+        </ImageView>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/backButtonSettings"
+            android:layout_marginLeft="65dp"
+            android:layout_marginTop="15dp"
+            android:text="@string/settings_language"
+            android:textSize="20dp"
+            tools:ignore="NotSibling" />
+
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@android:dimen/notification_large_icon_width"
+        android:layout_marginTop="185dp">
+        <ImageView
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:src="@drawable/gallery1">
+        </ImageView>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/backButtonSettings"
+            android:layout_marginLeft="65dp"
+            android:layout_marginTop="15dp"
+            android:text="@string/settings_media_storage"
+            android:textSize="20dp"
+            tools:ignore="NotSibling" />
+
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@android:dimen/notification_large_icon_width"
+        android:layout_marginTop="250dp">
+
+        <ImageView
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:src="@drawable/location">
+        </ImageView>
+
+        <Switch
+            android:id="@+id/switch1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="60dp"
+            android:layout_marginTop="15dp" />
+    </RelativeLayout>
+
+
+</RelativeLayout>

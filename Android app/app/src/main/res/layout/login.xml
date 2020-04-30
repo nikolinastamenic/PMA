@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,7 +8,7 @@
     android:background="@color/colorBackground">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar2"
+        android:id="@+id/loginToolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorForeground"
@@ -17,7 +16,7 @@
         android:theme="?attr/actionBarTheme" />
 
     <ImageButton
-        android:id="@+id/backButton"
+        android:id="@+id/backButtonLogin"
         android:layout_width="75dp"
         android:layout_height="55dp"
         android:src="@drawable/backicon"
@@ -27,9 +26,9 @@
         android:id="@+id/textView"
         android:layout_width="96dp"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@id/backButton"
-        android:layout_alignRight="@id/backButton"
-        android:layout_alignBottom="@id/toolbar2"
+        android:layout_alignEnd="@id/backButtonLogin"
+        android:layout_alignRight="@id/backButtonLogin"
+        android:layout_alignBottom="@id/loginToolbar"
         android:layout_marginEnd="-106dp"
         android:layout_marginRight="-106dp"
         android:layout_marginBottom="8dp"
