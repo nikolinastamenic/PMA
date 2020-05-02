@@ -15,7 +15,9 @@ import android.view.View;
 import com.example.myapplication.activities.LoginActivity;
 import com.example.myapplication.activities.ReportActivity;
 import com.example.myapplication.activities.SettingsActivity;
+import com.example.myapplication.activities.ProfileActivity;
 import com.example.myapplication.activities.TestActivity;
+import com.example.myapplication.util.NavBarUtil;
 import com.google.android.material.navigation.NavigationView;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -131,22 +133,39 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
 
-        switch (menuItem.getItemId()) {
-            case R.id.nav_home:
-                Intent homeIntent = new Intent(MainActivity.this, MainActivity.class);
-                startActivity(homeIntent);
-                break;
-            case R.id.nav_log_in:
-                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                startActivity(intent);
-                break;
-            case R.id.nav_settings:
-                Intent settingsIntent = new Intent(MainActivity.this, SettingsActivity.class);
-                startActivity(settingsIntent);
-                break;
+        Intent intent = NavBarUtil.setNavBarActions(MainActivity.this, menuItem);
+        if (intent != null) {
+            startActivity(intent);
         }
 
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
+//        switch (menuItem.getItemId()) {
+//            case R.id.nav_profile:
+//                Intent profileIntent = new Intent(MainActivity.this, ProfileActivity.class);
+//                startActivity(profileIntent);
+//                break;
+//            case R.id.nav_log_in:
+//                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+//                startActivity(intent);
+//                break;
+        //switch (menuItem.getItemId()) {
+        //            case R.id.nav_home:
+        //                Intent homeIntent = new Intent(MainActivity.this, MainActivity.class);
+        //                startActivity(homeIntent);
+        //                break;
+        //            case R.id.nav_log_in:
+        //                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+        //                startActivity(intent);
+        //                break;
+        //            case R.id.nav_settings:
+        //                Intent settingsIntent = new Intent(MainActivity.this, SettingsActivity.class);
+        //                startActivity(settingsIntent);
+        //                break;
+        //        }
+//        }
+//
+//        drawerLayout.closeDrawer(GravityCompat.START);
+//        return true;
     }
 }
