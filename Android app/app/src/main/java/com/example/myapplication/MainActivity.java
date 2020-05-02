@@ -132,6 +132,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
 
         switch (menuItem.getItemId()) {
+            case R.id.nav_home:
+                Intent homeIntent = new Intent(MainActivity.this, MainActivity.class);
+                startActivity(homeIntent);
+                break;
             case R.id.nav_log_in:
                 Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                 startActivity(intent);

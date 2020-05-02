@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer_layout"
@@ -7,6 +8,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     tools:context=".activities.LoginActivity"
+    android:background="@color/colorBackground"
     tools:openDrawer="start">
 
     <com.google.android.material.navigation.NavigationView
@@ -21,15 +23,15 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/colorBackground"
-        tools:context=".activities.LoginActivity">
-
+        android:layout_height="match_parent">
 
         <include
             android:id="@+id/toolbar"
             layout="@layout/toolbar" />
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
         <Button
             android:id="@+id/login_button"
             android:layout_width="match_parent"
@@ -83,6 +85,6 @@
             android:text="@string/login_forgotPassword"
             android:textSize="10dp" />
 
-
+        </RelativeLayout>
     </RelativeLayout>
 </androidx.drawerlayout.widget.DrawerLayout>
