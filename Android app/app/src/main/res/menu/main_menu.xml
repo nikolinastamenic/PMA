@@ -18,18 +18,27 @@
             android:id="@+id/nav_finished_tasks"
             android:title="@string/finished_tasks"
             android:icon="@drawable/ic_finished" />
-        <item
-            android:id="@+id/nav_profile"
-            android:title="@string/profile"
-            android:icon="@drawable/ic_profile" />
-        <item
-            android:id="@+id/nav_log_in"
-            android:title="@string/login_signIn"/>
-        <item
-            android:id="@+id/nav_log_out"
-            android:title="@string/log_out"
-            android:icon="@drawable/ic_log_out" />
+
     </group>
+
+    <item android:title="@string/profile">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/nav_profile"
+                    android:title="@string/profile"
+                    android:icon="@drawable/ic_profile" />
+                <item
+                    android:id="@+id/nav_log_in"
+                    android:title="@string/login_signIn"
+                    android:icon="@drawable/ic_log_in"/>
+                <item
+                    android:id="@+id/nav_log_out"
+                    android:title="@string/log_out"
+                    android:icon="@drawable/ic_log_out" />
+            </group>
+        </menu>
+    </item>
 
 
 </menu>

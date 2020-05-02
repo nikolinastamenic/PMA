@@ -5,6 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/colorForeground"
     android:elevation="4dp"
-    app:navigationIcon="@drawable/ic_menu_toggle_black" >
+    app:navigationIcon="@drawable/ic_menu_toggle_black"
+    app:titleTextAppearance="@style/TextAppearance.TabsFont">
 
 </androidx.appcompat.widget.Toolbar>

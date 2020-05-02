@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         toggle.syncState();
 
         navigationView.setNavigationItemSelectedListener(this);
+        navigationView.setCheckedItem(R.id.nav_home);
         System.out.println("main activity ON CREATE");
 
 
@@ -123,6 +124,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 startActivity(intent);
                 break;
         }
+
+        drawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
 }
