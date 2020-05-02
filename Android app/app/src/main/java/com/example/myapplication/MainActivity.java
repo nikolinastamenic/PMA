@@ -13,7 +13,9 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.example.myapplication.activities.LoginActivity;
+import com.example.myapplication.activities.ProfileActivity;
 import com.example.myapplication.activities.TestActivity;
+import com.example.myapplication.util.NavBarUtil;
 import com.google.android.material.navigation.NavigationView;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -118,14 +120,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
 
-        switch (menuItem.getItemId()) {
-            case R.id.nav_log_in:
-                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                startActivity(intent);
-                break;
+        Intent intent = NavBarUtil.setNavBarActions(MainActivity.this, menuItem);
+        if (intent != null) {
+            startActivity(intent);
         }
-
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
+//        switch (menuItem.getItemId()) {
+//            case R.id.nav_profile:
+//                Intent profileIntent = new Intent(MainActivity.this, ProfileActivity.class);
+//                startActivity(profileIntent);
+//                break;
+//            case R.id.nav_log_in:
+//                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+//                startActivity(intent);
+//                break;
+//        }
+//
+//        drawerLayout.closeDrawer(GravityCompat.START);
+//        return true;
     }
 }
