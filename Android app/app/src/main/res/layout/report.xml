@@ -6,14 +6,9 @@
     tools:context=".activities.ReportActivity"
     android:background="@color/colorBackground">
 
-
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/reportToolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorForeground"
-        android:minHeight="?attr/actionBarSize"
-        android:theme="?attr/actionBarTheme" />
+    <include
+        layout="@layout/toolbar"
+        android:id="@+id/toolbar" />
 
     <ImageButton
         android:id="@+id/backButtonReport"
@@ -21,20 +16,6 @@
         android:layout_height="55dp"
         android:src="@drawable/backicon"
         android:background="@null"/>
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="96dp"
-        android:layout_height="wrap_content"
-        android:layout_alignEnd="@id/backButtonReport"
-        android:layout_alignRight="@id/backButtonReport"
-        android:layout_alignBottom="@id/reportToolbar"
-        android:layout_marginEnd="-106dp"
-        android:layout_marginRight="-106dp"
-        android:layout_marginBottom="8dp"
-        android:text="@string/report"
-        android:textAlignment="center"
-        android:textColor="@color/colorTextField"
-        android:textSize="29dp" />
 
     <Button
         android:id="@+id/finishButtonReport"
