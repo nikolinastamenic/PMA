@@ -13,6 +13,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.myapplication.MainActivity;
 import com.example.myapplication.R;
+import com.example.myapplication.util.NavBarUtil;
 import com.google.android.material.navigation.NavigationView;
 
 public class LoginActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -44,21 +45,11 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.nav_home:
-                Intent homeIntent = new Intent(LoginActivity.this, MainActivity.class);
-                startActivity(homeIntent);
-                break;
-            case R.id.nav_log_in:
-                Intent loginIntent = new Intent(LoginActivity.this, LoginActivity.class);
-                startActivity(loginIntent);
-                break;
-            case R.id.nav_settings:
-                Intent settingsIntent = new Intent(LoginActivity.this, SettingsActivity.class);
-                startActivity(settingsIntent);
-                break;
-        }
 
+        Intent intent = NavBarUtil.setNavBarActions(LoginActivity.this, item);
+        if (intent != null) {
+            startActivity(intent);
+        }
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
