@@ -16,17 +16,16 @@ import com.example.myapplication.R;
 import com.example.myapplication.util.NavBarUtil;
 import com.google.android.material.navigation.NavigationView;
 
-public class LoginActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class SettingsActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     DrawerLayout drawerLayout;
     NavigationView navigationView;
     Toolbar toolbar;
 
     @Override
-    protected void onCreate (Bundle savedInstanceState) {
-
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.login);
+        setContentView(R.layout.settings);
 
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
@@ -34,19 +33,19 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
 
         navigationView.bringToFront();
         setSupportActionBar(toolbar);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.login_signIn, R.string.login_signIn);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.settings, R.string.settings);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
         navigationView.setNavigationItemSelectedListener(this);
-        navigationView.setCheckedItem(R.id.nav_log_in);
+        navigationView.setCheckedItem(R.id.nav_settings);
 
     }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
-        Intent intent = NavBarUtil.setNavBarActions(LoginActivity.this, item);
+        Intent intent = NavBarUtil.setNavBarActions(SettingsActivity.this, item);
         if (intent != null) {
             startActivity(intent);
         }

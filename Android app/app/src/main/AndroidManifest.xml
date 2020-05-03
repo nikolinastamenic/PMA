@@ -22,7 +22,10 @@
 
             </intent-filter>
         </activity>
-        <activity android:name=".activities.LoginActivity" android:parentActivityName=".MainActivity" />
+        <activity android:name=".activities.LoginActivity" ></activity>
+        <activity android:name=".activities.ReportActivity" ></activity>
+        <activity android:name=".activities.NewItemActivity"></activity>
+        <activity android:name=".activities.SettingsActivity"></activity>
 
         <activity android:name=".activities.ProfileActivity" android:parentActivityName=".MainActivity" />
         <activity android:name=".activities.ApartmentActivity" android:parentActivityName=".MainActivity" />

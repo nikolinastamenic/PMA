@@ -14,6 +14,8 @@ import android.view.View;
 
 import com.example.myapplication.activities.ApartmentActivity;
 import com.example.myapplication.activities.LoginActivity;
+import com.example.myapplication.activities.ReportActivity;
+import com.example.myapplication.activities.SettingsActivity;
 import com.example.myapplication.activities.ProfileActivity;
 import com.example.myapplication.activities.TestActivity;
 import com.example.myapplication.util.NavBarUtil;
@@ -72,6 +74,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         startActivity(intent);
     }
 
+    public void onClickReport(View view) {
+        Intent intent = new Intent(MainActivity.this, ReportActivity.class);
+
+        startActivity(intent);
+    }
+
+    public void onClickSettings(View view) {
+        Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+
+        startActivity(intent);
+    }
     @Override
     protected void onStop() {
         super.onStop();
@@ -131,6 +144,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (intent != null) {
             startActivity(intent);
         }
+
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
 //        switch (menuItem.getItemId()) {
@@ -142,6 +156,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
 //                startActivity(intent);
 //                break;
+        //switch (menuItem.getItemId()) {
+        //            case R.id.nav_home:
+        //                Intent homeIntent = new Intent(MainActivity.this, MainActivity.class);
+        //                startActivity(homeIntent);
+        //                break;
+        //            case R.id.nav_log_in:
+        //                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+        //                startActivity(intent);
+        //                break;
+        //            case R.id.nav_settings:
+        //                Intent settingsIntent = new Intent(MainActivity.this, SettingsActivity.class);
+        //                startActivity(settingsIntent);
+        //                break;
+        //        }
 //        }
 //
 //        drawerLayout.closeDrawer(GravityCompat.START);
