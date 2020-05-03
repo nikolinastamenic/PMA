@@ -18,6 +18,20 @@
     <string name="finished_tasks">Finished tasks</string>
     <string name="profile">Profile</string>
     <string name="log_out">Log out</string>
+    <string name="report">Report</string>
+    <string name="report_finish">Finish</string>
+    <string name="report_new_item">New Item</string>
+    <string name="report_items">Report items:</string>
+    <string name="item_new"> New item</string>
+    <string name="item_fault_name">Name:</string>
+    <string name="item_description"> Description:</string>
+    <string name="item_picture"> Picture:</string>
+    <string name="settings">Settings</string>
+    <string name="settings_account">Account</string>
+    <string name="settings_language">Language</string>
+    <string name="settings_media_storage">Media and storage</string>
+
+
 
 
 </resources>
