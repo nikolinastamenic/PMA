@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.example.myapplication.activities.ApartmentActivity;
 import com.example.myapplication.activities.LoginActivity;
 import com.example.myapplication.activities.ProfileActivity;
 import com.example.myapplication.activities.TestActivity;
@@ -61,6 +62,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public void onClickLogin(View view) {
         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+
+        startActivity(intent);
+    }
+
+    public void onClickApartmentView(View view) {
+        Intent intent = new Intent(MainActivity.this, ApartmentActivity.class);
 
         startActivity(intent);
     }

@@ -43,7 +43,7 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
+                android:layout_marginLeft="120dp"
                 android:foregroundGravity="center"
                 android:onClick="onClickButton"
                 android:text="Register"
@@ -57,6 +57,17 @@
                 android:foregroundGravity="center"
                 android:onClick="onClickLogin"
                 android:text="Login"
+                app:layout_constraintBottom_toTopOf="@+id/hello_world"
+                app:layout_constraintLeft_toLeftOf="@+id/hello_world"
+                tools:ignore="MissingConstraints" />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="100dp"
+                android:layout_marginBottom="220dp"
+                android:foregroundGravity="center"
+                android:onClick="onClickApartmentView"
+                android:text="Apartment View"
                 app:layout_constraintBottom_toTopOf="@+id/hello_world"
                 app:layout_constraintLeft_toLeftOf="@+id/hello_world"
                 tools:ignore="MissingConstraints" />
