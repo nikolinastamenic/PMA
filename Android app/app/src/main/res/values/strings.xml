@@ -30,7 +30,10 @@
     <string name="settings_account">Account</string>
     <string name="settings_language">Language</string>
     <string name="settings_media_storage">Media and storage</string>
-
+    <string name="apartment_title">Apartment nbr.</string>
+    <string name="btn_assign">Assign</string>
+    <string name="apartment_address">Address</string>
+    <string name="apartment_date">Date </string>
 
 
 

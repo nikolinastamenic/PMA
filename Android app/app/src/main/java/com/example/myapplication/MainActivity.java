@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.example.myapplication.activities.AllTasksActivity;
 import com.example.myapplication.activities.LoginActivity;
 import com.example.myapplication.activities.ReportActivity;
 import com.example.myapplication.activities.SettingsActivity;
@@ -78,6 +79,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         startActivity(intent);
     }
+
+    public void onClickAllTasks(View view) {
+        Intent intent = new Intent(MainActivity.this, AllTasksActivity.class);
+
+        startActivity(intent);
+    }
+
+
+
+
     @Override
     protected void onStop() {
         super.onStop();

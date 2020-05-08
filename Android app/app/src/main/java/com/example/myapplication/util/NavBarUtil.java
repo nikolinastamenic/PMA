@@ -6,6 +6,7 @@ import android.view.MenuItem;
 
 import com.example.myapplication.MainActivity;
 import com.example.myapplication.R;
+import com.example.myapplication.activities.AllTasksActivity;
 import com.example.myapplication.activities.LoginActivity;
 import com.example.myapplication.activities.ProfileActivity;
 import com.example.myapplication.activities.SettingsActivity;
@@ -22,6 +23,8 @@ public class NavBarUtil {
                 return new Intent(parent, ProfileActivity.class);
             case R.id.nav_log_in:
                 return new Intent(parent, LoginActivity.class);
+            case R.id.nav_all_tasks:
+                return new Intent(parent, AllTasksActivity.class);
         }
         return null;
     }
