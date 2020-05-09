@@ -67,7 +67,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(AllTasksActivity.this, ReportActivity.class);
+                Intent intent = new Intent(AllTasksActivity.this, ApartmentActivity.class);
                 startActivity(intent);
             }
         });
