@@ -31,8 +31,15 @@
     <string name="settings_language">Language</string>
     <string name="settings_media_storage">Media and storage</string>
     <string name="assign_me">Assign me</string>
-
-
-
+    <string name="apartment_title">Apartment nbr.</string>
+    <string name="btn_assign">Assign</string>
+    <string name="apartment_address">Address</string>
+    <string name="apartment_date">Date </string>
+    <string name="language_serbian">Serbian</string>
+    <string name="language_english">English</string>
+    <string name="madia_and_storage_description">Click if you want to save pictures in media storage.</string>
+    <string name="location_desctiption">Click if you want to turn on your location.</string>
+    <string name="language_description">Choose language.</string>
+    <string name="location">Location</string>
 
 </resources>

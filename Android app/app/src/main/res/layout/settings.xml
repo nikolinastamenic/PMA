@@ -18,31 +18,36 @@
         android:layout_gravity="start"
         app:headerLayout="@layout/header"
         app:menu="@menu/main_menu">
-
     </com.google.android.material.navigation.NavigationView>
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        >
 
-        <include
-            android:id="@+id/toolbar"
-            layout="@layout/toolbar" />
+
+
 
         <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            >
 
+            <include
+                android:id="@+id/toolbar"
+                layout="@layout/toolbar" />
 
+<!--
             <ImageButton
                 android:id="@+id/backButtonSettings"
                 android:layout_width="75dp"
                 android:layout_height="55dp"
                 android:background="@null"
                 android:src="@drawable/backicon" />
+-->
 
 
-            <RelativeLayout
+<!--            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="@android:dimen/notification_large_icon_width"
                 android:layout_marginTop="55dp">
@@ -62,68 +67,177 @@
                     android:textSize="20dp"
                     tools:ignore="NotSibling" />
 
-            </RelativeLayout>
+            </RelativeLayout>-->
 
             <RelativeLayout
+                android:id="@+id/language"
                 android:layout_width="match_parent"
-                android:layout_height="@android:dimen/notification_large_icon_width"
-                android:layout_marginTop="120dp">
+                android:layout_height="wrap_content"
+                android:layout_below="@id/toolbar"
+                android:layout_margin="5dp"
+                >
+
 
                 <ImageView
+                    android:id="@+id/languageImage"
                     android:layout_width="55dp"
                     android:layout_height="55dp"
-                    android:src="@drawable/language"></ImageView>
+                    android:src="@drawable/language"/>
 
                 <TextView
+                    android:textColor="#000"
+                    android:id="@+id/labelLanguage"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/backButtonSettings"
                     android:layout_marginLeft="65dp"
-                    android:layout_marginTop="15dp"
+                    android:layout_marginTop="10dp"
                     android:text="@string/settings_language"
                     android:textSize="20dp"
                     tools:ignore="NotSibling" />
 
-            </RelativeLayout>
+                <TextView
+                    android:id="@+id/languageDescription"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/labelLanguage"
+                    android:textSize="12sp"
+                    android:layout_marginTop="3dp"
+                    android:text="@string/language_description"
+                    android:layout_alignLeft="@id/labelLanguage"
+                    />
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="@android:dimen/notification_large_icon_width"
-                android:layout_marginTop="185dp">
+                <RadioGroup
+                    android:id="@+id/radioGroup"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="13dp"
+                    android:layout_marginLeft="23dp"
+                    android:layout_below="@id/languageDescription"
+                    >
 
-                <ImageView
-                    android:layout_width="55dp"
-                    android:layout_height="55dp"
-                    android:src="@drawable/gallery1"></ImageView>
+                    <RadioButton
+                        android:id="@+id/radioBtn1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                    <RadioButton
+                        android:id="@+id/radioBtn2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+                </RadioGroup>
+
+                <TextView
+                    android:id="@+id/labelSerbian"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="17sp"
+                    android:layout_toRightOf="@id/radioGroup"
+                    android:layout_below="@id/languageDescription"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginLeft="10dp"
+                    android:text="@string/language_serbian" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/backButtonSettings"
-                    android:layout_marginLeft="65dp"
-                    android:layout_marginTop="15dp"
-                    android:text="@string/settings_media_storage"
-                    android:textSize="20dp"
-                    tools:ignore="NotSibling" />
+                    android:textSize="17sp"
+                    android:layout_toRightOf="@id/radioGroup"
+                    android:layout_below="@id/labelSerbian"
+                    android:layout_marginTop="11dp"
+                    android:layout_marginLeft="10dp"
+                    android:text="@string/language_english"/>
 
             </RelativeLayout>
 
             <RelativeLayout
+                android:id="@+id/mediaAndStorage"
                 android:layout_width="match_parent"
-                android:layout_height="@android:dimen/notification_large_icon_width"
-                android:layout_marginTop="250dp">
+                android:layout_height="wrap_content"
+                android:layout_below="@id/language"
+                android:layout_margin="5dp"
+
+                >
 
                 <ImageView
+                    android:id="@+id/imageMediaAndStorage"
                     android:layout_width="55dp"
                     android:layout_height="55dp"
-                    android:src="@drawable/location"></ImageView>
+                    android:src="@drawable/gallery1"/>
+
+                <TextView
+                    android:id="@+id/labelMediaAndStorage"
+                    android:textColor="#000"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="65dp"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/settings_media_storage"
+                    android:textSize="20dp"
+                    tools:ignore="NotSibling" />
+
+                <Switch
+                    android:id="@+id/switchMS"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="300dp"
+                    android:layout_marginTop="15dp"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/labelMediaAndStorage"
+                    android:textSize="12sp"
+                    android:layout_marginTop="3dp"
+                    android:text="@string/madia_and_storage_description"
+                    android:layout_alignLeft="@id/labelMediaAndStorage"
+                    />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/haha"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/mediaAndStorage"
+                android:layout_margin="5dp"
+
+                >
+
+                <ImageView
+                    android:id="@+id/imageLocation"
+                    android:layout_width="55dp"
+                    android:layout_height="55dp"
+                    android:src="@drawable/location"/>
+
+                <TextView
+                    android:id="@+id/labelLocation"
+                    android:textColor="#000"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="65dp"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/location"
+                    android:textSize="20dp"
+                    tools:ignore="NotSibling" />
 
                 <Switch
                     android:id="@+id/switch1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="60dp"
-                    android:layout_marginTop="15dp" />
+                    android:layout_marginLeft="300dp"
+                    android:layout_marginTop="15dp"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/labelLocation"
+                    android:textSize="12sp"
+                    android:text="@string/location_desctiption"
+                    android:layout_marginTop="3dp"
+                    android:layout_alignLeft="@id/labelLocation"
+                    />
             </RelativeLayout>
 
 
