@@ -147,32 +147,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
-//        switch (menuItem.getItemId()) {
-//            case R.id.nav_profile:
-//                Intent profileIntent = new Intent(MainActivity.this, ProfileActivity.class);
-//                startActivity(profileIntent);
-//                break;
-//            case R.id.nav_log_in:
-//                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-//                startActivity(intent);
-//                break;
-        //switch (menuItem.getItemId()) {
-        //            case R.id.nav_home:
-        //                Intent homeIntent = new Intent(MainActivity.this, MainActivity.class);
-        //                startActivity(homeIntent);
-        //                break;
-        //            case R.id.nav_log_in:
-        //                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-        //                startActivity(intent);
-        //                break;
-        //            case R.id.nav_settings:
-        //                Intent settingsIntent = new Intent(MainActivity.this, SettingsActivity.class);
-        //                startActivity(settingsIntent);
-        //                break;
-        //        }
-//        }
-//
-//        drawerLayout.closeDrawer(GravityCompat.START);
-//        return true;
+
     }
 }

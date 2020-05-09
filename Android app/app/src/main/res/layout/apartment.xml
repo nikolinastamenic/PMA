@@ -95,6 +95,26 @@
                     tools:ignore="MissingConstraints" />
 
             </LinearLayout>
+            <LinearLayout
+                android:layout_width="400dp"
+                android:layout_height="300dp"
+                android:layout_columnWeight="1">
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/mapa">
+
+                </ImageView>
+            </LinearLayout>
         </GridLayout>
+        <Button
+            android:id="@+id/assignMeButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorForeground"
+            android:layout_alignParentBottom="true"
+            android:text="@string/assign_me"
+            android:textColor="@color/colorTextField">
+        </Button>
     </RelativeLayout>
 </androidx.drawerlayout.widget.DrawerLayout>

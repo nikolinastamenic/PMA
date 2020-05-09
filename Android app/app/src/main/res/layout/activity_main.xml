@@ -71,6 +71,18 @@
                 app:layout_constraintBottom_toTopOf="@+id/hello_world"
                 app:layout_constraintLeft_toLeftOf="@+id/hello_world"
                 tools:ignore="MissingConstraints" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onClickReport"
+                android:text="Report"
+                tools:ignore="MissingConstraints"
+                app:layout_constraintBottom_toTopOf="@+id/hello_world"
+                app:layout_constraintLeft_toLeftOf="@+id/hello_world"
+                android:layout_marginLeft="10dp"
+                android:layout_marginBottom="220dp"/>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </RelativeLayout>
 </androidx.drawerlayout.widget.DrawerLayout>
