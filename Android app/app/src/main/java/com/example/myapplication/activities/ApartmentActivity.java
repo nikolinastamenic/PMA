@@ -3,6 +3,7 @@ package com.example.myapplication.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -60,5 +61,11 @@ public class ApartmentActivity extends AppCompatActivity implements NavigationVi
             super.onBackPressed();
         }
 
+    }
+
+    public void onClickReport(View view) {
+        Intent intent = new Intent(ApartmentActivity.this, ReportActivity.class);
+
+        startActivity(intent);
     }
 }

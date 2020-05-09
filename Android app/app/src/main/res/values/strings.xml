@@ -22,6 +22,7 @@
     <string name="report_finish">Finish</string>
     <string name="report_new_item">New Item</string>
     <string name="report_items">Report items:</string>
+    <string name="create_report">Create report</string>
     <string name="item_new"> New item</string>
     <string name="item_fault_name">Name:</string>
     <string name="item_description"> Description:</string>

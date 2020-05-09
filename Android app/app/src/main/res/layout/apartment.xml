@@ -113,8 +113,9 @@
             android:layout_height="wrap_content"
             android:background="@color/colorForeground"
             android:layout_alignParentBottom="true"
-            android:text="@string/assign_me"
-            android:textColor="@color/colorTextField">
+            android:text="@string/create_report"
+            android:textColor="@color/colorTextField"
+            android:onClick="onClickReport">
         </Button>
     </RelativeLayout>
 </androidx.drawerlayout.widget.DrawerLayout>
