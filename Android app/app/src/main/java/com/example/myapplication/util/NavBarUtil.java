@@ -25,6 +25,10 @@ public class NavBarUtil {
                 return new Intent(parent, LoginActivity.class);
             case R.id.nav_all_tasks:
                 return new Intent(parent, AllTasksActivity.class);
+            case R.id.nav_finished_tasks:
+                return new Intent(parent, AllTasksActivity.class);
+            case R.id.nav_tasks_in_process:
+                return new Intent(parent, AllTasksActivity.class);
         }
         return null;
     }
