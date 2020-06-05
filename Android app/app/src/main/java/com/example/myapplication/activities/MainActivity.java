@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.myapplication.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -12,13 +12,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.example.myapplication.activities.ApartmentActivity;
-import com.example.myapplication.activities.AllTasksActivity;
-import com.example.myapplication.activities.LoginActivity;
-import com.example.myapplication.activities.ReportActivity;
-import com.example.myapplication.activities.SettingsActivity;
-import com.example.myapplication.activities.ProfileActivity;
-import com.example.myapplication.activities.TestActivity;
+import com.example.myapplication.R;
 import com.example.myapplication.util.NavBarUtil;
 import com.google.android.material.navigation.NavigationView;
 
@@ -27,6 +21,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     DrawerLayout drawerLayout;
     NavigationView navigationView;
     Toolbar toolbar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +45,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
-    public void onClickButton(View view){
+
+    public void onClickButton(View view) {
 
         Intent intent = new Intent(MainActivity.this, TestActivity.class);
         //da li ove dve linije znace isto?
@@ -94,8 +90,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
 
-
-
     @Override
     protected void onStop() {
         super.onStop();
@@ -105,6 +99,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onStart() {
         super.onStart();
+//        Util.initDB(MainActivity.this);
+
         System.out.println("main activity ON START");
 
     }
@@ -122,6 +118,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         System.out.println("main activity ON PAUSE");
 
     }
+
 
     @Override
     protected void onResume() {
@@ -160,4 +157,5 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
 
     }
+
 }
