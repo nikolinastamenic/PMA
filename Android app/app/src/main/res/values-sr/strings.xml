@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">QuickInspect</string>
+    <string name="registration_title">Registracija</string>
+    <string name="registration_name">Ime</string>
+    <string name="registration_lastname">Prezime</string>
+    <string name="registration_email">E-mail</string>
+    <string name="registration_username">Korisničko ime</string>
+    <string name="registration_password">Lozinka</string>
+    <string name="registration_register">Registracija</string>
+    <string name="login_username">Korisničko ime</string>
+    <string name="login_password">Lozinka</string>
+    <string name="login_signIn">Prijava</string>
+    <string name="login_rememberMe">Zapamti me</string>
+    <string name="login_forgotPassword">Zaboravljena lozinka</string>
+    <string name="home">Početna strana</string>
+    <string name="all_tasks">Svi pregledi</string>
+    <string name="tasks_in_process">Pregledi u procesu</string>
+    <string name="finished_tasks">Završeni pregledi</string>
+    <string name="profile">Profil</string>
+    <string name="log_out">Odjava</string>
+    <string name="report">Izveštaj</string>
+    <string name="report_finish">Završi</string>
+    <string name="report_new_item">Nova stavka</string>
+    <string name="report_items">Stavke izveštaja:</string>
+    <string name="create_report">Kreiraj izveštaj</string>
+    <string name="item_new"> Nova stavka</string>
+    <string name="item_fault_name">Naziv:</string>
+    <string name="item_description"> Opis:</string>
+    <string name="item_picture"> Slika:</string>
+    <string name="settings">Podešavanja</string>
+    <string name="settings_account">Nalog</string>
+    <string name="settings_language">Jezik</string>
+    <string name="settings_media_storage">Mediji i skladištenje</string>
+    <string name="assign_me">Dodeli mi</string>
+    <string name="apartment_title">Stan br.</string>
+    <string name="btn_assign">Dodela</string>
+    <string name="apartment_address">Adresa</string>
+    <string name="apartment_date">Datum </string>
+    <string name="language_serbian">Srpski</string>
+    <string name="language_english">Engleski</string>
+    <string name="madia_and_storage_description">Klik ako želite da sačuvate slike u skladištu za medije.</string>
+    <string name="location_desctiption">Klik ako želite da uključite praćenje lokacije.</string>
+    <string name="language_description">Odabir jezika.</string>
+    <string name="location">Lokacija</string>
+    <string-array name="languages">
+        <item>Srpski</item>
+        <item>Engleski</item>
+    </string-array>
+</resources>
