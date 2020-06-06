@@ -1,4 +1,4 @@
-package com.pma.server.model.model;
+package com.pma.server.model;
 
 public enum State {
     NEW,

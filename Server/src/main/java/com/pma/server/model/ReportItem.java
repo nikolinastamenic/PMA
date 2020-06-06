@@ -1,4 +1,4 @@
-package com.pma.server.model.model;
+package com.pma.server.model;
 
 import javax.persistence.*;
 import java.io.Serializable;

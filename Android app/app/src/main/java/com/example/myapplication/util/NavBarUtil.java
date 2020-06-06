@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.view.MenuItem;
 
-import com.example.myapplication.MainActivity;
+import com.example.myapplication.activities.MainActivity;
 import com.example.myapplication.R;
 import com.example.myapplication.activities.AllTasksActivity;
 import com.example.myapplication.activities.LoginActivity;
