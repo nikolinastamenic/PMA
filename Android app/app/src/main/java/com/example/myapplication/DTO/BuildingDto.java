@@ -1,15 +1,12 @@
 package com.example.myapplication.DTO;
 
 import com.example.myapplication.model.Address;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 
 public class BuildingDto {
 
-//    @JsonProperty("id")
     private Long id;
 
-//    @JsonProperty("address")
     private Address address;
 
     public BuildingDto() {

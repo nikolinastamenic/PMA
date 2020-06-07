@@ -26,6 +26,7 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.myapplication.DTO.AllTaskDto;
+import com.example.myapplication.DTO.EmailDto;
 import com.example.myapplication.R;
 import com.example.myapplication.database.DBContentProvider;
 import com.example.myapplication.database.SqlHelper;
@@ -41,10 +42,10 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
-public class AllTasksActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-
+public class TasksInProgressActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     DrawerLayout drawerLayout;
     NavigationView navigationView;
     Toolbar toolbar;
@@ -75,7 +76,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.setCheckedItem(R.id.nav_all_tasks);
-        getTasks();            //TODO premestiti gde treba!
+        getTasksInProcess();            //premestiti gde treba!
         listView();
 
 
@@ -112,7 +113,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
                 }
 
-                MyAdapter myAdapter = new MyAdapter(this, apartmentTitle, apartmentAddress, checkApartmentDate);
+                TasksInProgressActivity.MyAdapter myAdapter = new TasksInProgressActivity.MyAdapter(this, apartmentTitle, apartmentAddress, checkApartmentDate);
                 listView.setAdapter(myAdapter);
             }
         }
@@ -121,7 +122,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(AllTasksActivity.this, ApartmentActivity.class);
+                Intent intent = new Intent(TasksInProgressActivity.this, ApartmentActivity.class);
                 startActivity(intent);
             }
         });
@@ -147,7 +148,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        Intent intent = NavBarUtil.setNavBarActions(AllTasksActivity.this, item);
+        Intent intent = NavBarUtil.setNavBarActions(TasksInProgressActivity.this, item);
         if (intent != null) {
             startActivity(intent);
         }
@@ -201,9 +202,9 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
     }
 
 
-    public void getTasks() {
-        final String uri = "http://10.0.2.2:8080/api/task";
-        new RESTTask().execute(uri);
+    public void getTasksInProcess() {
+        final String uri = "http://10.0.2.2:8080/api/task/inprocess";
+        new TasksInProgressActivity.RESTTask().execute(uri);
     }
 
     class RESTTask extends AsyncTask<String, Void, ResponseEntity<AllTaskDto[]>> {
@@ -218,9 +219,11 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
                 HttpHeaders headers = new HttpHeaders();
                 headers.setContentType(MediaType.APPLICATION_JSON);
                 headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-                HttpEntity entity = new HttpEntity(headers);
+                EmailDto emailDto = new EmailDto("user@yahoo.com");
+                HttpEntity entity = new HttpEntity(emailDto, headers);   //TODO ispraviti posle odradjenog logovanja
 
-                ResponseEntity<AllTaskDto[]> response = restTemplate.getForEntity(url, AllTaskDto[].class, entity);
+                ResponseEntity<AllTaskDto[]> response = restTemplate.postForEntity(url, entity, AllTaskDto[].class);
+
 
                 return response;
             } catch (Exception e) {
@@ -235,16 +238,28 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
             AllTaskDto[] taskDtos = responseEntity.getBody();
 
-            SqlHelper dbHelper = new SqlHelper(AllTasksActivity.this);
+            SqlHelper dbHelper = new SqlHelper(TasksInProgressActivity.this);
             dbHelper.dropTable();
             SQLiteDatabase db = dbHelper.getWritableDatabase();
 
             for (AllTaskDto taskDto : taskDtos) {
 
+                ContentValues entryUser = new ContentValues();  //TODO promeniti kad se odradi logovanje!
                 ContentValues entryAddress = new ContentValues();
                 ContentValues entryBuilding = new ContentValues();
                 ContentValues entryApartment = new ContentValues();
                 ContentValues entryTask = new ContentValues();
+
+
+                entryUser.put(SqlHelper.COLUMN_USER_MYSQLID, taskDto.getUserDto().getId());
+                entryUser.put(SqlHelper.COLUMN_USER_EMAIL, taskDto.getUserDto().getEmail());
+                entryUser.put(SqlHelper.COLUMN_USER_PASSWORD, taskDto.getUserDto().getPassword());
+                entryUser.put(SqlHelper.COLUMN_USER_NAME, taskDto.getUserDto().getName());
+                entryUser.put(SqlHelper.COLUMN_USER_SURNAME, taskDto.getUserDto().getSurname());
+
+
+                Uri userUri = TasksInProgressActivity.this.getContentResolver().insert(DBContentProvider.CONTENT_URI_USER, entryUser);
+
 
                 entryAddress.put(SqlHelper.COLUMN_ADDRESS_MYSQLID, taskDto.getApartmentDto().getBuildingDto().getAddress().getId());
                 entryAddress.put(SqlHelper.COLUMN_ADDRESS_COUNTRY, taskDto.getApartmentDto().getBuildingDto().getAddress().getCountry());
@@ -253,19 +268,19 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
                 entryAddress.put(SqlHelper.COLUMN_ADDRESS_NUMBER, taskDto.getApartmentDto().getBuildingDto().getAddress().getNumber());
                 entryAddress.put(SqlHelper.COLUMN_ADDRESS_LONGITUDE, taskDto.getApartmentDto().getBuildingDto().getAddress().getLongitude());
                 entryAddress.put(SqlHelper.COLUMN_ADDRESS_LATITUDE, taskDto.getApartmentDto().getBuildingDto().getAddress().getLatitude());
-                Uri addressUri = AllTasksActivity.this.getContentResolver().insert(DBContentProvider.CONTENT_URI_ADDRESS, entryAddress);
+                Uri addressUri = TasksInProgressActivity.this.getContentResolver().insert(DBContentProvider.CONTENT_URI_ADDRESS, entryAddress);
 
                 entryBuilding.put(SqlHelper.COLUMN_BUILDING_MYSQLID, taskDto.getApartmentDto().getBuildingDto().getId());
                 String addressId = addressUri.toString().split("/")[1];
                 entryBuilding.put(SqlHelper.COLUMN_BUILDING_ADDRESS_ID, addressId);
-                Uri buildingUri = AllTasksActivity.this.getContentResolver().insert(DBContentProvider.CONTENT_URI_BUILDING, entryBuilding);
+                Uri buildingUri = TasksInProgressActivity.this.getContentResolver().insert(DBContentProvider.CONTENT_URI_BUILDING, entryBuilding);
 
 
                 entryApartment.put(SqlHelper.COLUMN_APARTMENT_MYSQLID, taskDto.getApartmentDto().getId());
                 entryApartment.put(SqlHelper.COLUMN_APARTMENT_NUMBER, taskDto.getApartmentDto().getNumber());
                 String buildingId = buildingUri.toString().split("/")[1];
                 entryApartment.put(SqlHelper.COLUMN_APARTMENT_BUILDING_ID, buildingId);
-                Uri apartmentUri = AllTasksActivity.this.getContentResolver().insert(DBContentProvider.CONTENT_URI_APARTMENT, entryApartment);
+                Uri apartmentUri = TasksInProgressActivity.this.getContentResolver().insert(DBContentProvider.CONTENT_URI_APARTMENT, entryApartment);
 
                 entryTask.put(SqlHelper.COLUMN_TASK_MYSQLID, taskDto.getId());
                 entryTask.put(SqlHelper.COLUMN_TASK_STATE, taskDto.getState());
@@ -273,8 +288,12 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
                 entryTask.put(SqlHelper.COLUMN_TASK_TYPE_OF_APARTMENT, taskDto.getTypeOfApartment());
                 entryTask.put(SqlHelper.COLUMN_TASK_URGENT, taskDto.isUrgent());
                 String apartmentId = apartmentUri.toString().split("/")[1];
+                String userId = userUri.toString().split("/")[1];
+
                 entryTask.put(SqlHelper.COLUMN_TASK_APARTMENT_ID, apartmentId);
-                Uri taskUri = AllTasksActivity.this.getContentResolver().insert(DBContentProvider.CONTENT_URI_TASK, entryTask);
+                entryTask.put(SqlHelper.COLUMN_TASK_USER_ID, userId);
+
+                Uri taskUri = TasksInProgressActivity.this.getContentResolver().insert(DBContentProvider.CONTENT_URI_TASK, entryTask);
 
 
             }

@@ -10,6 +10,7 @@ import com.example.myapplication.activities.AllTasksActivity;
 import com.example.myapplication.activities.LoginActivity;
 import com.example.myapplication.activities.ProfileActivity;
 import com.example.myapplication.activities.SettingsActivity;
+import com.example.myapplication.activities.TasksInProgressActivity;
 
 public class NavBarUtil {
 
@@ -28,7 +29,7 @@ public class NavBarUtil {
             case R.id.nav_finished_tasks:
                 return new Intent(parent, AllTasksActivity.class);
             case R.id.nav_tasks_in_process:
-                return new Intent(parent, AllTasksActivity.class);
+                return new Intent(parent, TasksInProgressActivity.class);
         }
         return null;
     }

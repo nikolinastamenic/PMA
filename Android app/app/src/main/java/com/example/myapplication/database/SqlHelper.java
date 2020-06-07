@@ -213,7 +213,6 @@ public class SqlHelper extends SQLiteOpenHelper {
 
     public Cursor getAllTasks() {
         SQLiteDatabase sqlDB = this.getWritableDatabase();
-//        Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_TASK + " WHERE username " + "= " + username, null);
         Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_TASK, null);
 
         return data;
@@ -241,4 +240,11 @@ public class SqlHelper extends SQLiteOpenHelper {
         return data;
     }
 
+    public Cursor getTasksInProcess(String username) {
+        SQLiteDatabase sqlDB = this.getWritableDatabase();
+        Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_TASK + " WHERE username " + "= " + username, null);
+
+        return data;
+
+    }
 }
