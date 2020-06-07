@@ -18,5 +18,30 @@ public class Report implements Serializable {
 
     @Column
     private Date date;
+    
+    public Report() {}
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public List<ReportItem> getItemList() {
+        return itemList;
+    }
+
+    public void setItemList(List<ReportItem> itemList) {
+        this.itemList = itemList;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
 }

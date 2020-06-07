@@ -1,33 +1,50 @@
-package com.pma.server.model;
+package com.pma.server.Dto;
 
-import javax.persistence.*;
-import java.io.Serializable;
 
-@Entity
-public class User implements Serializable {
+import com.pma.server.model.User;
 
-    @Id
-    @Column
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class UserDto {
+
     private Long id;
 
-    @Column
     private String name;
 
-    @Column
     private String surname;
 
-    @Column
     private String phoneNumber;
 
-    @Column
     private String email;
 
-    @Column
     private String password;
 
-    @Column
     private String picture;
+
+
+    public UserDto(){
+
+    }
+
+    public UserDto(Long id, String name, String surname, String phoneNumber, String email, String password, String picture) {
+        this.id = id;
+        this.name = name;
+        this.surname = surname;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+        this.password = password;
+        this.picture = picture;
+    }
+
+    public UserDto(User user) {
+        this.id = user.getId();
+        this.name = user.getName();
+        this.surname = user.getSurname();
+        this.phoneNumber = user.getPhoneNumber();
+        this.email = user.getEmail();
+        this.password = user.getPassword();
+        if(user.getPicture() != null) {
+            this.picture = user.getPicture();
+        }
+    }
 
     public Long getId() {
         return id;

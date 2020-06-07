@@ -16,6 +16,8 @@ public class AllTaskDto {
 
     private Date deadline;
 
+    private UserDto userDto;
+
     public AllTaskDto() {
     }
 
@@ -26,6 +28,16 @@ public class AllTaskDto {
         this.state = state;
         this.urgent = urgent;
         this.deadline = deadline;
+    }
+
+    public AllTaskDto(Long id, ApartmentDto apartmentDto, String typeOfApartment, String state, boolean urgent, Date deadline, UserDto userDto) {
+        this.id = id;
+        this.apartmentDto = apartmentDto;
+        this.typeOfApartment = typeOfApartment;
+        this.state = state;
+        this.urgent = urgent;
+        this.deadline = deadline;
+        this.userDto = userDto;
     }
 
     public Long getId() {
@@ -74,5 +86,13 @@ public class AllTaskDto {
 
     public void setDeadline(Date deadline) {
         this.deadline = deadline;
+    }
+
+    public UserDto getUserDto() {
+        return userDto;
+    }
+
+    public void setUserDto(UserDto userDto) {
+        this.userDto = userDto;
     }
 }
