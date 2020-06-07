@@ -241,4 +241,11 @@ public class SqlHelper extends SQLiteOpenHelper {
         return data;
     }
 
+    public Cursor getUserById (String id) {
+        SQLiteDatabase sqlDB = this.getWritableDatabase();
+        Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_USER + " WHERE id " + "= " + id, null);
+
+        return data;
+    }
+
 }

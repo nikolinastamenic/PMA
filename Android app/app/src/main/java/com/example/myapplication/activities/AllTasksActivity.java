@@ -29,6 +29,7 @@ import com.example.myapplication.DTO.AllTaskDto;
 import com.example.myapplication.R;
 import com.example.myapplication.database.DBContentProvider;
 import com.example.myapplication.database.SqlHelper;
+import com.example.myapplication.util.AppConfig;
 import com.example.myapplication.util.NavBarUtil;
 import com.google.android.material.navigation.NavigationView;
 
@@ -203,7 +204,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
 
     public void getTasks() {
-        final String uri = "http://10.0.2.2:8080/api/task";
+        final String uri = AppConfig.apiURI + "task";
         new RESTTask().execute(uri);
     }
 

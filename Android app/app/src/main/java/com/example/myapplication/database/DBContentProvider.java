@@ -11,6 +11,8 @@ import android.text.TextUtils;
 
 import androidx.annotation.Nullable;
 
+import java.net.URI;
+
 public class DBContentProvider extends ContentProvider {
 
     private SqlHelper database;
@@ -27,6 +29,9 @@ public class DBContentProvider extends ContentProvider {
     private static final int APARTMENT = 25;
     private static final int APARTMENT_ID = 90;
 
+    private static final int USER = 50;
+    private static final int USER_ID = 51;
+
 
     private static final String AUTHORITY = "com.example.myapplication";
 
@@ -34,12 +39,14 @@ public class DBContentProvider extends ContentProvider {
     private static final String ADDRESS_PATH = "address";
     private static final String BUILDING_PATH = "building";
     private static final String APARTMENT_PATH = "apartment";
+    private static final String USER_PATH = "user";
 
 
     public static final Uri CONTENT_URI_TASK = Uri.parse("content://" + AUTHORITY + "/" + TASK_PATH);
     public static final Uri CONTENT_URI_ADDRESS = Uri.parse("content://" + AUTHORITY + "/" + ADDRESS_PATH);
     public static final Uri CONTENT_URI_BUILDING = Uri.parse("content://" + AUTHORITY + "/" + BUILDING_PATH);
     public static final Uri CONTENT_URI_APARTMENT = Uri.parse("content://" + AUTHORITY + "/" + APARTMENT_PATH);
+    public static final Uri CONTENT_URI_USER = Uri.parse("content://" + AUTHORITY + "/" + USER_PATH);
 
 
     private static final UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -56,6 +63,9 @@ public class DBContentProvider extends ContentProvider {
 
         sURIMatcher.addURI(AUTHORITY, APARTMENT_PATH, APARTMENT);
         sURIMatcher.addURI(AUTHORITY, APARTMENT_PATH + "/#", APARTMENT_ID);
+
+        sURIMatcher.addURI(AUTHORITY, USER_PATH, USER);
+        sURIMatcher.addURI(AUTHORITY, USER_PATH + "/#", USER_ID);
     }
 
     @Override
@@ -126,6 +136,10 @@ public class DBContentProvider extends ContentProvider {
             case APARTMENT:
                 id = sqlDB.insert(SqlHelper.TABLE_APARTMENT, null, values);
                 retVal = Uri.parse(APARTMENT_PATH + "/" + id);
+                break;
+            case USER:
+                id = sqlDB.insert(SqlHelper.TABLE_USER, null, values);
+                retVal = Uri.parse(USER_PATH + "/" + id);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI: " + uri);

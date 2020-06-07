@@ -8,3 +8,5 @@ INSERT INTO apartment (number, building_id) values (8, 2);
 
 INSERT INTO task (deadline, state, type_of_apartment, urgent, apartment_id) values ('2020-09-10 14:45', 'NEW', 'NEW', true, 1);
 INSERT INTO task (deadline, state, type_of_apartment, urgent, apartment_id) values ('2020-10-10 14:45', 'NEW', 'NEW', true, 2);
+
+INSERT INTO user (id, email, name, password, phone_number, picture, surname) values (1, 'user@example.com', 'Ana', 'mysecret', '0614427283', 'profile_picture.jpg', 'Mihic');
