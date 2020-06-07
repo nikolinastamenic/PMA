@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">QuickInspect</string>
     <string name="registration_title">Registration</string>
@@ -46,5 +47,4 @@
         <item>Serbian</item>
         <item>English</item>
     </string-array>
-
 </resources>
