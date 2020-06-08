@@ -45,48 +45,48 @@
                 android:textColor="@color/colorPrimary"
                 />
 
-            <Button
+<!--            <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="120dp"
                 android:foregroundGravity="center"
                 android:onClick="getFinishedTasks"
-                android:text="Sync"
+                android:text="Register"
                 app:layout_constraintBottom_toTopOf="@id/hello_world"
                 app:layout_constraintLeft_toLeftOf="@id/hello_world" />
-            <!--
-                        <Button
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="20dp"
-                            android:foregroundGravity="center"
-                            android:onClick="onClickSettings"
-                            android:text="Login"
-                            app:layout_constraintBottom_toTopOf="@+id/hello_world"
-                            app:layout_constraintLeft_toLeftOf="@+id/hello_world"
-                            tools:ignore="MissingConstraints" />
-                        <Button
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="100dp"
-                            android:layout_marginBottom="220dp"
-                            android:foregroundGravity="center"
-                            android:onClick="onClickApartmentView"
-                            android:text="Apartment View"
-                            app:layout_constraintBottom_toTopOf="@+id/hello_world"
-                            app:layout_constraintLeft_toLeftOf="@+id/hello_world"
-                            tools:ignore="MissingConstraints" />
 
-                        <Button
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:onClick="onClickReport"
-                            android:text="Report"
-                            tools:ignore="MissingConstraints"
-                            app:layout_constraintBottom_toTopOf="@+id/hello_world"
-                            app:layout_constraintLeft_toLeftOf="@+id/hello_world"
-                            android:layout_marginLeft="10dp"
-                            android:layout_marginBottom="220dp"/>-->
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:foregroundGravity="center"
+                android:onClick="onClickSettings"
+                android:text="Login"
+                app:layout_constraintBottom_toTopOf="@+id/hello_world"
+                app:layout_constraintLeft_toLeftOf="@+id/hello_world"
+                tools:ignore="MissingConstraints" />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="100dp"
+                android:layout_marginBottom="220dp"
+                android:foregroundGravity="center"
+                android:onClick="onClickApartmentView"
+                android:text="Apartment View"
+                app:layout_constraintBottom_toTopOf="@+id/hello_world"
+                app:layout_constraintLeft_toLeftOf="@+id/hello_world"
+                tools:ignore="MissingConstraints" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onClickReport"
+                android:text="Report"
+                tools:ignore="MissingConstraints"
+                app:layout_constraintBottom_toTopOf="@+id/hello_world"
+                app:layout_constraintLeft_toLeftOf="@+id/hello_world"
+                android:layout_marginLeft="10dp"
+                android:layout_marginBottom="220dp"/>-->
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </RelativeLayout>

@@ -7,7 +7,9 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -56,8 +58,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.setCheckedItem(R.id.nav_home);
         System.out.println("main activity ON CREATE");
-//        getFinishedTasks();
-
 
     }
 
@@ -74,11 +74,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
-    public void onClickLogin(View view) {
-        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-
-        startActivity(intent);
-    }
 
     public void onClickApartmentView(View view) {
         Intent intent = new Intent(MainActivity.this, ApartmentActivity.class);
@@ -114,8 +109,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onStart() {
         super.onStart();
-//        Util.initDB(MainActivity.this);
-
         System.out.println("main activity ON START");
 
     }
@@ -138,6 +131,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onResume() {
         super.onResume();
+        syncTasks(); //TODO premestiti
         System.out.println("main activity ON RESUME");
 
     }
@@ -173,7 +167,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
-    public void getFinishedTasks(View view) {
+    public void syncTasks() {
         final String uri = "http://10.0.2.2:8080/api/task/all";
         new MainActivity.RESTTask().execute(uri);
     }
@@ -190,7 +184,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 HttpHeaders headers = new HttpHeaders();
                 headers.setContentType(MediaType.APPLICATION_JSON);
                 headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+
                 EmailDto emailDto = new EmailDto("user@yahoo.com");
+
                 HttpEntity entity = new HttpEntity(emailDto, headers);   //TODO ispraviti posle odradjenog logovanja
 
                 ResponseEntity<AllTaskDto[]> response = restTemplate.postForEntity(url, entity, AllTaskDto[].class);
@@ -240,7 +236,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
 
                 String taskUri = NewEntry.newTaskEntry(MainActivity.this, taskDto, apartmentUri, userId, reportId);
-
 
 
             }
