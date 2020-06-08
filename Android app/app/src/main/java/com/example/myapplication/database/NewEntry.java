@@ -82,7 +82,6 @@ public class NewEntry {
         ContentValues entryUser = new ContentValues();
         entryUser.put(SqlHelper.COLUMN_USER_MYSQLID, userDto.getId());
         entryUser.put(SqlHelper.COLUMN_USER_EMAIL, userDto.getEmail());
-        entryUser.put(SqlHelper.COLUMN_USER_PASSWORD, userDto.getPassword());
         entryUser.put(SqlHelper.COLUMN_USER_NAME, userDto.getName());
         entryUser.put(SqlHelper.COLUMN_USER_SURNAME, userDto.getSurname());
 

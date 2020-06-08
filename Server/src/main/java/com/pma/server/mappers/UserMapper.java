@@ -19,18 +19,18 @@ public class UserMapper {
         dto.setEmail(user.getEmail());
         dto.setPhoneNumber(user.getPhoneNumber());
         dto.setPictureName(user.getPicture());
-//        dto.setPicture(new ArrayList<>());
 
-        String filePath = new File("").getAbsolutePath();
-        filePath = filePath.concat("/pictures/");
+        if (user.getPicture() != null) {
+            String filePath = new File("").getAbsolutePath();
+            filePath = filePath.concat("/pictures/");
 
-        File in = new File(filePath + user.getPicture());
-        try {
-            dto.setPicture(IOUtils.toByteArray(new FileInputStream(in)));
-        } catch (IOException e) {
-            e.printStackTrace();
+            File in = new File(filePath + user.getPicture());
+            try {
+                dto.setPicture(IOUtils.toByteArray(new FileInputStream(in)));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-
         return dto;
     }
 }

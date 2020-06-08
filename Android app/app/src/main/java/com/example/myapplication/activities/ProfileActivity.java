@@ -11,6 +11,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.Icon;
 import android.media.Image;
 import android.net.Uri;
+import android.opengl.GLDebugHelper;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -82,9 +83,8 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
     }
 
     public void showUserProfile() {
-//        listView = (ListView) findViewById(R.id.listViewAllTasks);
         db = new SqlHelper(this);
-        Cursor data = db.getUserById("1");
+        Cursor data = db.getUserByMySqlId("3");
         if (data.getCount() != 0) {
             data.moveToNext();
 //            File picture = SavePictureUtil.readFromFile(data.getString(7), getApplicationContext(), getFilesDir());
@@ -117,39 +117,9 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
     }
 
     public void getUserProfile() {
-        final String uri = AppConfig.apiURI + "user/" + "1";    // TODO read cached user id value
+        final String uri = AppConfig.apiURI + "user/" + "3";    // TODO read cached user id value
         new RESTTask().execute(uri);
     }
-
-//    class MyAdapter extends ArrayAdapter<String> {
-//
-//        Context context;
-//        String name;
-//        File picture;
-//
-//
-//        MyAdapter(Context c, String name, File picture) {
-//            super(c, R.layout.profile);
-//            this.context = c;
-//            this.name = name;
-//            this.picture = picture;
-//        }
-//
-//        @NonNull
-//        @Override
-//        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-//            LayoutInflater layoutInflater = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//
-//            View item = layoutInflater.inflate(R.layout.profile, parent, false);
-//
-//
-//
-//            name1.setText(name);
-//            profile_picture.setImageIcon(new Icon(picture));
-//
-//            return item;
-//        }
-//    }
 
     class RESTTask extends AsyncTask<String, Void, ResponseEntity<UserDto>> {
 
@@ -181,7 +151,8 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
             UserDto userDto = responseEntity.getBody();
 
             SqlHelper dbHelper = new SqlHelper(ProfileActivity.this);
-//            dbHelper.dropTable();
+            dbHelper.dropUserTable();
+
             SQLiteDatabase db = dbHelper.getWritableDatabase();
 
             ContentValues entryUser = new ContentValues();
