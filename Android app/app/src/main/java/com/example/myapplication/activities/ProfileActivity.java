@@ -1,9 +1,12 @@
 package com.example.myapplication.activities;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
@@ -13,7 +16,9 @@ import android.media.Image;
 import android.net.Uri;
 import android.opengl.GLDebugHelper;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,20 +28,25 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.example.myapplication.DTO.PictureDto;
 import com.example.myapplication.DTO.UserDto;
 import com.example.myapplication.R;
 import com.example.myapplication.database.DBContentProvider;
 import com.example.myapplication.database.SqlHelper;
 import com.example.myapplication.util.AppConfig;
+import com.example.myapplication.util.MiscUtil;
 import com.example.myapplication.util.NavBarUtil;
 import com.example.myapplication.util.SavePictureUtil;
 import com.google.android.material.navigation.NavigationView;
@@ -45,10 +55,13 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
@@ -58,6 +71,8 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
     NavigationView navigationView;
     Toolbar toolbar;
     SqlHelper db;
+    ImageView profilePicture;
+    PictureDto updatedPicture;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,9 +92,65 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.setCheckedItem(R.id.nav_profile);
 
-        getUserProfile();
+        getUserProfile("3");
         showUserProfile();
 
+        profilePicture = findViewById(R.id.profile_picture);
+        profilePicture.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.M)
+            @Override
+            public void onClick(View v) {
+                if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+                {
+                    requestPermissions(new String[]{Manifest.permission.CAMERA}, AppConfig.CAMERA_PERMISSION_CODE);
+
+                }
+                if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)
+                {
+                    Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                    startActivityForResult(cameraIntent, AppConfig.CAMERA_REQUEST);
+                }
+            }
+        });
+
+
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
+    {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == AppConfig.CAMERA_PERMISSION_CODE)
+        {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
+            {
+                Toast.makeText(this, getString(R.string.camera_access_allowed), Toast.LENGTH_LONG).show();
+                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(cameraIntent, AppConfig.CAMERA_REQUEST);
+            }
+            else
+            {
+                Toast.makeText(this, getString(R.string.camera_access_denied), Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == AppConfig.CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
+            Bitmap photo = (Bitmap) data.getExtras().get("data");
+            profilePicture.setImageBitmap(photo);
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            photo.compress(Bitmap.CompressFormat.PNG, 100, stream);
+            String picName = "profilePicture-" + MiscUtil.generateRandom(7) + ".png";
+
+            SavePictureUtil.writeToFile(stream.toByteArray(), picName, getApplicationContext(), getFilesDir());
+            SqlHelper dbHelper = new SqlHelper(ProfileActivity.this);
+            dbHelper.setUserPicture("3", picName);
+            setUserProfilePicture("3", new PictureDto(picName, stream.toByteArray()));
+        }
     }
 
     public void showUserProfile() {
@@ -116,12 +187,18 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         return true;
     }
 
-    public void getUserProfile() {
-        final String uri = AppConfig.apiURI + "user/" + "3";    // TODO read cached user id value
-        new RESTTask().execute(uri);
+    public void getUserProfile(String id) {
+        final String uri = AppConfig.apiURI + "user/" + id;    // TODO read cached user id value
+        new RESTGetUserTask().execute(uri);
     }
 
-    class RESTTask extends AsyncTask<String, Void, ResponseEntity<UserDto>> {
+    public void setUserProfilePicture(String id, PictureDto pictureDto) {
+        final String uri = AppConfig.apiURI + "user/" + id + "/picture";    // TODO read cached user id value
+        updatedPicture = pictureDto;
+        new RESTSetUserProfilePictureTask().execute(uri);
+    }
+
+    class RESTGetUserTask extends AsyncTask<String, Void, ResponseEntity<UserDto>> {
 
         @Override
         protected ResponseEntity<UserDto> doInBackground(String... uri) {
@@ -146,7 +223,6 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         }
 
         protected void onPostExecute(ResponseEntity<UserDto> responseEntity) {
-//            HttpStatus status = responseEntity.getStatusCode();
 
             UserDto userDto = responseEntity.getBody();
 
@@ -164,8 +240,55 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
             entryUser.put(SqlHelper.COLUMN_USER_EMAIL, userDto.getEmail());
             entryUser.put(SqlHelper.COLUMN_USER_PICTURE, userDto.getPictureName());
             SavePictureUtil.writeToFile(userDto.getPicture(), userDto.getPictureName(), getApplicationContext(), getFilesDir());
-            // TODO save picture in folder pictures
-//            entryUser.put(SqlHelper.COLUMN_USER_PASSWORD, userDto.getPassword());
+            Uri userUri = ProfileActivity.this.getContentResolver().insert(DBContentProvider.CONTENT_URI_USER, entryUser);
+            db.close();
+            showUserProfile();
+
+        }
+    }
+
+    class RESTSetUserProfilePictureTask extends AsyncTask<String, Void, ResponseEntity<UserDto>> {
+
+        @Override
+        protected ResponseEntity<UserDto> doInBackground(String... uri) {
+            final String url = uri[0];
+            RestTemplate restTemplate = new RestTemplate();
+            try {
+                restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.APPLICATION_JSON);
+                headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+                HttpEntity entity = new HttpEntity(headers);
+
+                ResponseEntity<UserDto> response = restTemplate.postForEntity(url, updatedPicture, UserDto.class);
+
+                return response;
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+                return null;
+            }
+
+        }
+
+        protected void onPostExecute(ResponseEntity<UserDto> responseEntity) {
+
+            UserDto userDto = responseEntity.getBody();
+
+            SqlHelper dbHelper = new SqlHelper(ProfileActivity.this);
+            dbHelper.dropUserTable();
+
+            SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+            ContentValues entryUser = new ContentValues();
+
+            entryUser.put(SqlHelper.COLUMN_USER_MYSQLID, userDto.getId());
+            entryUser.put(SqlHelper.COLUMN_USER_NAME, userDto.getName());
+            entryUser.put(SqlHelper.COLUMN_USER_SURNAME, userDto.getSurname());
+            entryUser.put(SqlHelper.COLUMN_USER_PHONE_NUMBER, userDto.getPhoneNumber());
+            entryUser.put(SqlHelper.COLUMN_USER_EMAIL, userDto.getEmail());
+            entryUser.put(SqlHelper.COLUMN_USER_PICTURE, userDto.getPictureName());
+            SavePictureUtil.writeToFile(userDto.getPicture(), userDto.getPictureName(), getApplicationContext(), getFilesDir());
             Uri userUri = ProfileActivity.this.getContentResolver().insert(DBContentProvider.CONTENT_URI_USER, entryUser);
             db.close();
             showUserProfile();

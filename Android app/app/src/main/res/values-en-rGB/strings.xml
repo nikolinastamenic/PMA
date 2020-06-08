@@ -47,4 +47,6 @@
         <item>Serbian</item>
         <item>English</item>
     </string-array>
+    <string name="camera_access_allowed">Camera permission granted</string>
+    <string name="camera_access_denied">Camera permission denied</string>
 </resources>

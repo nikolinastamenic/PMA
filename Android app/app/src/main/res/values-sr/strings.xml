@@ -47,4 +47,6 @@
         <item>Srpski</item>
         <item>Engleski</item>
     </string-array>
+    <string name="camera_access_allowed">Pristup kameri je dozvoljen</string>
+    <string name="camera_access_denied">Pristup kameri je zabranjen</string>
 </resources>
