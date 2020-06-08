@@ -25,9 +25,6 @@
         android:layout_height="match_parent"
         >
 
-
-
-
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -36,38 +33,6 @@
             <include
                 android:id="@+id/toolbar"
                 layout="@layout/toolbar" />
-
-<!--
-            <ImageButton
-                android:id="@+id/backButtonSettings"
-                android:layout_width="75dp"
-                android:layout_height="55dp"
-                android:background="@null"
-                android:src="@drawable/backicon" />
--->
-
-
-<!--            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="@android:dimen/notification_large_icon_width"
-                android:layout_marginTop="55dp">
-
-                <ImageView
-                    android:layout_width="55dp"
-                    android:layout_height="55dp"
-                    android:src="@drawable/account"></ImageView>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/backButtonSettings"
-                    android:layout_marginLeft="65dp"
-                    android:layout_marginTop="15dp"
-                    android:text="@string/settings_account"
-                    android:textSize="20dp"
-                    tools:ignore="NotSibling" />
-
-            </RelativeLayout>-->
 
             <RelativeLayout
                 android:id="@+id/language"
@@ -82,7 +47,8 @@
                     android:id="@+id/languageImage"
                     android:layout_width="55dp"
                     android:layout_height="55dp"
-                    android:src="@drawable/language"/>
+                    android:src="@drawable/language"
+                    android:layout_marginTop="8dp"/>
 
                 <TextView
                     android:textColor="#000"
@@ -105,24 +71,28 @@
                     android:text="@string/language_description"
                     android:layout_alignLeft="@id/labelLanguage"
                     />
-
                 <RadioGroup
                     android:id="@+id/radioGroup"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="13dp"
-                    android:layout_marginLeft="23dp"
+                    android:layout_marginLeft="60dp"
                     android:layout_below="@id/languageDescription"
                     >
 
                     <RadioButton
                         android:id="@+id/radioBtn1"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:buttonTint="@color/colorPrimaryDark"
+                        />
                     <RadioButton
                         android:id="@+id/radioBtn2"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:buttonTint="@color/colorPrimaryDark"/>
+
+
 
                 </RadioGroup>
 
@@ -160,9 +130,11 @@
 
                 <ImageView
                     android:id="@+id/imageMediaAndStorage"
-                    android:layout_width="55dp"
-                    android:layout_height="55dp"
-                    android:src="@drawable/gallery1"/>
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/gallery1"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="10dp"/>
 
                 <TextView
                     android:id="@+id/labelMediaAndStorage"
@@ -179,8 +151,10 @@
                     android:id="@+id/switchMS"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="300dp"
+                    android:layout_marginLeft="350dp"
                     android:layout_marginTop="15dp"
+                    android:thumbTint="@color/colorPrimaryDark"
+                    android:trackTint="@color/cardview_dark_background"
                     />
 
                 <TextView
@@ -206,9 +180,10 @@
 
                 <ImageView
                     android:id="@+id/imageLocation"
-                    android:layout_width="55dp"
-                    android:layout_height="55dp"
-                    android:src="@drawable/location"/>
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:src="@drawable/location"
+                    android:layout_marginTop="10dp"/>
 
                 <TextView
                     android:id="@+id/labelLocation"
@@ -225,8 +200,10 @@
                     android:id="@+id/switch1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="300dp"
+                    android:layout_marginLeft="350dp"
                     android:layout_marginTop="15dp"
+                    android:thumbTint="@color/colorPrimaryDark"
+                    android:trackTint="@color/cardview_dark_background"
                     />
 
                 <TextView
@@ -238,6 +215,7 @@
                     android:layout_marginTop="3dp"
                     android:layout_alignLeft="@id/labelLocation"
                     />
+
             </RelativeLayout>
 
 

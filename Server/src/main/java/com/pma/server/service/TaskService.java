@@ -9,4 +9,7 @@ import java.util.List;
 public interface TaskService {
 
     List<Task> getAllTasks();
+    List<Task> getTasksInProcess(String username);
+    List<Task> getFinishedTasks(String username);
+
 }
