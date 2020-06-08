@@ -41,6 +41,7 @@ public class FinishedTasksActivity extends AppCompatActivity implements Navigati
     List<String> apartmentAddress;
     List<String> checkApartmentDate;
     SqlHelper db;
+    List<String> taskIds;
 
 
     @Override
@@ -49,6 +50,7 @@ public class FinishedTasksActivity extends AppCompatActivity implements Navigati
         super.onCreate(savedInstanceState);
         setContentView(R.layout.finished_tasks);
 
+        taskIds = new ArrayList<>();
         apartmentTitle = new ArrayList<>();
         apartmentAddress = new ArrayList<>();
         checkApartmentDate = new ArrayList<>();
@@ -81,6 +83,8 @@ public class FinishedTasksActivity extends AppCompatActivity implements Navigati
         } else {
             while (data.moveToNext()) {
 
+                taskIds.add(data.getString(0));
+
                 checkApartmentDate.add(data.getString(5).substring(0, 13));
                 apartmentId = data.getString(6);
                 Cursor apartmentData = db.getApartmentById(apartmentId);
@@ -108,7 +112,12 @@ public class FinishedTasksActivity extends AppCompatActivity implements Navigati
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                String taskId = taskIds.get(position);
+
+
                 Intent intent = new Intent(FinishedTasksActivity.this, ApartmentActivity.class);
+                intent.putExtra("taskId", taskId);
                 startActivity(intent);
             }
         });

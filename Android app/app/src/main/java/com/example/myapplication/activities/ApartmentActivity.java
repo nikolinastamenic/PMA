@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -65,22 +66,65 @@ public class ApartmentActivity extends AppCompatActivity implements NavigationVi
 
         db = new SqlHelper(this);
         Cursor data = db.getTaskById(taskId);
+
+
         String apartmentId = "";
         String apartmentNumber = "";
         String apartmentAddress = "";
+        String buildingId = "";
+        String addressId = "";
+        String stateName = "";
+        TextView state = findViewById(R.id.stateTaskId);
+        TextView address = findViewById(R.id.addressTaskId);
+        TextView description = findViewById(R.id.apartmentNameTaskId);
 
         if (data.getCount() == 0) {
             System.out.println("prazna lista apartmentActivity");
         } else {
             while (data.moveToNext()) {
 
-                System.out.println(data);
-                System.out.println(data.getString(1));
-                System.out.println(data.getString(2));
-                System.out.println(data.getString(3));
-                System.out.println(data.getString(4));
-                System.out.println(data.getString(5));
-                System.out.println(data.getString(6));
+                stateName = data.getString(3);
+                apartmentId = data.getString(6);
+
+                Cursor dataApartment = db.getApartmentById(apartmentId);
+
+                while (dataApartment.moveToNext()){
+
+                    apartmentNumber = dataApartment.getString(2);
+                    buildingId = dataApartment.getString(3);
+
+                    Cursor buildingData = db.getBuildingById(buildingId);
+
+                    while (buildingData.moveToNext()){
+
+                        addressId = buildingData.getString(2);
+                        Cursor addressData = db.getAddressById(addressId);
+
+                        while (addressData.moveToNext()){
+
+                            apartmentAddress = addressData.getString(3) + ", " + addressData.getString(4) + " " + addressData.getString(5);
+
+                        }
+
+                    }
+
+
+                }
+                if(stateName.equals("IN_PROCESS")) {
+                    state.setText("In process");
+                } else if (stateName.equals("FINISHED")){
+                    state.setText("Finished");
+                } else if (stateName.equals("NEW")){
+                    state.setText("New");
+                }
+
+                address.setText(apartmentAddress);
+                description.setText("Apartment number: " + apartmentNumber);
+
+
+
+
+
 //                checkApartmentDate.add(data.getString(5).substring(0, 13));
 //                apartmentId = data.getString(6);
 //                Cursor apartmentData = db.getApartmentById(apartmentId);

@@ -93,8 +93,6 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
                 apartmentId = data.getString(6);
                 Cursor apartmentData = db.getApartmentById(apartmentId);
 
-                taskIds.add(data.getString(0));
-
                 while (apartmentData.moveToNext()) {
                     apartmentTitle.add("Apartment number: " + apartmentData.getString(2));
 

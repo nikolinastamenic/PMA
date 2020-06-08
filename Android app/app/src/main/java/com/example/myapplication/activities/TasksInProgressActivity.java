@@ -43,6 +43,8 @@ public class TasksInProgressActivity extends AppCompatActivity implements Naviga
     List<String> apartmentAddress;
     List<String> checkApartmentDate;
     SqlHelper db;
+    List<String> taskIds;
+
 
 
     @Override
@@ -51,6 +53,7 @@ public class TasksInProgressActivity extends AppCompatActivity implements Naviga
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tasks_in_process);
 
+        taskIds = new ArrayList<>();
         apartmentTitle = new ArrayList<>();
         apartmentAddress = new ArrayList<>();
         checkApartmentDate = new ArrayList<>();
@@ -83,6 +86,7 @@ public class TasksInProgressActivity extends AppCompatActivity implements Naviga
         } else {
             while (data.moveToNext()) {
 
+                taskIds.add(data.getString(0));
                 checkApartmentDate.add(data.getString(5).substring(0, 13));
                 apartmentId = data.getString(6);
                 Cursor apartmentData = db.getApartmentById(apartmentId);
@@ -110,9 +114,12 @@ public class TasksInProgressActivity extends AppCompatActivity implements Naviga
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                String taskId = taskIds.get(position);
+
                 Intent intent = new Intent(TasksInProgressActivity.this, ApartmentActivity.class);
-                startActivity(intent);
-            }
+                intent.putExtra("taskId", taskId);
+                startActivity(intent);            }
         });
 
 

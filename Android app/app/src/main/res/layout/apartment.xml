@@ -46,10 +46,10 @@
                 android:layout_columnWeight="1">
 
                 <TextView
+                    android:id="@+id/apartmentNameTaskId"
                     android:layout_width="wrap_content"
                     android:layout_height="35dp"
                     android:paddingEnd="10dp"
-                    android:text="Apartment nbr: 5"
                     android:textSize="22sp" />
             </LinearLayout>
 
@@ -66,9 +66,9 @@
                     android:textSize="22sp" />
 
                 <TextView
+                    android:id="@+id/stateTaskId"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="New"
                     android:textSize="22sp"
                     android:textStyle="bold|italic"
                     tools:ignore="MissingConstraints" />
@@ -87,9 +87,9 @@
                     android:textSize="22sp" />
 
                 <TextView
+                    android:id="@+id/addressTaskId"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Narodnog fronta 22"
                     android:textSize="22sp"
                     android:textStyle="bold|italic"
                     tools:ignore="MissingConstraints" />
