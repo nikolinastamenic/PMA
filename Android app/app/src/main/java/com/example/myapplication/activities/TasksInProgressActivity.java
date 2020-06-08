@@ -1,9 +1,9 @@
 package com.example.myapplication.activities;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -23,17 +23,17 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.myapplication.R;
+
 import com.example.myapplication.database.SqlHelper;
-import com.example.myapplication.util.AppConfig;
 import com.example.myapplication.util.NavBarUtil;
 import com.google.android.material.navigation.NavigationView;
 
 
 import java.util.ArrayList;
+
 import java.util.List;
 
-public class AllTasksActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-
+public class TasksInProgressActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     DrawerLayout drawerLayout;
     NavigationView navigationView;
     Toolbar toolbar;
@@ -48,7 +48,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
     protected void onCreate(@Nullable Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.all_tasks);
+        setContentView(R.layout.tasks_in_process);
 
         apartmentTitle = new ArrayList<>();
         apartmentAddress = new ArrayList<>();
@@ -63,7 +63,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
         toggle.syncState();
 
         navigationView.setNavigationItemSelectedListener(this);
-        navigationView.setCheckedItem(R.id.nav_all_tasks);
+        navigationView.setCheckedItem(R.id.nav_tasks_in_process);
         listView();
 
 
@@ -71,9 +71,9 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
     public void listView() {
 
-        listView = (ListView) findViewById(R.id.listViewAllTasks);
+        listView = (ListView) findViewById(R.id.listViewTasksInProcess);
         db = new SqlHelper(this);
-        Cursor data = db.getAllTasks();
+        Cursor data = db.getTasksInProcess();
         String apartmentId = "";
         String apartmentNumber = "";
         String buildingId = "";
@@ -100,7 +100,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
                 }
 
-                MyAdapter myAdapter = new MyAdapter(this, apartmentTitle, apartmentAddress, checkApartmentDate);
+                TasksInProgressActivity.MyAdapter myAdapter = new TasksInProgressActivity.MyAdapter(this, apartmentTitle, apartmentAddress, checkApartmentDate);
                 listView.setAdapter(myAdapter);
             }
         }
@@ -109,7 +109,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(AllTasksActivity.this, ApartmentActivity.class);
+                Intent intent = new Intent(TasksInProgressActivity.this, ApartmentActivity.class);
                 startActivity(intent);
             }
         });
@@ -135,7 +135,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        Intent intent = NavBarUtil.setNavBarActions(AllTasksActivity.this, item);
+        Intent intent = NavBarUtil.setNavBarActions(TasksInProgressActivity.this, item);
         if (intent != null) {
             startActivity(intent);
         }
@@ -187,6 +187,5 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
             return item;
         }
     }
-
 
 }

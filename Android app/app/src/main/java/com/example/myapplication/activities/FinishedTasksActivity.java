@@ -24,15 +24,13 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.myapplication.R;
 import com.example.myapplication.database.SqlHelper;
-import com.example.myapplication.util.AppConfig;
 import com.example.myapplication.util.NavBarUtil;
 import com.google.android.material.navigation.NavigationView;
-
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class AllTasksActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class FinishedTasksActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     DrawerLayout drawerLayout;
     NavigationView navigationView;
@@ -48,7 +46,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
     protected void onCreate(@Nullable Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.all_tasks);
+        setContentView(R.layout.finished_tasks);
 
         apartmentTitle = new ArrayList<>();
         apartmentAddress = new ArrayList<>();
@@ -63,7 +61,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
         toggle.syncState();
 
         navigationView.setNavigationItemSelectedListener(this);
-        navigationView.setCheckedItem(R.id.nav_all_tasks);
+        navigationView.setCheckedItem(R.id.nav_finished_tasks);
         listView();
 
 
@@ -71,9 +69,9 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
     public void listView() {
 
-        listView = (ListView) findViewById(R.id.listViewAllTasks);
+        listView = (ListView) findViewById(R.id.listViewFinishedTasks);
         db = new SqlHelper(this);
-        Cursor data = db.getAllTasks();
+        Cursor data = db.getFinishedTasks();
         String apartmentId = "";
         String apartmentNumber = "";
         String buildingId = "";
@@ -100,7 +98,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
                 }
 
-                MyAdapter myAdapter = new MyAdapter(this, apartmentTitle, apartmentAddress, checkApartmentDate);
+                FinishedTasksActivity.MyAdapter myAdapter = new FinishedTasksActivity.MyAdapter(this, apartmentTitle, apartmentAddress, checkApartmentDate);
                 listView.setAdapter(myAdapter);
             }
         }
@@ -109,7 +107,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(AllTasksActivity.this, ApartmentActivity.class);
+                Intent intent = new Intent(FinishedTasksActivity.this, ApartmentActivity.class);
                 startActivity(intent);
             }
         });
@@ -135,7 +133,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        Intent intent = NavBarUtil.setNavBarActions(AllTasksActivity.this, item);
+        Intent intent = NavBarUtil.setNavBarActions(FinishedTasksActivity.this, item);
         if (intent != null) {
             startActivity(intent);
         }
@@ -187,6 +185,5 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
             return item;
         }
     }
-
 
 }

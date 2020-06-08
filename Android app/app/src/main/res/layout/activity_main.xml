@@ -50,7 +50,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="120dp"
                 android:foregroundGravity="center"
-                android:onClick="onClickButton"
+                android:onClick="getFinishedTasks"
                 android:text="Register"
                 app:layout_constraintBottom_toTopOf="@id/hello_world"
                 app:layout_constraintLeft_toLeftOf="@id/hello_world" />

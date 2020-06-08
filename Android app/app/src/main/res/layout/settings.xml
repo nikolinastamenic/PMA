@@ -185,6 +185,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="300dp"
                     android:layout_marginTop="15dp"
+                    android:thumbTint="@color/colorPrimaryDark"
+                    android:trackTint="@color/cardview_dark_background"
                     />
 
                 <TextView
@@ -231,6 +233,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="300dp"
                     android:layout_marginTop="15dp"
+                    android:thumbTint="@color/colorPrimaryDark"
+                    android:trackTint="@color/cardview_dark_background"
                     />
 
                 <TextView

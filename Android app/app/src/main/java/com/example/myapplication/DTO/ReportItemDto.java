@@ -1,26 +1,26 @@
-package com.pma.server.model;
+package com.example.myapplication.DTO;
 
-import javax.persistence.*;
-import java.io.Serializable;
 
-@Entity
-public class ReportItem implements Serializable {
+public class ReportItemDto {
 
-    @Id
-    @Column
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
     private String faultName;
 
-    @Column
     private String details;
 
-    @Column
     private String picture;
 
-    public ReportItem() {}
+    public ReportItemDto() {
+    }
+
+
+    public ReportItemDto(Long id, String faultName, String details, String picture) {
+        this.id = id;
+        this.faultName = faultName;
+        this.details = details;
+        this.picture = picture;
+    }
 
     public Long getId() {
         return id;

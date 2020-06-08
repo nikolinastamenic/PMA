@@ -1,10 +1,14 @@
 package com.example.myapplication.activities;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.MenuItem;
@@ -23,10 +27,23 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.example.myapplication.DTO.UserDto;
 import com.example.myapplication.R;
+import com.example.myapplication.database.DBContentProvider;
+import com.example.myapplication.database.SqlHelper;
+import com.example.myapplication.util.AppConfig;
 import com.example.myapplication.util.NavBarUtil;
+import com.example.myapplication.util.SavePictureUtil;
 import com.google.android.material.navigation.NavigationView;
 
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.Arrays;
 import java.util.Locale;
 
 public class SettingsActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -77,7 +94,6 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
                 setLocale("sr");
             }
         });
-
         englishRadio.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
