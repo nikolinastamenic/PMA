@@ -29,6 +29,7 @@ import com.example.myapplication.DTO.AllTaskDto;
 import com.example.myapplication.DTO.EmailDto;
 import com.example.myapplication.R;
 import com.example.myapplication.database.DBContentProvider;
+import com.example.myapplication.database.NewEntry;
 import com.example.myapplication.database.SqlHelper;
 import com.example.myapplication.util.NavBarUtil;
 import com.google.android.material.navigation.NavigationView;
@@ -60,7 +61,7 @@ public class TasksInProgressActivity extends AppCompatActivity implements Naviga
     protected void onCreate(@Nullable Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.all_tasks);
+        setContentView(R.layout.tasks_in_process);
 
         apartmentTitle = new ArrayList<>();
         apartmentAddress = new ArrayList<>();
@@ -84,9 +85,9 @@ public class TasksInProgressActivity extends AppCompatActivity implements Naviga
 
     public void listView() {
 
-        listView = (ListView) findViewById(R.id.listViewAllTasks);
+        listView = (ListView) findViewById(R.id.listViewTasksInProcess);
         db = new SqlHelper(this);
-        Cursor data = db.getAllTasks();
+        Cursor data = db.getTasksInProcess();
         String apartmentId = "";
         String apartmentNumber = "";
         String buildingId = "";
@@ -240,65 +241,20 @@ public class TasksInProgressActivity extends AppCompatActivity implements Naviga
 
             SqlHelper dbHelper = new SqlHelper(TasksInProgressActivity.this);
             dbHelper.dropTable();
-            SQLiteDatabase db = dbHelper.getWritableDatabase();
 
             for (AllTaskDto taskDto : taskDtos) {
 
-                ContentValues entryUser = new ContentValues();  //TODO promeniti kad se odradi logovanje!
-                ContentValues entryAddress = new ContentValues();
-                ContentValues entryBuilding = new ContentValues();
-                ContentValues entryApartment = new ContentValues();
-                ContentValues entryTask = new ContentValues();
+                String userUri = NewEntry.newUserEntry(TasksInProgressActivity.this, taskDto.getUserDto()); //TODO promeniti kad se odradi logovanje!
+                String userId = userUri.split("/")[1];
+                String addressUri = NewEntry.newAddressEntry(TasksInProgressActivity.this, taskDto.getApartmentDto().getBuildingDto());
+                String buildingUri = NewEntry.newBuildingEntry(TasksInProgressActivity.this, taskDto.getApartmentDto().getBuildingDto(), addressUri);
 
-
-                entryUser.put(SqlHelper.COLUMN_USER_MYSQLID, taskDto.getUserDto().getId());
-                entryUser.put(SqlHelper.COLUMN_USER_EMAIL, taskDto.getUserDto().getEmail());
-                entryUser.put(SqlHelper.COLUMN_USER_PASSWORD, taskDto.getUserDto().getPassword());
-                entryUser.put(SqlHelper.COLUMN_USER_NAME, taskDto.getUserDto().getName());
-                entryUser.put(SqlHelper.COLUMN_USER_SURNAME, taskDto.getUserDto().getSurname());
-
-
-                Uri userUri = TasksInProgressActivity.this.getContentResolver().insert(DBContentProvider.CONTENT_URI_USER, entryUser);
-
-
-                entryAddress.put(SqlHelper.COLUMN_ADDRESS_MYSQLID, taskDto.getApartmentDto().getBuildingDto().getAddress().getId());
-                entryAddress.put(SqlHelper.COLUMN_ADDRESS_COUNTRY, taskDto.getApartmentDto().getBuildingDto().getAddress().getCountry());
-                entryAddress.put(SqlHelper.COLUMN_ADDRESS_CITY, taskDto.getApartmentDto().getBuildingDto().getAddress().getCity());
-                entryAddress.put(SqlHelper.COLUMN_ADDRESS_STREET, taskDto.getApartmentDto().getBuildingDto().getAddress().getStreet());
-                entryAddress.put(SqlHelper.COLUMN_ADDRESS_NUMBER, taskDto.getApartmentDto().getBuildingDto().getAddress().getNumber());
-                entryAddress.put(SqlHelper.COLUMN_ADDRESS_LONGITUDE, taskDto.getApartmentDto().getBuildingDto().getAddress().getLongitude());
-                entryAddress.put(SqlHelper.COLUMN_ADDRESS_LATITUDE, taskDto.getApartmentDto().getBuildingDto().getAddress().getLatitude());
-                Uri addressUri = TasksInProgressActivity.this.getContentResolver().insert(DBContentProvider.CONTENT_URI_ADDRESS, entryAddress);
-
-                entryBuilding.put(SqlHelper.COLUMN_BUILDING_MYSQLID, taskDto.getApartmentDto().getBuildingDto().getId());
-                String addressId = addressUri.toString().split("/")[1];
-                entryBuilding.put(SqlHelper.COLUMN_BUILDING_ADDRESS_ID, addressId);
-                Uri buildingUri = TasksInProgressActivity.this.getContentResolver().insert(DBContentProvider.CONTENT_URI_BUILDING, entryBuilding);
-
-
-                entryApartment.put(SqlHelper.COLUMN_APARTMENT_MYSQLID, taskDto.getApartmentDto().getId());
-                entryApartment.put(SqlHelper.COLUMN_APARTMENT_NUMBER, taskDto.getApartmentDto().getNumber());
-                String buildingId = buildingUri.toString().split("/")[1];
-                entryApartment.put(SqlHelper.COLUMN_APARTMENT_BUILDING_ID, buildingId);
-                Uri apartmentUri = TasksInProgressActivity.this.getContentResolver().insert(DBContentProvider.CONTENT_URI_APARTMENT, entryApartment);
-
-                entryTask.put(SqlHelper.COLUMN_TASK_MYSQLID, taskDto.getId());
-                entryTask.put(SqlHelper.COLUMN_TASK_STATE, taskDto.getState());
-                entryTask.put(SqlHelper.COLUMN_TASK_DEADLINE, taskDto.getDeadline().toString());
-                entryTask.put(SqlHelper.COLUMN_TASK_TYPE_OF_APARTMENT, taskDto.getTypeOfApartment());
-                entryTask.put(SqlHelper.COLUMN_TASK_URGENT, taskDto.isUrgent());
-                String apartmentId = apartmentUri.toString().split("/")[1];
-                String userId = userUri.toString().split("/")[1];
-
-                entryTask.put(SqlHelper.COLUMN_TASK_APARTMENT_ID, apartmentId);
-                entryTask.put(SqlHelper.COLUMN_TASK_USER_ID, userId);
-
-                Uri taskUri = TasksInProgressActivity.this.getContentResolver().insert(DBContentProvider.CONTENT_URI_TASK, entryTask);
+                String apartmentUri = NewEntry.newApartmentEntry(TasksInProgressActivity.this, taskDto.getApartmentDto(), buildingUri);
+                String taskUri = NewEntry.newTaskEntry(TasksInProgressActivity.this, taskDto, apartmentUri, userId, null);
 
 
             }
 
-            db.close();
 
         }
     }

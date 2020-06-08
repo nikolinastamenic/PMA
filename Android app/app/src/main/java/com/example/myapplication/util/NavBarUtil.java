@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.view.MenuItem;
 
+import com.example.myapplication.activities.FinishedTasksActivity;
 import com.example.myapplication.activities.MainActivity;
 import com.example.myapplication.R;
 import com.example.myapplication.activities.AllTasksActivity;
@@ -27,7 +28,7 @@ public class NavBarUtil {
             case R.id.nav_all_tasks:
                 return new Intent(parent, AllTasksActivity.class);
             case R.id.nav_finished_tasks:
-                return new Intent(parent, AllTasksActivity.class);
+                return new Intent(parent, FinishedTasksActivity.class);
             case R.id.nav_tasks_in_process:
                 return new Intent(parent, TasksInProgressActivity.class);
         }

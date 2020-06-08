@@ -35,6 +35,8 @@
         <activity android:name=".activities.SettingsActivity"></activity>
         <activity android:name=".activities.AllTasksActivity"></activity>
         <activity android:name=".activities.TasksInProgressActivity"></activity>
+        <activity android:name=".activities.FinishedTasksActivity"></activity>
+
 
 
         <activity

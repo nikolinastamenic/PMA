@@ -19,6 +19,8 @@ public class AllTaskDto {
 
     private UserDto userDto;
 
+    private ReportDto reportDto;
+
     public AllTaskDto() {
     }
 
@@ -78,5 +80,13 @@ public class AllTaskDto {
 
     public void setUserDto(UserDto userDto) {
         this.userDto = userDto;
+    }
+
+    public ReportDto getReportDto() {
+        return reportDto;
+    }
+
+    public void setReportDto(ReportDto reportDto) {
+        this.reportDto = reportDto;
     }
 }

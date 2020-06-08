@@ -14,7 +14,7 @@ public class SqlHelper extends SQLiteOpenHelper {
     public static final String TABLE_APARTMENT = "apartment";
     public static final String TABLE_REPORT_ITEM = "report_item";
     public static final String TABLE_REPORT = "report";
-    public static final String TABLE_REPORT_REPORT_ITEM = "report_report_item";
+    public static final String JOIN_TABLE = "report_report_item";
     public static final String TABLE_TASK = "task";
     public static final String TABLE_USER = "user";
 
@@ -147,7 +147,7 @@ public class SqlHelper extends SQLiteOpenHelper {
             + ")";
 
     private static final String TABLE_REPORT_REPORT_ITEM_CREATE = "create table "
-            + TABLE_REPORT_REPORT_ITEM + "("
+            + JOIN_TABLE + "("
             + COLUMN_REPORT_REPORT_ITEM_REPORT_ID + " integer, "
             + COLUMN_REPORT_REPORT_ITEM_REPORT_MYSQLIDID + " integer, "
             + COLUMN_REPORT_REPORT_ITEM_REPOR_ITEM_ID + " integer, "
@@ -199,7 +199,7 @@ public class SqlHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_APARTMENT);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_REPORT_ITEM);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_REPORT);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_REPORT_REPORT_ITEM);
+        db.execSQL("DROP TABLE IF EXISTS " + JOIN_TABLE);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_TASK);
 
         onCreate(db);
@@ -240,9 +240,18 @@ public class SqlHelper extends SQLiteOpenHelper {
         return data;
     }
 
-    public Cursor getTasksInProcess(String username) {
+    public Cursor getTasksInProcess() {
         SQLiteDatabase sqlDB = this.getWritableDatabase();
-        Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_TASK + " WHERE username " + "= " + username, null);
+        Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_TASK + " WHERE state = 'IN_PROCESS' ", null);
+
+        return data;
+
+    }
+
+    public Cursor getFinishedTasks() {
+        SQLiteDatabase sqlDB = this.getWritableDatabase();
+
+        Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_TASK + " WHERE state = 'FINISHED' ", null);
 
         return data;
 

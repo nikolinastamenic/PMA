@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresPermission;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -26,6 +27,8 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.myapplication.DTO.AllTaskDto;
+import com.example.myapplication.DTO.EmailDto;
+import com.example.myapplication.DTO.ReportItemDto;
 import com.example.myapplication.R;
 import com.example.myapplication.database.DBContentProvider;
 import com.example.myapplication.database.NewEntry;
@@ -44,7 +47,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class AllTasksActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class FinishedTasksActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     DrawerLayout drawerLayout;
     NavigationView navigationView;
@@ -60,7 +63,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
     protected void onCreate(@Nullable Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.all_tasks);
+        setContentView(R.layout.finished_tasks);
 
         apartmentTitle = new ArrayList<>();
         apartmentAddress = new ArrayList<>();
@@ -76,7 +79,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.setCheckedItem(R.id.nav_all_tasks);
-        getTasks();            //TODO premestiti gde treba!
+        getFinishedTasks();            //premestiti gde treba!
         listView();
 
 
@@ -84,9 +87,9 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
     public void listView() {
 
-        listView = (ListView) findViewById(R.id.listViewAllTasks);
+        listView = (ListView) findViewById(R.id.listViewFinishedTasks);
         db = new SqlHelper(this);
-        Cursor data = db.getAllTasks();
+        Cursor data = db.getFinishedTasks();
         String apartmentId = "";
         String apartmentNumber = "";
         String buildingId = "";
@@ -113,7 +116,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
                 }
 
-                MyAdapter myAdapter = new MyAdapter(this, apartmentTitle, apartmentAddress, checkApartmentDate);
+                FinishedTasksActivity.MyAdapter myAdapter = new FinishedTasksActivity.MyAdapter(this, apartmentTitle, apartmentAddress, checkApartmentDate);
                 listView.setAdapter(myAdapter);
             }
         }
@@ -122,7 +125,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(AllTasksActivity.this, ApartmentActivity.class);
+                Intent intent = new Intent(FinishedTasksActivity.this, ApartmentActivity.class);
                 startActivity(intent);
             }
         });
@@ -148,7 +151,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        Intent intent = NavBarUtil.setNavBarActions(AllTasksActivity.this, item);
+        Intent intent = NavBarUtil.setNavBarActions(FinishedTasksActivity.this, item);
         if (intent != null) {
             startActivity(intent);
         }
@@ -202,9 +205,9 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
     }
 
 
-    public void getTasks() {
-        final String uri = "http://10.0.2.2:8080/api/task";
-        new RESTTask().execute(uri);
+    public void getFinishedTasks() {
+        final String uri = "http://10.0.2.2:8080/api/task/finished";
+        new FinishedTasksActivity.RESTTask().execute(uri);
     }
 
     class RESTTask extends AsyncTask<String, Void, ResponseEntity<AllTaskDto[]>> {
@@ -219,9 +222,11 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
                 HttpHeaders headers = new HttpHeaders();
                 headers.setContentType(MediaType.APPLICATION_JSON);
                 headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-                HttpEntity entity = new HttpEntity(headers);
+                EmailDto emailDto = new EmailDto("user@yahoo.com");
+                HttpEntity entity = new HttpEntity(emailDto, headers);   //TODO ispraviti posle odradjenog logovanja
 
-                ResponseEntity<AllTaskDto[]> response = restTemplate.getForEntity(url, AllTaskDto[].class, entity);
+                ResponseEntity<AllTaskDto[]> response = restTemplate.postForEntity(url, entity, AllTaskDto[].class);
+
 
                 return response;
             } catch (Exception e) {
@@ -235,20 +240,34 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
             AllTaskDto[] taskDtos = responseEntity.getBody();
 
-            SqlHelper dbHelper = new SqlHelper(AllTasksActivity.this);
+            SqlHelper dbHelper = new SqlHelper(FinishedTasksActivity.this);
             dbHelper.dropTable();
-//            SQLiteDatabase db = dbHelper.getWritableDatabase();
 
             for (AllTaskDto taskDto : taskDtos) {
 
-                String addressUri = NewEntry.newAddressEntry(AllTasksActivity.this, taskDto.getApartmentDto().getBuildingDto());
-                String buildingUri = NewEntry.newBuildingEntry(AllTasksActivity.this, taskDto.getApartmentDto().getBuildingDto(), addressUri);
-                String apartmentUri = NewEntry.newApartmentEntry(AllTasksActivity.this, taskDto.getApartmentDto(), buildingUri);
-                String taskUri = NewEntry.newTaskEntry(AllTasksActivity.this, taskDto, apartmentUri, null, null);
+                String userUri = NewEntry.newUserEntry(FinishedTasksActivity.this, taskDto.getUserDto()); //TODO promeniti kad se odradi logovanje!
+                String userId = userUri.split("/")[1];
+                String addressUri = NewEntry.newAddressEntry(FinishedTasksActivity.this, taskDto.getApartmentDto().getBuildingDto());
+                String buildingUri = NewEntry.newBuildingEntry(FinishedTasksActivity.this, taskDto.getApartmentDto().getBuildingDto(), addressUri);
+
+                String apartmentUri = NewEntry.newApartmentEntry(FinishedTasksActivity.this, taskDto.getApartmentDto(), buildingUri);
+                String reportUri = NewEntry.newReportEntry(FinishedTasksActivity.this, taskDto.getReportDto());
+                String reportId = reportUri.split("/")[1];
+
+                String taskUri = NewEntry.newTaskEntry(FinishedTasksActivity.this, taskDto, apartmentUri, userId, reportId);
+
+
+                for (ReportItemDto reportItemDto : taskDto.getReportDto().getItemList()) {
+
+                    String reportItemUri = NewEntry.newReportItemEntry(FinishedTasksActivity.this, reportItemDto);
+
+                    String reportItemId = reportItemUri.toString().split("/")[1];
+                    String reportReporetItemUri = NewEntry.newReportReportItemEntry(FinishedTasksActivity.this, reportItemDto, taskDto.getReportDto(), reportId, reportItemId);
+
+                }
 
 
             }
-
 
         }
     }
