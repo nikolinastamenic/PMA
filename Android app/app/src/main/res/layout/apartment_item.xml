@@ -20,6 +20,9 @@
             android:text="@string/apartment_title"
             android:textColor="#000"
             android:textSize="20sp"/>
+
+
+
         <TextView
             android:layout_width="260dp"
             android:layout_height="wrap_content"
@@ -30,6 +33,14 @@
 
         </TextView>
 
+        <Button
+            android:id="@+id/buttonAssing"
+            android:layout_width="75dp"
+            android:layout_height="40dp"
+            android:layout_margin = "5dp"
+            android:layout_marginLeft="20dp"
+            android:text="Assign" />
+
         <TextView
             android:id="@+id/apartmentDate"
             android:layout_width="wrap_content"
@@ -39,6 +50,8 @@
             android:text="@string/apartment_date"
             android:layout_gravity="right"
             />
+
+
 
 
     </LinearLayout>

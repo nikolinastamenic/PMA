@@ -1,42 +1,29 @@
 package com.example.myapplication.DTO;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Date;
 
 public class AllTaskDto {
 
-//    @JsonProperty("id")
     private long id;
 
-//    @JsonProperty("apartment_dto")
-//    private ApartmentDto apartmentDto;
-
-//    @JsonProperty("type_of_apartment")
     private String typeOfApartment;
 
-//    @JsonProperty("state")
     private String state;
 
-//    @JsonProperty("urgent")
     private boolean urgent;
 
-//    @JsonProperty("deadline")
     private Date deadline;
 
     private ApartmentDto apartmentDto;
 
+    private UserDto userDto;
+
+    private ReportDto reportDto;
+
     public AllTaskDto() {
     }
 
-//    public AllTaskDto(Long id, ApartmentDto apartmentDto, String typeOfApartment, String state, boolean urgent, Date deadline) {
-//        this.id = id;
-////        this.apartmentDto = apartmentDto;
-//        this.typeOfApartment = typeOfApartment;
-//        this.state = state;
-//        this.urgent = urgent;
-//        this.deadline = deadline;
-//    }
 
     public long getId() {
         return id;
@@ -85,5 +72,21 @@ public class AllTaskDto {
 
     public void setDeadline(Date deadline) {
         this.deadline = deadline;
+    }
+
+    public UserDto getUserDto() {
+        return userDto;
+    }
+
+    public void setUserDto(UserDto userDto) {
+        this.userDto = userDto;
+    }
+
+    public ReportDto getReportDto() {
+        return reportDto;
+    }
+
+    public void setReportDto(ReportDto reportDto) {
+        this.reportDto = reportDto;
     }
 }

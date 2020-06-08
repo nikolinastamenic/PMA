@@ -4,9 +4,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-
-import android.net.Uri;
-import android.net.sip.SipSession;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -27,18 +24,17 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.myapplication.R;
-import com.example.myapplication.database.DBContentProvider;
+
 import com.example.myapplication.database.SqlHelper;
-import com.example.myapplication.util.AppConfig;
 import com.example.myapplication.util.NavBarUtil;
 import com.google.android.material.navigation.NavigationView;
 
 
 import java.util.ArrayList;
+
 import java.util.List;
 
-public class AllTasksActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-
+public class TasksInProgressActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     DrawerLayout drawerLayout;
     NavigationView navigationView;
     Toolbar toolbar;
@@ -47,19 +43,17 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
     List<String> apartmentAddress;
     List<String> checkApartmentDate;
     SqlHelper db;
-    List<String> taskIds;
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.all_tasks);
+        setContentView(R.layout.tasks_in_process);
 
         apartmentTitle = new ArrayList<>();
         apartmentAddress = new ArrayList<>();
         checkApartmentDate = new ArrayList<>();
-        taskIds = new ArrayList<>();
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
         toolbar = findViewById(R.id.toolbar);
@@ -70,7 +64,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
         toggle.syncState();
 
         navigationView.setNavigationItemSelectedListener(this);
-        navigationView.setCheckedItem(R.id.nav_all_tasks);
+        navigationView.setCheckedItem(R.id.nav_tasks_in_process);
         listView();
 
 
@@ -78,9 +72,9 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
     public void listView() {
 
-        listView = (ListView) findViewById(R.id.listViewAllTasks);
+        listView = (ListView) findViewById(R.id.listViewTasksInProcess);
         db = new SqlHelper(this);
-        Cursor data = db.getAllTasks();
+        Cursor data = db.getTasksInProcess();
         String apartmentId = "";
         String apartmentNumber = "";
         String buildingId = "";
@@ -88,7 +82,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
             System.out.println("prazna lista");
         } else {
             while (data.moveToNext()) {
-                taskIds.add(data.getString(0));
+
                 checkApartmentDate.add(data.getString(5).substring(0, 13));
                 apartmentId = data.getString(6);
                 Cursor apartmentData = db.getApartmentById(apartmentId);
@@ -107,7 +101,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
                 }
 
-                MyAdapter myAdapter = new MyAdapter(this, apartmentTitle, apartmentAddress, checkApartmentDate);
+                TasksInProgressActivity.MyAdapter myAdapter = new TasksInProgressActivity.MyAdapter(this, apartmentTitle, apartmentAddress, checkApartmentDate);
                 listView.setAdapter(myAdapter);
             }
         }
@@ -116,7 +110,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(AllTasksActivity.this, ApartmentActivity.class);
+                Intent intent = new Intent(TasksInProgressActivity.this, ApartmentActivity.class);
                 startActivity(intent);
             }
         });
@@ -142,7 +136,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        Intent intent = NavBarUtil.setNavBarActions(AllTasksActivity.this, item);
+        Intent intent = NavBarUtil.setNavBarActions(TasksInProgressActivity.this, item);
         if (intent != null) {
             startActivity(intent);
         }
@@ -178,56 +172,23 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
         @NonNull
         @Override
-        public View getView(final int position, @Nullable View convertView, @NonNull final ViewGroup parent) {
+        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
             LayoutInflater layoutInflater = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-            final View item = layoutInflater.inflate(R.layout.apartment_item, parent, false);
+            View item = layoutInflater.inflate(R.layout.apartment_item, parent, false);
 
             TextView title1 = item.findViewById(R.id.apartmentTitleTextView);
             TextView description1 = item.findViewById(R.id.address);
             TextView date1 = item.findViewById(R.id.apartmentDate);
+            Button assignButton = item.findViewById(R.id.buttonAssing);
+
+            assignButton.setVisibility(View.GONE);
             title1.setText(title.get(position));
             description1.setText(address.get(position));
             date1.setText(date.get(position));
 
-            Button assignButton = item.findViewById(R.id.buttonAssing);
-            assignButton.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-
-                    ContentValues entryTask = new ContentValues();
-
-                    String taskId = taskIds.get(position);
-                    Cursor taskData = db.getTaskById(taskId);
-                    while (taskData.moveToNext()) {
-                        String mysqlId = taskData.getString(1);
-                        String typeOfApartment = taskData.getString(2);
-                        String state = "IN_PROCESS";
-                        String urgent = taskData.getString(4);
-                        String deadline = taskData.getString(5);
-                        String apartmentId = taskData.getString(6);
-                        String userId = "1";                       //TODO
-
-                        entryTask.put(SqlHelper.COLUMN_TASK_MYSQLID, mysqlId);
-                        entryTask.put(SqlHelper.COLUMN_TASK_STATE, state);
-                        entryTask.put(SqlHelper.COLUMN_TASK_DEADLINE, deadline);
-                        entryTask.put(SqlHelper.COLUMN_TASK_TYPE_OF_APARTMENT, typeOfApartment);
-                        entryTask.put(SqlHelper.COLUMN_TASK_URGENT, urgent);
-                        entryTask.put(SqlHelper.COLUMN_TASK_APARTMENT_ID, apartmentId);
-
-                        entryTask.put(SqlHelper.COLUMN_TASK_USER_ID, userId);
-
-                        AllTasksActivity.this.getContentResolver().update(DBContentProvider.CONTENT_URI_TASK, entryTask, "id=" + taskId, null);
-                    }
-
-
-                    item.setVisibility(View.GONE);
-
-                }
-            });
-
             return item;
         }
     }
-
 
 }
