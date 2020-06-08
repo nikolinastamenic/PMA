@@ -213,7 +213,7 @@ public class SqlHelper extends SQLiteOpenHelper {
 
     public Cursor getAllTasks() {
         SQLiteDatabase sqlDB = this.getWritableDatabase();
-        Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_TASK, null);
+        Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_TASK + " WHERE state = 'NEW' ", null);
 
         return data;
 

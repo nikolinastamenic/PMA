@@ -1,12 +1,9 @@
 package com.example.myapplication.activities;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
-import android.os.AsyncTask;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -25,23 +22,14 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
-import com.example.myapplication.DTO.AllTaskDto;
 import com.example.myapplication.R;
-import com.example.myapplication.database.DBContentProvider;
-import com.example.myapplication.database.NewEntry;
 import com.example.myapplication.database.SqlHelper;
 import com.example.myapplication.util.NavBarUtil;
 import com.google.android.material.navigation.NavigationView;
 
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.web.client.RestTemplate;
+
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class AllTasksActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -76,7 +64,6 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.setCheckedItem(R.id.nav_all_tasks);
-        getTasks();            //TODO premestiti gde treba!
         listView();
 
 
@@ -202,54 +189,4 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
     }
 
 
-    public void getTasks() {
-        final String uri = "http://10.0.2.2:8080/api/task";
-        new RESTTask().execute(uri);
-    }
-
-    class RESTTask extends AsyncTask<String, Void, ResponseEntity<AllTaskDto[]>> {
-
-        @Override
-        protected ResponseEntity<AllTaskDto[]> doInBackground(String... uri) {
-            final String url = uri[0];
-            RestTemplate restTemplate = new RestTemplate();
-            try {
-                restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-
-                HttpHeaders headers = new HttpHeaders();
-                headers.setContentType(MediaType.APPLICATION_JSON);
-                headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-                HttpEntity entity = new HttpEntity(headers);
-
-                ResponseEntity<AllTaskDto[]> response = restTemplate.getForEntity(url, AllTaskDto[].class, entity);
-
-                return response;
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-                return null;
-            }
-
-        }
-
-        protected void onPostExecute(ResponseEntity<AllTaskDto[]> responseEntity) {
-
-            AllTaskDto[] taskDtos = responseEntity.getBody();
-
-            SqlHelper dbHelper = new SqlHelper(AllTasksActivity.this);
-            dbHelper.dropTable();
-//            SQLiteDatabase db = dbHelper.getWritableDatabase();
-
-            for (AllTaskDto taskDto : taskDtos) {
-
-                String addressUri = NewEntry.newAddressEntry(AllTasksActivity.this, taskDto.getApartmentDto().getBuildingDto());
-                String buildingUri = NewEntry.newBuildingEntry(AllTasksActivity.this, taskDto.getApartmentDto().getBuildingDto(), addressUri);
-                String apartmentUri = NewEntry.newApartmentEntry(AllTasksActivity.this, taskDto.getApartmentDto(), buildingUri);
-                String taskUri = NewEntry.newTaskEntry(AllTasksActivity.this, taskDto, apartmentUri, null, null);
-
-
-            }
-
-
-        }
-    }
 }

@@ -25,25 +25,15 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
-import com.example.myapplication.DTO.AllTaskDto;
-import com.example.myapplication.DTO.EmailDto;
 import com.example.myapplication.R;
-import com.example.myapplication.database.DBContentProvider;
-import com.example.myapplication.database.NewEntry;
+
 import com.example.myapplication.database.SqlHelper;
 import com.example.myapplication.util.NavBarUtil;
 import com.google.android.material.navigation.NavigationView;
 
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
+
 import java.util.List;
 
 public class TasksInProgressActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -77,7 +67,6 @@ public class TasksInProgressActivity extends AppCompatActivity implements Naviga
 
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.setCheckedItem(R.id.nav_all_tasks);
-        getTasksInProcess();            //premestiti gde treba!
         listView();
 
 
@@ -202,60 +191,4 @@ public class TasksInProgressActivity extends AppCompatActivity implements Naviga
         }
     }
 
-
-    public void getTasksInProcess() {
-        final String uri = "http://10.0.2.2:8080/api/task/inprocess";
-        new TasksInProgressActivity.RESTTask().execute(uri);
-    }
-
-    class RESTTask extends AsyncTask<String, Void, ResponseEntity<AllTaskDto[]>> {
-
-        @Override
-        protected ResponseEntity<AllTaskDto[]> doInBackground(String... uri) {
-            final String url = uri[0];
-            RestTemplate restTemplate = new RestTemplate();
-            try {
-                restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-
-                HttpHeaders headers = new HttpHeaders();
-                headers.setContentType(MediaType.APPLICATION_JSON);
-                headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-                EmailDto emailDto = new EmailDto("user@yahoo.com");
-                HttpEntity entity = new HttpEntity(emailDto, headers);   //TODO ispraviti posle odradjenog logovanja
-
-                ResponseEntity<AllTaskDto[]> response = restTemplate.postForEntity(url, entity, AllTaskDto[].class);
-
-
-                return response;
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-                return null;
-            }
-
-        }
-
-        protected void onPostExecute(ResponseEntity<AllTaskDto[]> responseEntity) {
-//            HttpStatus status = responseEntity.getStatusCode();
-
-            AllTaskDto[] taskDtos = responseEntity.getBody();
-
-            SqlHelper dbHelper = new SqlHelper(TasksInProgressActivity.this);
-            dbHelper.dropTable();
-
-            for (AllTaskDto taskDto : taskDtos) {
-
-                String userUri = NewEntry.newUserEntry(TasksInProgressActivity.this, taskDto.getUserDto()); //TODO promeniti kad se odradi logovanje!
-                String userId = userUri.split("/")[1];
-                String addressUri = NewEntry.newAddressEntry(TasksInProgressActivity.this, taskDto.getApartmentDto().getBuildingDto());
-                String buildingUri = NewEntry.newBuildingEntry(TasksInProgressActivity.this, taskDto.getApartmentDto().getBuildingDto(), addressUri);
-
-                String apartmentUri = NewEntry.newApartmentEntry(TasksInProgressActivity.this, taskDto.getApartmentDto(), buildingUri);
-                String taskUri = NewEntry.newTaskEntry(TasksInProgressActivity.this, taskDto, apartmentUri, userId, null);
-
-
-            }
-
-
-        }
-    }
 }
