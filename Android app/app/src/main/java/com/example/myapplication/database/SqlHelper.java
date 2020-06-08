@@ -221,7 +221,7 @@ public class SqlHelper extends SQLiteOpenHelper {
 
     public Cursor getTaskById (String id) {
         SQLiteDatabase sqlDB = this.getWritableDatabase();
-        Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_APARTMENT + " WHERE id " + "= " + id, null);
+        Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_TASK + " WHERE id " + "= " + id, null);
 
         return data;
     }

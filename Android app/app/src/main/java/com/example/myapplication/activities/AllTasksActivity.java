@@ -1,5 +1,6 @@
 package com.example.myapplication.activities;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -176,7 +177,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
         @NonNull
         @Override
-        public View getView(final int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+        public View getView(final int position, @Nullable View convertView, @NonNull final ViewGroup parent) {
             LayoutInflater layoutInflater = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
             final View item = layoutInflater.inflate(R.layout.apartment_item, parent, false);
@@ -191,9 +192,34 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
             Button assignButton = item.findViewById(R.id.buttonAssing);
             assignButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                   String taskId = taskIds.get(position);
-                   String username = "user@yahoo.com";   //TODO ispaviti posle odradjenog logovanja
-//                    Uri taskUri = AllTasksActivity.this.getContentResolver().update(DBContentProvider.CONTENT_URI_TASK, );
+
+                    ContentValues entryTask = new ContentValues();
+
+                    String taskId = taskIds.get(position);
+                    Cursor taskData = db.getTaskById(taskId);
+                    while (taskData.moveToNext()) {
+                        String mysqlId = taskData.getString(1);
+                        String typeOfApartment = taskData.getString(2);
+                        String state = "IN_PROCESS";
+                        String urgent = taskData.getString(4);
+                        String deadline = taskData.getString(5);
+                        String apartmentId = taskData.getString(6);
+                        String userId = "1";                       //TODO
+
+                        entryTask.put(SqlHelper.COLUMN_TASK_MYSQLID, mysqlId);
+                        entryTask.put(SqlHelper.COLUMN_TASK_STATE, state);
+                        entryTask.put(SqlHelper.COLUMN_TASK_DEADLINE, deadline);
+                        entryTask.put(SqlHelper.COLUMN_TASK_TYPE_OF_APARTMENT, typeOfApartment);
+                        entryTask.put(SqlHelper.COLUMN_TASK_URGENT, urgent);
+                        entryTask.put(SqlHelper.COLUMN_TASK_APARTMENT_ID, apartmentId);
+
+                        entryTask.put(SqlHelper.COLUMN_TASK_USER_ID, userId);
+
+                        AllTasksActivity.this.getContentResolver().update(DBContentProvider.CONTENT_URI_TASK, entryTask, "id=" + taskId, null);
+                    }
+
+
+                    item.setVisibility(View.GONE);
 
                 }
             });
