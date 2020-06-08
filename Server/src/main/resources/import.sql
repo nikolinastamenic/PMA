@@ -40,4 +40,4 @@ INSERT INTO task (deadline, state, type_of_apartment, urgent, apartment_id) valu
 INSERT INTO task (deadline, state, type_of_apartment, urgent, apartment_id, user_id) values ('2020-09-10 14:45', 'IN_PROCESS', 'NEW', true, 3,1);
 INSERT INTO task (deadline, state, type_of_apartment, urgent, apartment_id, user_id) values ('2020-08-10 14:45', 'IN_PROCESS', 'NEW', true, 4,1);
 INSERT INTO task (deadline, state, type_of_apartment, urgent, apartment_id, user_id, report_id) values ('2020-03-10 14:45', 'FINISHED', 'NEW', true, 5,1,1);
-INSERT INTO task (deadline, state, type_of_apartment, urgent, apartment_id, user_id) values ('2020-03-10 14:45', 'NEW', 'NEW', true, 6,2);
+INSERT INTO task (deadline, state, type_of_apartment, urgent, apartment_id, user_id) values ('2020-03-10 14:45', 'IN_PROCESS', 'NEW', true, 6,2);
