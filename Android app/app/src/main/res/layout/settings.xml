@@ -105,7 +105,6 @@
                     android:text="@string/language_description"
                     android:layout_alignLeft="@id/labelLanguage"
                     />
-
                 <RadioGroup
                     android:id="@+id/radioGroup"
                     android:layout_width="wrap_content"
@@ -118,11 +117,16 @@
                     <RadioButton
                         android:id="@+id/radioBtn1"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:buttonTint="@color/colorPrimaryDark"
+                        />
                     <RadioButton
                         android:id="@+id/radioBtn2"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:buttonTint="@color/colorPrimaryDark"/>
+
+
 
                 </RadioGroup>
 
@@ -181,6 +185,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="300dp"
                     android:layout_marginTop="15dp"
+                    android:thumbTint="@color/colorPrimaryDark"
+                    android:trackTint="@color/cardview_dark_background"
                     />
 
                 <TextView
@@ -227,6 +233,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="300dp"
                     android:layout_marginTop="15dp"
+                    android:thumbTint="@color/colorPrimaryDark"
+                    android:trackTint="@color/cardview_dark_background"
                     />
 
                 <TextView
@@ -238,6 +246,7 @@
                     android:layout_marginTop="3dp"
                     android:layout_alignLeft="@id/labelLocation"
                     />
+
             </RelativeLayout>
 
 
