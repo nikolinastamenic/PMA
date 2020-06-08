@@ -205,9 +205,19 @@ public class SqlHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public void dropTable (){
+    public void dropTaskTable(){
         SQLiteDatabase sqlDB = this.getWritableDatabase();
-        this.onUpgrade(sqlDB, sqlDB.getVersion(), sqlDB.getVersion() + 1);
+        sqlDB.execSQL("DROP TABLE IF EXISTS " + TABLE_TASK);
+        sqlDB.execSQL(TABLE_TASK_CREATE);
+
+//        this.onUpgrade(sqlDB, sqlDB.getVersion(), sqlDB.getVersion() + 1);
+
+    }
+
+    public void dropUserTable(){
+        SQLiteDatabase sqlDB = this.getWritableDatabase();
+        sqlDB.execSQL("DROP TABLE IF EXISTS " + TABLE_USER);
+        sqlDB.execSQL(TABLE_USER_CREATE);
 
     }
 
@@ -261,6 +271,20 @@ public class SqlHelper extends SQLiteOpenHelper {
         Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_TASK + " WHERE state = 'FINISHED' ", null);
 
         return data;
-
     }
+
+    public Cursor getUserById (String id) {
+        SQLiteDatabase sqlDB = this.getWritableDatabase();
+        Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_USER + " WHERE id " + "= " + id, null);
+
+        return data;
+    }
+
+    public Cursor getUserByMySqlId (String id) {
+        SQLiteDatabase sqlDB = this.getWritableDatabase();
+        Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_USER + " WHERE mysql_id " + "= " + id, null);
+
+        return data;
+    }
+
 }

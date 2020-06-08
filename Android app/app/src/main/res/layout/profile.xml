@@ -45,11 +45,12 @@
                 >
 
             <ImageView
+                android:id="@+id/profile_picture"
                 android:layout_width="55dp"
                 android:layout_height="55dp"
-                android:src="@drawable/profile_picture"
                 android:paddingEnd="10dp"/>
             <TextView
+                android:id="@+id/profile_name_surname"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Milica Milic"
@@ -67,9 +68,9 @@
                 android:src="@drawable/ic_phone"
                 android:paddingEnd="10dp"/>
             <TextView
+                android:id="@+id/profile_phone_number"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="(650)555-1234"
                 android:textSize="22sp"
                 tools:ignore="MissingConstraints" />
             </LinearLayout>
@@ -83,9 +84,9 @@
                 android:src="@drawable/ic_email"
                 android:paddingEnd="10dp"/>
             <TextView
+                android:id="@+id/profile_email"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="milica@gmail.com"
                 android:textSize="22sp"
                 tools:ignore="MissingConstraints"/>
 

@@ -11,6 +11,8 @@ import android.text.TextUtils;
 
 import androidx.annotation.Nullable;
 
+import java.net.URI;
+
 public class DBContentProvider extends ContentProvider {
 
     private SqlHelper database;
@@ -257,7 +259,6 @@ public class DBContentProvider extends ContentProvider {
         getContext().getContentResolver().notifyChange(uri, null);
         return rowsUpdated;
     }
-
 
 
 }

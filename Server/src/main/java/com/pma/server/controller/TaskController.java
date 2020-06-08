@@ -1,6 +1,7 @@
 package com.pma.server.controller;
 
 import com.pma.server.Dto.*;
+import com.pma.server.mappers.UserMapper;
 import com.pma.server.model.Task;
 import com.pma.server.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,7 @@ public class TaskController {
         for(Task task:tasksWithoutUser){
             UserDto userDto = null;
             if(task.getUser() != null) {
-                 userDto = new UserDto(task.getUser());
+                 userDto = UserMapper.toUserDto(task.getUser());
             }
             BuildingDto buildingDto = new BuildingDto(task.getApartment().getBuilding().getId(), task.getApartment().getBuilding().getAddress());
             ApartmentDto apartmentDto = new ApartmentDto(task.getApartment().getId(), task.getApartment().getNumber(),buildingDto);

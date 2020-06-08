@@ -64,7 +64,7 @@ public class TasksInProgressActivity extends AppCompatActivity implements Naviga
         toggle.syncState();
 
         navigationView.setNavigationItemSelectedListener(this);
-        navigationView.setCheckedItem(R.id.nav_all_tasks);
+        navigationView.setCheckedItem(R.id.nav_tasks_in_process);
         listView();
 
 

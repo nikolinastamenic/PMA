@@ -62,9 +62,7 @@ public class FinishedTasksActivity extends AppCompatActivity implements Navigati
         toggle.syncState();
 
         navigationView.setNavigationItemSelectedListener(this);
-        navigationView.setCheckedItem(R.id.nav_all_tasks);
-
-
+        navigationView.setCheckedItem(R.id.nav_finished_tasks);
         listView();
 
 

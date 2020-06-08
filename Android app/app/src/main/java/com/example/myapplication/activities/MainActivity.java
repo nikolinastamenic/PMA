@@ -7,9 +7,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -21,6 +19,7 @@ import com.example.myapplication.DTO.ReportItemDto;
 import com.example.myapplication.R;
 import com.example.myapplication.database.NewEntry;
 import com.example.myapplication.database.SqlHelper;
+import com.example.myapplication.util.AppConfig;
 import com.example.myapplication.util.NavBarUtil;
 import com.google.android.material.navigation.NavigationView;
 
@@ -168,7 +167,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void syncTasks() {
-        final String uri = "http://10.0.2.2:8080/api/task/all";
+        final String uri = AppConfig.apiURI +  "task/all";
         new MainActivity.RESTTask().execute(uri);
     }
 
@@ -205,7 +204,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             AllTaskDto[] taskDtos = responseEntity.getBody();
 
             SqlHelper dbHelper = new SqlHelper(MainActivity.this);
-            dbHelper.dropTable();
+            dbHelper.dropTaskTable();
 
             for (AllTaskDto taskDto : taskDtos) {
                 String userId = null;
