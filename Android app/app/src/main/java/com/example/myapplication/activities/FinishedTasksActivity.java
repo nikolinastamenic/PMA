@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -62,6 +63,8 @@ public class FinishedTasksActivity extends AppCompatActivity implements Navigati
 
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.setCheckedItem(R.id.nav_all_tasks);
+
+
         listView();
 
 
@@ -177,7 +180,9 @@ public class FinishedTasksActivity extends AppCompatActivity implements Navigati
             TextView title1 = item.findViewById(R.id.apartmentTitleTextView);
             TextView description1 = item.findViewById(R.id.address);
             TextView date1 = item.findViewById(R.id.apartmentDate);
+            Button assignButton = item.findViewById(R.id.buttonAssing);
 
+            assignButton.setVisibility(View.GONE);
             title1.setText(title.get(position));
             description1.setText(address.get(position));
             date1.setText(date.get(position));

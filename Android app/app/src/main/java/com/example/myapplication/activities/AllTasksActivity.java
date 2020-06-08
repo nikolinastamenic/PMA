@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 
+import android.net.Uri;
+import android.net.sip.SipSession;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -11,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -23,6 +26,7 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.myapplication.R;
+import com.example.myapplication.database.DBContentProvider;
 import com.example.myapplication.database.SqlHelper;
 import com.example.myapplication.util.NavBarUtil;
 import com.google.android.material.navigation.NavigationView;
@@ -41,6 +45,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
     List<String> apartmentAddress;
     List<String> checkApartmentDate;
     SqlHelper db;
+    List<String> taskIds;
 
 
     @Override
@@ -52,6 +57,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
         apartmentTitle = new ArrayList<>();
         apartmentAddress = new ArrayList<>();
         checkApartmentDate = new ArrayList<>();
+        taskIds = new ArrayList<>();
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
         toolbar = findViewById(R.id.toolbar);
@@ -80,7 +86,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
             System.out.println("prazna lista");
         } else {
             while (data.moveToNext()) {
-
+                taskIds.add(data.getString(0));
                 checkApartmentDate.add(data.getString(5).substring(0, 13));
                 apartmentId = data.getString(6);
                 Cursor apartmentData = db.getApartmentById(apartmentId);
@@ -170,18 +176,27 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
         @NonNull
         @Override
-        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+        public View getView(final int position, @Nullable View convertView, @NonNull ViewGroup parent) {
             LayoutInflater layoutInflater = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-            View item = layoutInflater.inflate(R.layout.apartment_item, parent, false);
+            final View item = layoutInflater.inflate(R.layout.apartment_item, parent, false);
 
             TextView title1 = item.findViewById(R.id.apartmentTitleTextView);
             TextView description1 = item.findViewById(R.id.address);
             TextView date1 = item.findViewById(R.id.apartmentDate);
-
             title1.setText(title.get(position));
             description1.setText(address.get(position));
             date1.setText(date.get(position));
+
+            Button assignButton = item.findViewById(R.id.buttonAssing);
+            assignButton.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                   String taskId = taskIds.get(position);
+                   String username = "user@yahoo.com";   //TODO ispaviti posle odradjenog logovanja
+//                    Uri taskUri = AllTasksActivity.this.getContentResolver().update(DBContentProvider.CONTENT_URI_TASK, );
+
+                }
+            });
 
             return item;
         }
