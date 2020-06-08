@@ -1,5 +1,9 @@
 package com.pma.server.Dto;
 
+import com.pma.server.model.Report;
+import com.pma.server.model.ReportItem;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -18,6 +22,18 @@ public class ReportDto {
         this.id = id;
         this.itemList = itemList;
         this.date = date;
+    }
+
+    public ReportDto(Report report){
+        this.id = report.getId();
+        List<ReportItem> reportItems = report.getItemList();
+        List<ReportItemDto> reportItemDtos = new ArrayList<>();
+        for(ReportItem reportItem: reportItems) {
+            ReportItemDto reportItemDto = new ReportItemDto(reportItem);
+            reportItemDtos.add(reportItemDto);
+        }
+        this.itemList = reportItemDtos;
+        this.date = report.getDate();
     }
 
     public Long getId() {

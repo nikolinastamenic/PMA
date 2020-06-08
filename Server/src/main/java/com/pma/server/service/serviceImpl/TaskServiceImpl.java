@@ -13,6 +13,7 @@ import java.util.List;
 
 @Service
 public class TaskServiceImpl implements TaskService {
+
     @Autowired
     private TaskRepository taskRepository;
 
@@ -35,6 +36,16 @@ public class TaskServiceImpl implements TaskService {
         User user = this.userService.findUserByEmail(email);
 
         List<Task> tasks = this.taskRepository.findAllByUserAndState(user, "IN_PROCESS");
+
+        return tasks;
+    }
+
+    @Override
+    public List<Task> getFinishedTasks(String email) {
+        User user = this.userService.findUserByEmail(email);
+
+        List<Task> tasks = this.taskRepository.findAllByUserAndState(user, "FINISHED");
+
 
         return tasks;
     }

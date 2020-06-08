@@ -1,6 +1,8 @@
 package com.pma.server.Dto;
 
 
+import com.pma.server.model.ReportItem;
+
 public class ReportItemDto {
 
     private Long id;
@@ -12,6 +14,17 @@ public class ReportItemDto {
     private String picture;
 
     public ReportItemDto() {}
+
+    public ReportItemDto(ReportItem reportItem) {
+        this.id = reportItem.getId();
+        this.faultName = reportItem.getFaultName();
+        this.details = reportItem.getDetails();
+        if(reportItem.getPicture() != null) {
+            this.picture = reportItem.getPicture();
+        }
+    }
+
+
 
     public ReportItemDto(Long id, String faultName, String details, String picture) {
         this.id = id;
