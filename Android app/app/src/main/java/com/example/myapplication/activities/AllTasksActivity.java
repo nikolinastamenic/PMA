@@ -53,6 +53,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
     List<String> apartmentAddress;
     List<String> checkApartmentDate;
     SqlHelper db;
+    List<String> taskIds;
 
 
     @Override
@@ -61,6 +62,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
         super.onCreate(savedInstanceState);
         setContentView(R.layout.all_tasks);
 
+        taskIds = new ArrayList<>();
         apartmentTitle = new ArrayList<>();
         apartmentAddress = new ArrayList<>();
         checkApartmentDate = new ArrayList<>();
@@ -98,6 +100,9 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
                 checkApartmentDate.add(data.getString(5).substring(0, 13));
                 apartmentId = data.getString(6);
                 Cursor apartmentData = db.getApartmentById(apartmentId);
+
+                taskIds.add(data.getString(0));
+
                 while (apartmentData.moveToNext()) {
                     apartmentTitle.add("Apartment number: " + apartmentData.getString(2));
 
@@ -122,7 +127,11 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                String taskId = taskIds.get(position);
+
                 Intent intent = new Intent(AllTasksActivity.this, ApartmentActivity.class);
+                intent.putExtra("taskId", taskId);
                 startActivity(intent);
             }
         });
@@ -203,7 +212,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
 
     public void getTasks() {
-        final String uri = "http://10.0.2.2:8080/api/task";
+        final String uri = "http://192.168.1.5:8080/api/task";
         new RESTTask().execute(uri);
     }
 

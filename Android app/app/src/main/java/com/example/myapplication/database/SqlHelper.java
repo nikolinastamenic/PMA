@@ -158,8 +158,8 @@ public class SqlHelper extends SQLiteOpenHelper {
 
     private static final String TABLE_TASK_CREATE = "create table "
             + TABLE_TASK + "("
-            + COLUMN_TASK_ID + " integer primary key autoincrement , "
-            + COLUMN_TASK_MYSQLID + " integer, "
+            + COLUMN_TASK_ID + " integer primary key autoincrement , "  //0
+            + COLUMN_TASK_MYSQLID + " integer, "                        //1 ...
             + COLUMN_TASK_TYPE_OF_APARTMENT + " text, "
             + COLUMN_TASK_STATE + " text, "
             + COLUMN_TASK_URGENT + " boolean, "
@@ -223,6 +223,13 @@ public class SqlHelper extends SQLiteOpenHelper {
     public Cursor getApartmentById (String id) {
         SQLiteDatabase sqlDB = this.getWritableDatabase();
         Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_APARTMENT + " WHERE id " + "= " + id, null);
+
+        return data;
+    }
+
+    public Cursor getTaskById (String id) {
+        SQLiteDatabase sqlDB = this.getWritableDatabase();
+        Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_TASK + " WHERE id " + "= " + id, null);
 
         return data;
     }
