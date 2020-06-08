@@ -7,14 +7,31 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.example.myapplication.DTO.AllTaskDto;
+import com.example.myapplication.DTO.EmailDto;
+import com.example.myapplication.DTO.ReportItemDto;
 import com.example.myapplication.R;
+import com.example.myapplication.database.NewEntry;
+import com.example.myapplication.database.SqlHelper;
 import com.example.myapplication.util.NavBarUtil;
 import com.google.android.material.navigation.NavigationView;
+
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -42,7 +59,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setCheckedItem(R.id.nav_home);
         System.out.println("main activity ON CREATE");
 
-
     }
 
 
@@ -54,16 +70,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         intent.putExtra("broj", 12);
         startActivity(intent);
 
-
         System.out.println("main activity ON CLICK BUTTON");
 
     }
 
-    public void onClickLogin(View view) {
-        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-
-        startActivity(intent);
-    }
 
     public void onClickApartmentView(View view) {
         Intent intent = new Intent(MainActivity.this, ApartmentActivity.class);
@@ -99,8 +109,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onStart() {
         super.onStart();
-//        Util.initDB(MainActivity.this);
-
         System.out.println("main activity ON START");
 
     }
@@ -123,6 +131,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onResume() {
         super.onResume();
+        syncTasks(); //TODO premestiti
         System.out.println("main activity ON RESUME");
 
     }
@@ -156,6 +165,82 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
 
+    }
+
+    public void syncTasks() {
+        final String uri = "http://10.0.2.2:8080/api/task/all";
+        new MainActivity.RESTTask().execute(uri);
+    }
+
+    class RESTTask extends AsyncTask<String, Void, ResponseEntity<AllTaskDto[]>> {
+
+        @Override
+        protected ResponseEntity<AllTaskDto[]> doInBackground(String... uri) {
+            final String url = uri[0];
+            RestTemplate restTemplate = new RestTemplate();
+            try {
+                restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.APPLICATION_JSON);
+                headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+
+                EmailDto emailDto = new EmailDto("user@yahoo.com");
+
+                HttpEntity entity = new HttpEntity(emailDto, headers);   //TODO ispraviti posle odradjenog logovanja
+
+                ResponseEntity<AllTaskDto[]> response = restTemplate.postForEntity(url, entity, AllTaskDto[].class);
+
+
+                return response;
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+                return null;
+            }
+
+        }
+
+        protected void onPostExecute(ResponseEntity<AllTaskDto[]> responseEntity) {
+
+            AllTaskDto[] taskDtos = responseEntity.getBody();
+
+            SqlHelper dbHelper = new SqlHelper(MainActivity.this);
+            dbHelper.dropTable();
+
+            for (AllTaskDto taskDto : taskDtos) {
+                String userId = null;
+                if (taskDto.getUserDto() != null) {
+                    String userUri = NewEntry.newUserEntry(MainActivity.this, taskDto.getUserDto()); //TODO promeniti kad se odradi logovanje!
+                    userId = userUri.split("/")[1];
+                }
+                String addressUri = NewEntry.newAddressEntry(MainActivity.this, taskDto.getApartmentDto().getBuildingDto());
+                String buildingUri = NewEntry.newBuildingEntry(MainActivity.this, taskDto.getApartmentDto().getBuildingDto(), addressUri);
+
+                String apartmentUri = NewEntry.newApartmentEntry(MainActivity.this, taskDto.getApartmentDto(), buildingUri);
+                String reportId = null;
+                if (taskDto.getReportDto() != null) {
+                    String reportUri = NewEntry.newReportEntry(MainActivity.this, taskDto.getReportDto());
+                    reportId = reportUri.split("/")[1];
+
+                    if (!taskDto.getReportDto().getItemList().isEmpty()) {
+
+                        for (ReportItemDto reportItemDto : taskDto.getReportDto().getItemList()) {
+
+                            String reportItemUri = NewEntry.newReportItemEntry(MainActivity.this, reportItemDto);
+
+                            String reportItemId = reportItemUri.split("/")[1];
+                            String reportReporetItemUri = NewEntry.newReportReportItemEntry(MainActivity.this, reportItemDto, taskDto.getReportDto(), reportId, reportItemId);
+
+                        }
+                    }
+                }
+
+                String taskUri = NewEntry.newTaskEntry(MainActivity.this, taskDto, apartmentUri, userId, reportId);
+
+
+            }
+
+        }
     }
 
 }

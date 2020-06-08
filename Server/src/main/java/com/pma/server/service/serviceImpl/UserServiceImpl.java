@@ -30,4 +30,10 @@ public class UserServiceImpl implements UserService {
 
         return UserMapper.toUserDto(user.get());
     }
+
+    @Override
+    public User findUserByEmail(String email)
+    {
+        return userRepository.findUserByEmail(email);
+    }
 }

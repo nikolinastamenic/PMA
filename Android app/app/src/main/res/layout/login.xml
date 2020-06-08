@@ -38,6 +38,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:background="@color/colorForeground"
+            android:onClick="login"
             android:text="@string/login_signIn">
 
         </Button>

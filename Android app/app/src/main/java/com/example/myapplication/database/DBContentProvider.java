@@ -29,9 +29,18 @@ public class DBContentProvider extends ContentProvider {
     private static final int APARTMENT = 25;
     private static final int APARTMENT_ID = 90;
 
-    private static final int USER = 50;
-    private static final int USER_ID = 51;
+    private static final int USER = 11;
+    private static final int USER_ID = 18;
 
+    private static final int REPORT = 55;
+    private static final int REPORT_ID = 1;
+
+
+    private static final int REPORT_ITEM = 2;
+    private static final int REPORT_ITEM_ID = 3;
+
+    private static final int REPORT_REPORT_ITEM= 88;
+    private static final int REPORT_REPORT_ITEM_ID = 3;
 
     private static final String AUTHORITY = "com.example.myapplication";
 
@@ -40,6 +49,12 @@ public class DBContentProvider extends ContentProvider {
     private static final String BUILDING_PATH = "building";
     private static final String APARTMENT_PATH = "apartment";
     private static final String USER_PATH = "user";
+    private static final String REPORT_PATH = "report";
+    private static final String REPORT_ITEM_PATH = "report_item";
+    private static final String REPORT_REPORT_ITEM_PATH = "report_report_item";
+
+
+
 
 
     public static final Uri CONTENT_URI_TASK = Uri.parse("content://" + AUTHORITY + "/" + TASK_PATH);
@@ -47,6 +62,12 @@ public class DBContentProvider extends ContentProvider {
     public static final Uri CONTENT_URI_BUILDING = Uri.parse("content://" + AUTHORITY + "/" + BUILDING_PATH);
     public static final Uri CONTENT_URI_APARTMENT = Uri.parse("content://" + AUTHORITY + "/" + APARTMENT_PATH);
     public static final Uri CONTENT_URI_USER = Uri.parse("content://" + AUTHORITY + "/" + USER_PATH);
+    public static final Uri CONTENT_URI_REPORT = Uri.parse("content://" + AUTHORITY + "/" + REPORT_PATH);
+    public static final Uri CONTENT_URI_REPORT_ITEM = Uri.parse("content://" + AUTHORITY + "/" + REPORT_ITEM_PATH);
+    public static final Uri CONTENT_URI_JOIN_TABLE = Uri.parse("content://" + AUTHORITY + "/" + REPORT_REPORT_ITEM_PATH);
+
+
+
 
 
     private static final UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -66,6 +87,15 @@ public class DBContentProvider extends ContentProvider {
 
         sURIMatcher.addURI(AUTHORITY, USER_PATH, USER);
         sURIMatcher.addURI(AUTHORITY, USER_PATH + "/#", USER_ID);
+
+        sURIMatcher.addURI(AUTHORITY, REPORT_PATH, REPORT);
+        sURIMatcher.addURI(AUTHORITY, REPORT_PATH + "/#", REPORT_ID);
+
+        sURIMatcher.addURI(AUTHORITY, REPORT_ITEM_PATH, REPORT_ITEM);
+        sURIMatcher.addURI(AUTHORITY, REPORT_ITEM_PATH + "/#", REPORT_ITEM_ID);
+
+        sURIMatcher.addURI(AUTHORITY, REPORT_REPORT_ITEM_PATH, REPORT_REPORT_ITEM);
+        sURIMatcher.addURI(AUTHORITY, REPORT_REPORT_ITEM_PATH + "/#", REPORT_REPORT_ITEM_ID);
     }
 
     @Override
@@ -141,6 +171,19 @@ public class DBContentProvider extends ContentProvider {
                 id = sqlDB.insert(SqlHelper.TABLE_USER, null, values);
                 retVal = Uri.parse(USER_PATH + "/" + id);
                 break;
+            case REPORT_REPORT_ITEM:
+                id = sqlDB.insert(SqlHelper.JOIN_TABLE, null, values);
+                retVal = Uri.parse(REPORT_REPORT_ITEM_PATH + "/" + id);
+                break;
+            case REPORT:
+                id = sqlDB.insert(SqlHelper.TABLE_REPORT, null, values);
+                retVal = Uri.parse(REPORT_PATH + "/" + id);
+                break;
+            case REPORT_ITEM:
+                id = sqlDB.insert(SqlHelper.TABLE_REPORT_ITEM, null, values);
+                retVal = Uri.parse(REPORT_ITEM_PATH + "/" + id);
+                break;
+
             default:
                 throw new IllegalArgumentException("Unknown URI: " + uri);
         }
