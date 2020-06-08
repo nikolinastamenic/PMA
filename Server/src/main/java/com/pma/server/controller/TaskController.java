@@ -1,8 +1,6 @@
 package com.pma.server.controller;
 
 import com.pma.server.Dto.*;
-import com.pma.server.model.Address;
-import com.pma.server.model.Report;
 import com.pma.server.model.Task;
 import com.pma.server.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,30 +20,23 @@ public class TaskController {
     @Autowired
     private TaskService taskService;
 
-
-    @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<List<AllTaskDto>> getAllTasks() {
-
-        List<AllTaskDto> dtos = new ArrayList<>();
-        List<Task> tasks = this.taskService.getAllTasks();
-
-        for(Task task:tasks){
-            BuildingDto buildingDto = new BuildingDto(task.getApartment().getBuilding().getId(), task.getApartment().getBuilding().getAddress());
-            ApartmentDto apartmentDto = new ApartmentDto(task.getApartment().getId(), task.getApartment().getNumber(),buildingDto);
-            AllTaskDto dto = new AllTaskDto(task.getId(), apartmentDto, task.getTypeOfApartment(),task.getState(),task.isUrgent(),task.getDeadline());
-            dtos.add(dto);
-        }
-        return new ResponseEntity<>(dtos,HttpStatus.OK);
-    }
-
-    @PostMapping(value = "/inprocess")
-    public ResponseEntity<List<AllTaskDto>> getTaksInProcess(@RequestBody EmailDto emailDto) {
+    @PostMapping(value = "/all")
+    public ResponseEntity<List<AllTaskDto>> getAllTasks(@RequestBody EmailDto emailDto) {
 
         List<AllTaskDto> dtos = new ArrayList<>();
-        List<Task> tasks = this.taskService.getTasksInProcess(emailDto.getEmail());
+        List<Task> tasksWithoutUser = this.taskService.getAllTasks();
+        List<Task> finishedTasks = this.taskService.getFinishedTasks(emailDto.getEmail());
 
-        for(Task task:tasks){
-            UserDto userDto = new UserDto(task.getUser());
+        List<Task> tasksInProcess = this.taskService.getTasksInProcess(emailDto.getEmail());
+
+        tasksWithoutUser.addAll(finishedTasks);
+        tasksWithoutUser.addAll(tasksInProcess);
+
+        for(Task task:tasksWithoutUser){
+            UserDto userDto = null;
+            if(task.getUser() != null) {
+                 userDto = new UserDto(task.getUser());
+            }
             BuildingDto buildingDto = new BuildingDto(task.getApartment().getBuilding().getId(), task.getApartment().getBuilding().getAddress());
             ApartmentDto apartmentDto = new ApartmentDto(task.getApartment().getId(), task.getApartment().getNumber(),buildingDto);
             AllTaskDto dto = new AllTaskDto(task.getId(), apartmentDto, task.getTypeOfApartment(),task.getState(),task.isUrgent(),task.getDeadline(), userDto);
@@ -54,22 +45,5 @@ public class TaskController {
         return new ResponseEntity<>(dtos,HttpStatus.OK);
     }
 
-
-    @PostMapping(value = "/finished")
-    public ResponseEntity<List<AllTaskDto>> getFinishedTasks(@RequestBody EmailDto emailDto) {
-
-        List<AllTaskDto> dtos = new ArrayList<>();
-        List<Task> tasks = this.taskService.getFinishedTasks(emailDto.getEmail());
-
-        for(Task task:tasks){
-            UserDto userDto = new UserDto(task.getUser());
-            ReportDto reportDto = new ReportDto(task.getReport());
-            BuildingDto buildingDto = new BuildingDto(task.getApartment().getBuilding().getId(), task.getApartment().getBuilding().getAddress());
-            ApartmentDto apartmentDto = new ApartmentDto(task.getApartment().getId(), task.getApartment().getNumber(),buildingDto);
-            AllTaskDto dto = new AllTaskDto(task.getId(), apartmentDto, task.getTypeOfApartment(),task.getState(),task.isUrgent(),task.getDeadline(), userDto, reportDto);
-            dtos.add(dto);
-        }
-        return new ResponseEntity<>(dtos,HttpStatus.OK);
-    }
 
 }
