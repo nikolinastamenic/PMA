@@ -38,11 +38,19 @@ public class TaskController {
             if(task.getUser() != null) {
                  userDto = UserMapper.toUserDto(task.getUser());
             }
+
+            ReportDto reportDto = null;
+            if(task.getReport() != null){
+                reportDto = new ReportDto(task.getReport());
+            }
+
             BuildingDto buildingDto = new BuildingDto(task.getApartment().getBuilding().getId(), task.getApartment().getBuilding().getAddress());
             ApartmentDto apartmentDto = new ApartmentDto(task.getApartment().getId(), task.getApartment().getNumber(),buildingDto);
-            AllTaskDto dto = new AllTaskDto(task.getId(), apartmentDto, task.getTypeOfApartment(),task.getState(),task.isUrgent(),task.getDeadline(), userDto);
+            AllTaskDto dto = new AllTaskDto(task.getId(), apartmentDto, task.getTypeOfApartment(),task.getState(),task.isUrgent(),task.getDeadline(), userDto, reportDto);
             dtos.add(dto);
         }
+
+
         return new ResponseEntity<>(dtos,HttpStatus.OK);
     }
 

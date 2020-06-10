@@ -2,6 +2,7 @@ package com.pma.server.Dto;
 
 import com.pma.server.model.Report;
 import com.pma.server.model.ReportItem;
+import com.pma.server.model.Task;
 
 import java.util.ArrayList;
 import java.util.Date;
