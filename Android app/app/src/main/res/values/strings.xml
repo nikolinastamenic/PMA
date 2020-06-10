@@ -48,5 +48,8 @@
     </string-array>
     <string name="camera_access_allowed">Camera permission granted</string>
     <string name="camera_access_denied">Camera permission denied</string>
+    <string name="report_date">Report created: </string>
+    <string name="state">State: </string>
+    <string name="address">Address: </string>
 
 </resources>

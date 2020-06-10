@@ -34,6 +34,7 @@ public class ApartmentActivity extends AppCompatActivity implements NavigationVi
     private boolean urgent;
 
     private Date deadline;
+    String taskId;
 
     Toolbar toolbar;
 
@@ -43,7 +44,7 @@ public class ApartmentActivity extends AppCompatActivity implements NavigationVi
         setContentView(R.layout.apartment);
 
         Intent intent = getIntent();
-        String taskId = intent.getStringExtra("taskId");
+        taskId = intent.getStringExtra("taskId");
 
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
@@ -83,6 +84,8 @@ public class ApartmentActivity extends AppCompatActivity implements NavigationVi
         } else {
             while (data.moveToNext()) {
 
+                System.out.println(data.getString(7) + "REPORTTTTTTTTTT ID");
+
                 stateName = data.getString(3);
                 apartmentId = data.getString(6);
 
@@ -102,7 +105,8 @@ public class ApartmentActivity extends AppCompatActivity implements NavigationVi
 
                         while (addressData.moveToNext()){
 
-                            apartmentAddress = addressData.getString(3) + ", " + addressData.getString(4) + " " + addressData.getString(5);
+                            apartmentAddress = addressData.getString(4) + " " + addressData.getString(5)
+                                    + ", " + addressData.getString(3);
 
                         }
 
@@ -122,32 +126,6 @@ public class ApartmentActivity extends AppCompatActivity implements NavigationVi
                 description.setText("Apartment number: " + apartmentNumber);
 
 
-
-
-
-//                checkApartmentDate.add(data.getString(5).substring(0, 13));
-//                apartmentId = data.getString(6);
-//                Cursor apartmentData = db.getApartmentById(apartmentId);
-//
-//                taskIds.add(data.getString(0));
-//
-//                while (apartmentData.moveToNext()) {
-//                    apartmentTitle.add("Apartment number: " + apartmentData.getString(2));
-//
-//                    buildingId = apartmentData.getString(3);
-//                    Cursor buildungData = db.getBuildingById(buildingId);
-//                    while (buildungData.moveToNext()) {
-//                        String addressId = buildungData.getString(2);
-//                        Cursor addressData = db.getAddressById(addressId);
-//                        while (addressData.moveToNext()) {
-//                            apartmentAddress.add(addressData.getString(3) + ", " + addressData.getString(4) + " " + addressData.getString(5));
-//                        }
-//                    }
-//
-//                }
-//
-//                MyAdapter myAdapter = new MyAdapter(this, apartmentTitle, apartmentAddress, checkApartmentDate);
-//                listView.setAdapter(myAdapter);
             }
 
         }
@@ -177,7 +155,9 @@ public class ApartmentActivity extends AppCompatActivity implements NavigationVi
     }
 
     public void onClickReport(View view) {
+
         Intent intent = new Intent(ApartmentActivity.this, ReportActivity.class);
+        intent.putExtra("taskId", taskId);
 
         startActivity(intent);
     }

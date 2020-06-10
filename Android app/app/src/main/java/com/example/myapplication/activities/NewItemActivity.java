@@ -7,29 +7,56 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.myapplication.DTO.PictureDto;
 import com.example.myapplication.R;
 import com.example.myapplication.database.SqlHelper;
 import com.example.myapplication.util.AppConfig;
 import com.example.myapplication.util.MiscUtil;
+import com.example.myapplication.util.NavBarUtil;
 import com.example.myapplication.util.SavePictureUtil;
+import com.google.android.material.navigation.NavigationView;
 
 import java.io.ByteArrayOutputStream;
 
-public class NewItemActivity extends Activity {
+public class NewItemActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+
+
+    DrawerLayout drawerLayout;
+    NavigationView navigationView;
+    Toolbar toolbar;
 
     private ImageView cameraButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.new_item);
+
+        drawerLayout = findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.nav_view);
+        toolbar = findViewById(R.id.toolbar);
+
+        navigationView.bringToFront();
+        setSupportActionBar(toolbar);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.app_name, R.string.all_tasks);
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+
+        navigationView.setNavigationItemSelectedListener(this);
+
 
         cameraButton = findViewById(R.id.cameraButtonItem);
         cameraButton.setOnClickListener(new View.OnClickListener() {
@@ -76,5 +103,15 @@ public class NewItemActivity extends Activity {
             Bitmap photo = (Bitmap) data.getExtras().get("data");
 
         }
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        Intent intent = NavBarUtil.setNavBarActions(NewItemActivity.this, item);
+        if (intent != null) {
+            startActivity(intent);
+        }
+        drawerLayout.closeDrawer(GravityCompat.START);
+        return true;
     }
 }

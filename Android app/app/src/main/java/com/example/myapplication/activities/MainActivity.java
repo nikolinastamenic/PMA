@@ -234,6 +234,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     }
                 }
 
+
+                System.out.println(reportId + " uyyyyyyyyyyyyyyyyyyyyyyyyyy");
                 String taskUri = NewEntry.newTaskEntry(MainActivity.this, taskDto, apartmentUri, userId, reportId);
 
 

@@ -49,4 +49,8 @@
     </string-array>
     <string name="camera_access_allowed">Pristup kameri je dozvoljen</string>
     <string name="camera_access_denied">Pristup kameri je zabranjen</string>
+    <string name="report_date">Izveštaj kreiran: </string>
+    <string name="state">Stanje: </string>
+    <string name="address">Adresa: </string>
+
 </resources>

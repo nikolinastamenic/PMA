@@ -119,7 +119,8 @@ public class TasksInProgressActivity extends AppCompatActivity implements Naviga
 
                 Intent intent = new Intent(TasksInProgressActivity.this, ApartmentActivity.class);
                 intent.putExtra("taskId", taskId);
-                startActivity(intent);            }
+                startActivity(intent);
+            }
         });
 
 
