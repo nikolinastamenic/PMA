@@ -17,25 +17,9 @@ public class ReportDto {
     private Date date;
 
     public ReportDto() {
+            itemList = new ArrayList<>();
     }
 
-    public ReportDto(Long id, List<ReportItemDto> itemList, Date date) {
-        this.id = id;
-        this.itemList = itemList;
-        this.date = date;
-    }
-
-    public ReportDto(Report report){
-        this.id = report.getId();
-        List<ReportItem> reportItems = report.getItemList();
-        List<ReportItemDto> reportItemDtos = new ArrayList<>();
-        for(ReportItem reportItem: reportItems) {
-            ReportItemDto reportItemDto = new ReportItemDto(reportItem);
-            reportItemDtos.add(reportItemDto);
-        }
-        this.itemList = reportItemDtos;
-        this.date = report.getDate();
-    }
 
     public Long getId() {
         return id;
