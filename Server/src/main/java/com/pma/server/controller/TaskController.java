@@ -24,34 +24,15 @@ public class TaskController {
     @PostMapping(value = "/all")
     public ResponseEntity<List<AllTaskDto>> getAllTasks(@RequestBody EmailDto emailDto) {
 
-        List<AllTaskDto> dtos = new ArrayList<>();
-        List<Task> tasksWithoutUser = this.taskService.getAllTasks();
-        List<Task> finishedTasks = this.taskService.getFinishedTasks(emailDto.getEmail());
+        List<AllTaskDto> tasksWithoutUser = this.taskService.getAllTasks();
+        List<AllTaskDto> finishedTasks = this.taskService.getFinishedTasks(emailDto.getEmail());
+        List<AllTaskDto> tasksInProcess = this.taskService.getTasksInProcess(emailDto.getEmail());
 
-        List<Task> tasksInProcess = this.taskService.getTasksInProcess(emailDto.getEmail());
-
+        //todo vratiti samo tasks without user kad se podesi brisanje na androidu
         tasksWithoutUser.addAll(finishedTasks);
         tasksWithoutUser.addAll(tasksInProcess);
 
-        for(Task task:tasksWithoutUser){
-            UserDto userDto = null;
-            if(task.getUser() != null) {
-                 userDto = UserMapper.toUserDto(task.getUser());
-            }
-
-            ReportDto reportDto = null;
-            if(task.getReport() != null){
-                reportDto = new ReportDto(task.getReport());
-            }
-
-            BuildingDto buildingDto = new BuildingDto(task.getApartment().getBuilding().getId(), task.getApartment().getBuilding().getAddress());
-            ApartmentDto apartmentDto = new ApartmentDto(task.getApartment().getId(), task.getApartment().getNumber(),buildingDto);
-            AllTaskDto dto = new AllTaskDto(task.getId(), apartmentDto, task.getTypeOfApartment(),task.getState(),task.isUrgent(),task.getDeadline(), userDto, reportDto);
-            dtos.add(dto);
-        }
-
-
-        return new ResponseEntity<>(dtos,HttpStatus.OK);
+        return new ResponseEntity<>(tasksWithoutUser,HttpStatus.OK);
     }
 
 

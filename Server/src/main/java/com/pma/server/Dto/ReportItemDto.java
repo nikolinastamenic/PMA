@@ -15,23 +15,6 @@ public class ReportItemDto {
 
     public ReportItemDto() {}
 
-    public ReportItemDto(ReportItem reportItem) {
-        this.id = reportItem.getId();
-        this.faultName = reportItem.getFaultName();
-        this.details = reportItem.getDetails();
-        if(reportItem.getPicture() != null) {
-            this.picture = reportItem.getPicture();
-        }
-    }
-
-
-
-    public ReportItemDto(Long id, String faultName, String details, String picture) {
-        this.id = id;
-        this.faultName = faultName;
-        this.details = details;
-        this.picture = picture;
-    }
 
     public Long getId() {
         return id;
@@ -56,6 +39,7 @@ public class ReportItemDto {
     public void setDetails(String details) {
         this.details = details;
     }
+
 
     public String getPicture() {
         return picture;

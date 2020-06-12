@@ -1,6 +1,7 @@
 package com.example.myapplication.DTO;
 
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -13,14 +14,8 @@ public class ReportDto {
     private Date date;
 
     public ReportDto() {
+        itemList = new ArrayList<>();
     }
-
-    public ReportDto(Long id, List<ReportItemDto> itemList, Date date) {
-        this.id = id;
-        this.itemList = itemList;
-        this.date = date;
-    }
-
 
     public Long getId() {
         return id;
