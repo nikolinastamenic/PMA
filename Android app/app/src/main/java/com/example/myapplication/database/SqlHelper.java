@@ -211,14 +211,30 @@ public class SqlHelper extends SQLiteOpenHelper {
         sqlDB.execSQL("DROP TABLE IF EXISTS " + TABLE_REPORT);
         sqlDB.execSQL("DROP TABLE IF EXISTS " + TABLE_REPORT_ITEM);
         sqlDB.execSQL("DROP TABLE IF EXISTS " + JOIN_TABLE);
+        sqlDB.execSQL("DROP TABLE IF EXISTS " + TABLE_BUILDING);
+        sqlDB.execSQL("DROP TABLE IF EXISTS " + TABLE_APARTMENT);
 
         sqlDB.execSQL(TABLE_TASK_CREATE);
         sqlDB.execSQL(TABLE_REPORT_CREATE);
         sqlDB.execSQL(TABLE_REPORT_ITEM_CREATE);
         sqlDB.execSQL(TABLE_REPORT_REPORT_ITEM_CREATE);
+        sqlDB.execSQL(TABLE_BUILDING_CREATE);
+        sqlDB.execSQL(TABLE_APARTMENT_CREATE);
 
 
 //        this.onUpgrade(sqlDB, sqlDB.getVersion(), sqlDB.getVersion() + 1);
+
+    }
+
+    public void dropReportTable(){
+        SQLiteDatabase sqlDB = this.getWritableDatabase();
+        sqlDB.execSQL("DROP TABLE IF EXISTS " + TABLE_REPORT);
+        sqlDB.execSQL("DROP TABLE IF EXISTS " + TABLE_REPORT_ITEM);
+        sqlDB.execSQL("DROP TABLE IF EXISTS " + JOIN_TABLE);
+
+        sqlDB.execSQL(TABLE_REPORT_CREATE);
+        sqlDB.execSQL(TABLE_REPORT_ITEM_CREATE);
+        sqlDB.execSQL(TABLE_REPORT_REPORT_ITEM_CREATE);
 
     }
 
