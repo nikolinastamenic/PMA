@@ -188,7 +188,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
             final View item = layoutInflater.inflate(R.layout.apartment_item, parent, false);
 
-            TextView title1 = item.findViewById(R.id.apartmentTitleTextView);
+            final TextView title1 = item.findViewById(R.id.apartmentTitleTextView);
             TextView description1 = item.findViewById(R.id.address);
             TextView date1 = item.findViewById(R.id.apartmentDate);
             title1.setText(title.get(position));
@@ -224,8 +224,11 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
                         AllTasksActivity.this.getContentResolver().update(DBContentProvider.CONTENT_URI_TASK, entryTask, "id=" + taskId, null);
                     }
 
+                    apartmentAddress.remove(position);
+                    apartmentTitle.remove(position);
+                    checkApartmentDate.remove(position);
+                    notifyDataSetChanged();
 
-                    item.setVisibility(View.GONE);
 
                 }
             });
