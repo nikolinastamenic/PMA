@@ -8,4 +8,5 @@
     <color name="colorForeground">#019A8C</color>
     <color name="colorTextField">#FFFFFF</color>
     <color name="black">#000000</color>
+    <color name="silver">#C0C0C0</color>
 </resources>

@@ -43,78 +43,27 @@
             android:focusableInTouchMode="false"
             android:text="Assign" />
 
-        <TextView
-            android:id="@+id/apartmentDate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="3dp"
-            android:layout_marginStart="250dp"
-            android:text="@string/apartment_date"
-            android:layout_gravity="right"
-            />
-
-
-
-
     </LinearLayout>
 
-    <!--
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/apartment_titleTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="18sp"
-                android:gravity="center_vertical"
-                android:textColor="#000"
-                android:layout_marginLeft="15dp"
-                android:text="@string/apartment_title"
-                android:textStyle="bold"
-                android:layout_alignParentTop="true"
-                android:layout_marginTop="70dp"
-                />
+    <TextView
+        android:id="@+id/textViewWaiting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="310dp"
+        android:layout_marginTop="10dp"
+        android:text="@string/waiting"
+        android:textColor="@color/colorPrimaryDark"/>
 
-            <TextView
-                android:id="@+id/apartment_number"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_above="@id/address"
-                android:layout_alignParentEnd="true"
-                android:layout_marginEnd="0dp"
-                android:layout_toEndOf="@id/apartment_titleTextView"
-                android:layout_toLeftOf="@id/button_assign"
-                android:text=""
-                android:textColor="#000"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+    <TextView
+        android:id="@+id/apartmentDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="310dp"
+        android:text="@string/apartment_date"
+        android:layout_gravity="right"
+        android:layout_marginTop="85dp"
+        />
 
-            <Button
-                android:id="@+id/button_assign"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/btn_assign"
-                android:background="@color/colorForeground"
-                android:textColor="@color/colorTextField"
-                android:layout_below="@id/apartment_number"
-                android:layout_alignBottom="@id/address"
-                android:onClick="onClickAssign"
-                android:layout_marginEnd="10dp"
-                android:layout_alignRight="@id/apartment_number"
-                />
-
-            <TextView android:id="@+id/address"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Bulevar Oslobodjenja 145"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="15dp"
-                android:layout_below="@+id/apartment_titleTextView"
-                android:onClick="onClickAssign"
-                />
-
-    </RelativeLayout>-->
 
 </RelativeLayout>
