@@ -1,8 +1,10 @@
 package com.example.myapplication.activities;
 
+import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 
 import android.os.AsyncTask;
@@ -30,6 +32,8 @@ import com.example.myapplication.DTO.ChangeTaskStateDto;
 import com.example.myapplication.R;
 import com.example.myapplication.database.DBContentProvider;
 import com.example.myapplication.database.SqlHelper;
+import com.example.myapplication.sync.SyncReceiver;
+import com.example.myapplication.sync.SyncService;
 import com.example.myapplication.util.AppConfig;
 import com.example.myapplication.util.NavBarUtil;
 import com.google.android.material.navigation.NavigationView;
@@ -60,6 +64,10 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
     List<String> taskIds;
     String taskMysqlId;
     String taskId;
+    private SyncReceiver sync;
+    public static String SYNC_DATA = "SYNC_DATA";
+    private PendingIntent pendingIntent;
+
 
 
     @Override
@@ -84,6 +92,14 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.setCheckedItem(R.id.nav_all_tasks);
+
+        sync = new SyncReceiver();
+        startService(new Intent(this, SyncService.class));
+
+
+        // Retrieve a PendingIntent that will perform a broadcast
+        Intent intent = new Intent(this, SyncService.class);
+        pendingIntent = PendingIntent.getService(this, 0, intent, 0);
 
 
     }
@@ -146,8 +162,17 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
     @Override
     protected void onResume() {
 
+
         super.onResume();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(SYNC_DATA);
+
+        filter.addAction("android.net.wifi.WIFI_STATE_CHANGED");
+        filter.addAction("android.net.wifi.STATE_CHANGE");
+        filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
+        registerReceiver(sync, filter);
         listView();
+
 
     }
 
@@ -291,7 +316,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
         new AllTasksActivity.RESTChangeStateTask().execute(uri);
     }
 
-    class RESTChangeStateTask extends AsyncTask<String, Void, ResponseEntity<Boolean>> {
+    class RESTChangeStateTask extends AsyncTask<String, Void, ResponseEntity<Boolean>> {   //ulazni parametri, vrednost za racunanje procenta zavrsenosti posla, povrtna
 
         @Override
         protected ResponseEntity<Boolean> doInBackground(String... uri) {
