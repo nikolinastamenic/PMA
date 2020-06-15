@@ -1,7 +1,7 @@
 package com.example.myapplication.database;
 
-import android.app.Activity;
 import android.content.ContentValues;
+import android.content.Context;
 import android.net.Uri;
 
 import com.example.myapplication.DTO.AllTaskDto;
@@ -10,12 +10,11 @@ import com.example.myapplication.DTO.BuildingDto;
 import com.example.myapplication.DTO.ReportDto;
 import com.example.myapplication.DTO.ReportItemDto;
 import com.example.myapplication.DTO.UserDto;
-import com.example.myapplication.activities.FinishedTasksActivity;
-import com.example.myapplication.activities.TasksInProgressActivity;
+
 
 public class NewEntry {
 
-    public static String newAddressEntry(Activity activity, BuildingDto buildingDto) {
+    public static String newAddressEntry(Context context, BuildingDto buildingDto) {
         ContentValues entryAddress = new ContentValues();
 
 
@@ -26,21 +25,21 @@ public class NewEntry {
         entryAddress.put(SqlHelper.COLUMN_ADDRESS_NUMBER, buildingDto.getAddress().getNumber());
         entryAddress.put(SqlHelper.COLUMN_ADDRESS_LONGITUDE, buildingDto.getAddress().getLongitude());
         entryAddress.put(SqlHelper.COLUMN_ADDRESS_LATITUDE, buildingDto.getAddress().getLatitude());
-        Uri addressUri = activity.getContentResolver().insert(DBContentProvider.CONTENT_URI_ADDRESS, entryAddress);
+        Uri addressUri = context.getContentResolver().insert(DBContentProvider.CONTENT_URI_ADDRESS, entryAddress);
         return addressUri.toString();
     }
 
-    public static String newBuildingEntry(Activity activity, BuildingDto buildingDto, String addressUri) {
+    public static String newBuildingEntry(Context context, BuildingDto buildingDto, String addressUri) {
 
         ContentValues entryBuilding = new ContentValues();
         entryBuilding.put(SqlHelper.COLUMN_BUILDING_MYSQLID, buildingDto.getId());
         String addressId = addressUri.split("/")[1];
         entryBuilding.put(SqlHelper.COLUMN_BUILDING_ADDRESS_ID, addressId);
-        Uri buildingUri = activity.getContentResolver().insert(DBContentProvider.CONTENT_URI_BUILDING, entryBuilding);
+        Uri buildingUri = context.getContentResolver().insert(DBContentProvider.CONTENT_URI_BUILDING, entryBuilding);
         return buildingUri.toString();
     }
 
-    public static String newApartmentEntry(Activity activity, ApartmentDto apartmentDto, String buildingUri) {
+    public static String newApartmentEntry(Context context, ApartmentDto apartmentDto, String buildingUri) {
 
         ContentValues entryApartment = new ContentValues();
 
@@ -48,11 +47,11 @@ public class NewEntry {
         entryApartment.put(SqlHelper.COLUMN_APARTMENT_NUMBER, apartmentDto.getNumber());
         String buildingId = buildingUri.split("/")[1];
         entryApartment.put(SqlHelper.COLUMN_APARTMENT_BUILDING_ID, buildingId);
-        Uri apartmentUri = activity.getContentResolver().insert(DBContentProvider.CONTENT_URI_APARTMENT, entryApartment);
+        Uri apartmentUri = context.getContentResolver().insert(DBContentProvider.CONTENT_URI_APARTMENT, entryApartment);
         return apartmentUri.toString();
     }
 
-    public static String newTaskEntry(Activity activity, AllTaskDto allTaskDto, String apartmentUri, String userId, String reportId) {
+    public static String newTaskEntry(Context context, AllTaskDto allTaskDto, String apartmentUri, String userId, String reportId) {
         ContentValues entryTask = new ContentValues();
 
         entryTask.put(SqlHelper.COLUMN_TASK_MYSQLID, allTaskDto.getId());
@@ -69,7 +68,7 @@ public class NewEntry {
         if (reportId != null) {
             entryTask.put(SqlHelper.COLUMN_TASK_REPORT_ID, reportId);
         }
-        Uri taskUri = activity.getContentResolver().insert(DBContentProvider.CONTENT_URI_TASK, entryTask);
+        Uri taskUri = context.getContentResolver().insert(DBContentProvider.CONTENT_URI_TASK, entryTask);
 
         return taskUri.toString();
 
@@ -77,7 +76,7 @@ public class NewEntry {
     }
 
 
-    public static String newUserEntry(Activity activity, UserDto userDto) {
+    public static String newUserEntry(Context context, UserDto userDto) {
 
         ContentValues entryUser = new ContentValues();
         entryUser.put(SqlHelper.COLUMN_USER_MYSQLID, userDto.getId());
@@ -87,24 +86,24 @@ public class NewEntry {
         entryUser.put(SqlHelper.COLUMN_USER_SURNAME, userDto.getSurname());
 
 
-        Uri userUri = activity.getContentResolver().insert(DBContentProvider.CONTENT_URI_USER, entryUser);
+        Uri userUri = context.getContentResolver().insert(DBContentProvider.CONTENT_URI_USER, entryUser);
 
         return userUri.toString();
 
 
     }
 
-    public static String newReportEntry(Activity activity, ReportDto reportDto) {
+    public static String newReportEntry(Context context, ReportDto reportDto) {
         ContentValues entryReport = new ContentValues();
         entryReport.put(SqlHelper.COLUMN_REPORT_MYSQLID, reportDto.getId());
         entryReport.put(SqlHelper.COLUMN_REPORT_DATE, reportDto.getDate().toString());
 
-        Uri reportUri = activity.getContentResolver().insert(DBContentProvider.CONTENT_URI_REPORT, entryReport);
+        Uri reportUri = context.getContentResolver().insert(DBContentProvider.CONTENT_URI_REPORT, entryReport);
 
         return reportUri.toString();
     }
 
-    public static String newReportItemEntry(Activity activity, ReportItemDto reportItemDto) {
+    public static String newReportItemEntry(Context context, ReportItemDto reportItemDto) {
 
         ContentValues entryReportItem = new ContentValues();
         entryReportItem.put(SqlHelper.COLUMN_REPORT_ITEM_MYSQLID, reportItemDto.getId());
@@ -112,12 +111,12 @@ public class NewEntry {
         entryReportItem.put(SqlHelper.COLUMN_REPORT_ITEM_DETAILS, reportItemDto.getDetails()); //TODO fali slika
         entryReportItem.put(SqlHelper.COLUMN_REPORT_ITEM_FAULT_PICTURE, reportItemDto.getPicture());
 
-        Uri reportItemUri = activity.getContentResolver().insert(DBContentProvider.CONTENT_URI_REPORT_ITEM, entryReportItem);
+        Uri reportItemUri = context.getContentResolver().insert(DBContentProvider.CONTENT_URI_REPORT_ITEM, entryReportItem);
         return reportItemUri.toString();
 
     }
 
-    public static String newReportReportItemEntry(Activity activity, ReportItemDto reportItemDto, ReportDto reportDto, String reportId, String reportItemId) {
+    public static String newReportReportItemEntry(Context context, ReportItemDto reportItemDto, ReportDto reportDto, String reportId, String reportItemId) {
 
         ContentValues entryReportReportItem = new ContentValues();
         entryReportReportItem.put(SqlHelper.COLUMN_REPORT_REPORT_ITEM_REPORT_ID, reportId);
@@ -125,7 +124,7 @@ public class NewEntry {
         entryReportReportItem.put(SqlHelper.COLUMN_REPORT_REPORT_ITEM_REPOR_ITEM_ID, reportItemId);
         entryReportReportItem.put(SqlHelper.COLUMN_REPORT_REPORT_ITEM_REPORT_ITEM_MYSQLID, reportItemDto.getId());
 
-        Uri reportReportItemUri = activity.getContentResolver().insert(DBContentProvider.CONTENT_URI_JOIN_TABLE, entryReportReportItem);
+        Uri reportReportItemUri = context.getContentResolver().insert(DBContentProvider.CONTENT_URI_JOIN_TABLE, entryReportReportItem);
         return reportReportItemUri.toString();
 
     }
