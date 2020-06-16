@@ -1,5 +1,5 @@
-INSERT INTO user (id, name,surname, email, password, phone_number) VALUES (1, 'Mika', 'Mikic', 'user@yahoo.com','$2a$10$d2bYEem94Do7dck2CP14M.p4u3r2CPb7Di9uyrkxdDF0ibSbU5Bpy', '0292929');
-INSERT INTO user (id, name,surname, email, password, phone_number) VALUES (2, 'Mika', 'Mikic', 'user1@yahoo.com','$2a$10$d2bYEem94Do7dck2CP14M.p4u3r2CPb7Di9uyrkxdDF0ibSbU5Bpy', '0292929');
+INSERT INTO user (id, name,surname, email, password, phone_number) VALUES (1, 'Mika', 'Mikic', 'user@yahoo.com','123', '0292929');
+INSERT INTO user (id, name,surname, email, password, phone_number) VALUES (2, 'Mika', 'Mikic', 'user1@yahoo.com','123', '0292929');
 INSERT INTO user (id, email, name, password, phone_number, picture, surname) values (3, 'user@example.com', 'Ana', 'mysecret', '0614427283', 'profile_picture.jpg', 'Mihic');
 
 INSERT INTO address (city, country, latitude, longitude, number, street) values ('Beograd', 'Srbija',44.8080941, 20.294172799999956, 3, 'Nemanjina');

@@ -6,6 +6,7 @@ import android.database.Cursor;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,6 +66,10 @@ public class FinishedTasksActivity extends AppCompatActivity implements Navigati
 
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.setCheckedItem(R.id.nav_finished_tasks);
+        Menu menu =navigationView.getMenu();
+        MenuItem menuItem = menu.findItem(R.id.nav_log_in);
+
+        menuItem.setVisible(false);
         listView();
 
 

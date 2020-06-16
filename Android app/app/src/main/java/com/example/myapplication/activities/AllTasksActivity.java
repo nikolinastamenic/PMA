@@ -10,6 +10,7 @@ import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +37,7 @@ import com.example.myapplication.sync.SyncReceiver;
 import com.example.myapplication.sync.SyncService;
 import com.example.myapplication.util.AppConfig;
 import com.example.myapplication.util.NavBarUtil;
+import com.example.myapplication.util.UserSession;
 import com.google.android.material.navigation.NavigationView;
 
 
@@ -67,7 +69,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
     private SyncReceiver sync;
     public static String SYNC_DATA = "SYNC_DATA";
     private PendingIntent pendingIntent;
-
+    UserSession userSession;
 
 
     @Override
@@ -93,8 +95,15 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.setCheckedItem(R.id.nav_all_tasks);
 
+        Menu menu =navigationView.getMenu();
+        MenuItem menuItem = menu.findItem(R.id.nav_log_in);
+
+        menuItem.setVisible(false);
+
         sync = new SyncReceiver();
-        startService(new Intent(this, SyncService.class));
+        userSession = new UserSession(getApplicationContext());
+
+//        startService(new Intent(this, SyncService.class));
 
 
         // Retrieve a PendingIntent that will perform a broadcast
@@ -252,7 +261,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
             final Button assignButton = item.findViewById(R.id.buttonAssing);
 
 
-            if(taskWaitingList.get(position) == 1) {
+            if (taskWaitingList.get(position) == 1) {
 
                 isEnabled(position);
 
@@ -289,10 +298,6 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
                     assignButton.setEnabled(false);
 
 
-//                    apartmentAddress.remove(position);
-//                    apartmentTitle.remove(position);
-//                    checkApartmentDate.remove(position);
-//                    notifyDataSetChanged();
                     changeTaskState();
 
 
@@ -300,15 +305,9 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
             });
 
 
-
-
-
-
             return item;
         }
     }
-
-
 
 
     public void changeTaskState() {
@@ -323,23 +322,27 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
             final String url = uri[0];
             RestTemplate restTemplate = new RestTemplate();
             try {
-                restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+                String email = userSession.getUserEmail();
+                if(!email.equals("")) {
+                    restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
 
-                HttpHeaders headers = new HttpHeaders();
-                headers.setContentType(MediaType.APPLICATION_JSON);
-                headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+                    HttpHeaders headers = new HttpHeaders();
+                    headers.setContentType(MediaType.APPLICATION_JSON);
+                    headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 
-                ChangeTaskStateDto changeTaskStateDto = new ChangeTaskStateDto();
-                changeTaskStateDto.setEmail("user@yahoo.com");
-                changeTaskStateDto.setState("IN_PROCESS");
-                changeTaskStateDto.setTaskId(taskMysqlId);
+                    ChangeTaskStateDto changeTaskStateDto = new ChangeTaskStateDto();
+                    changeTaskStateDto.setEmail(email);
+                    changeTaskStateDto.setState("IN_PROCESS");
+                    changeTaskStateDto.setTaskId(taskMysqlId);
 
-                HttpEntity entity = new HttpEntity(changeTaskStateDto, headers);   //TODO ispraviti posle odradjenog logovanja
+                    HttpEntity entity = new HttpEntity(changeTaskStateDto, headers);   //TODO ispraviti posle odradjenog logovanja
 
-                ResponseEntity<Boolean> response = restTemplate.postForEntity(url, entity, Boolean.class);
+                    ResponseEntity<Boolean> response = restTemplate.postForEntity(url, entity, Boolean.class);
 
 
-                return response;
+                    return response;
+                }
+                return null;
             } catch (Exception e) {
                 System.out.println(e.getMessage());
                 return null;
@@ -373,7 +376,6 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 //                        entryTask.put(SqlHelper.COLUMN_TASK_APARTMENT_ID, apartmentId);
                 entryTask.put(SqlHelper.COLUMN_TASK_USER_ID, userId);
                 entryTask.put(SqlHelper.COLUMN_TASK_REQESTED, 1);
-
 
 
                 AllTasksActivity.this.getContentResolver().update(DBContentProvider.CONTENT_URI_TASK, entryTask, "id=" + taskId, null);

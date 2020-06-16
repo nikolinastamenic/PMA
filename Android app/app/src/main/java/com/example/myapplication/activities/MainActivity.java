@@ -8,15 +8,20 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.app.PendingIntent;
+import android.content.ClipData;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.example.myapplication.DTO.AllTaskDto;
 import com.example.myapplication.DTO.EmailDto;
+import com.example.myapplication.DTO.LoginDto;
 import com.example.myapplication.DTO.ReportItemDto;
 import com.example.myapplication.R;
 import com.example.myapplication.database.NewEntry;
@@ -25,6 +30,7 @@ import com.example.myapplication.sync.SyncReceiver;
 import com.example.myapplication.sync.SyncService;
 import com.example.myapplication.util.AppConfig;
 import com.example.myapplication.util.NavBarUtil;
+import com.example.myapplication.util.UserSession;
 import com.google.android.material.navigation.NavigationView;
 
 import org.springframework.http.HttpEntity;
@@ -47,6 +53,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private SyncReceiver sync;
     public static String SYNC_DATA = "SYNC_DATA";
 
+    SharedPreferences sharedPreferences;
+    private static final String PREF_NAME = "login_preferences";
+
+    String userEmail = "";
+    UserSession userSession;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,14 +79,35 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setCheckedItem(R.id.nav_home);
 
         sync = new SyncReceiver();
-        startService(new Intent(this, SyncService.class));
+        userSession = new UserSession(getApplicationContext());
+//        sharedPreferences = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
 
 
-        // Retrieve a PendingIntent that will perform a broadcast
-        Intent intent = new Intent(this, SyncService.class);
-        pendingIntent = PendingIntent.getService(this, 0, intent, 0);
+        boolean isUserLogedIn = userSession.checkLogin();
 
-        System.out.println("main activity ON CREATE");
+        Menu menu =navigationView.getMenu();
+
+        if (!isUserLogedIn) {                   //TODO proveriti
+
+            userEmail = userSession.getUserEmail();
+
+            MenuItem menuItem = menu.findItem(R.id.nav_log_in);
+
+            menuItem.setVisible(false);
+
+
+            Intent i = new Intent(this, SyncService.class);
+            i.putExtra("Email", userEmail);
+            startService(i);
+
+
+            // Retrieve a PendingIntent that will perform a broadcast
+            Intent intent = new Intent(this, SyncService.class);
+            pendingIntent = PendingIntent.getService(this, 0, intent, 0);
+
+            System.out.println("main activity ON CREATE");
+
+        }
 
     }
 
@@ -123,9 +156,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         filter.addAction("android.net.wifi.WIFI_STATE_CHANGED");
         filter.addAction("android.net.wifi.STATE_CHANGE");
-        filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
         registerReceiver(sync, filter);
         System.out.println("main activity ON RESUME");
+
 
     }
 

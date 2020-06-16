@@ -20,6 +20,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -92,6 +93,11 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.setCheckedItem(R.id.nav_profile);
 
+        Menu menu = navigationView.getMenu();
+        MenuItem menuItem = menu.findItem(R.id.nav_log_in);
+
+        menuItem.setVisible(false);
+
         getUserProfile("3");
         showUserProfile();
 
@@ -100,13 +106,11 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
             @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onClick(View v) {
-                if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
-                {
+                if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                     requestPermissions(new String[]{Manifest.permission.CAMERA}, AppConfig.CAMERA_PERMISSION_CODE);
 
                 }
-                if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)
-                {
+                if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
                     Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
                     startActivityForResult(cameraIntent, AppConfig.CAMERA_REQUEST);
                 }
@@ -114,23 +118,17 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         });
 
 
-
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
-    {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == AppConfig.CAMERA_PERMISSION_CODE)
-        {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
-            {
+        if (requestCode == AppConfig.CAMERA_PERMISSION_CODE) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, getString(R.string.camera_access_allowed), Toast.LENGTH_LONG).show();
                 Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
                 startActivityForResult(cameraIntent, AppConfig.CAMERA_REQUEST);
-            }
-            else
-            {
+            } else {
                 Toast.makeText(this, getString(R.string.camera_access_denied), Toast.LENGTH_LONG).show();
             }
         }
@@ -168,7 +166,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
             name1.setText(data.getString(2) + " " + data.getString(3));
             ContextWrapper contextWrapper = new ContextWrapper(getApplicationContext());
             File directory = contextWrapper.getDir(getFilesDir().getName(), Context.MODE_PRIVATE);
-            File file =  new File(directory, data.getString(7));
+            File file = new File(directory, data.getString(7));
             Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
             profile_picture.setImageBitmap(bitmap);
             phone_number.setText(data.getString(4));
@@ -176,6 +174,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         }
 
     }
+
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
 

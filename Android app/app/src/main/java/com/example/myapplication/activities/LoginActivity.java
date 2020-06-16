@@ -3,23 +3,36 @@ package com.example.myapplication.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
+
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.example.myapplication.DTO.LoginDto;
 import com.example.myapplication.R;
+
+import com.example.myapplication.util.AppConfig;
 import com.example.myapplication.util.NavBarUtil;
+import com.example.myapplication.util.UserSession;
 import com.google.android.material.navigation.NavigationView;
+
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.Arrays;
 
 public class LoginActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -29,9 +42,13 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
     EditText etEmail, etPassword;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
-    private static final String PREF_NAME = "preferences";
-    private static final String KEY_USERNAME = "Username";
-    private static final String KEY_PASSWORD = "Password";
+    private static final String PREF_NAME = "login_preferences";
+    private static final String KEY_EMAIL = "email";
+    private static final String KEY_PASSWORD = "password";
+    UserSession session;
+    String email;
+    String password;
+    boolean success;
 
 
     @Override
@@ -40,18 +57,11 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
 
-        drawerLayout = findViewById(R.id.drawer_layout);
-        navigationView = findViewById(R.id.nav_view);
         toolbar = findViewById(R.id.toolbar);
+        toolbar.setNavigationIcon(null);
 
-        navigationView.bringToFront();
-        setSupportActionBar(toolbar);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.login_signIn, R.string.login_signIn);
-        drawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
 
-        navigationView.setNavigationItemSelectedListener(this);
-        navigationView.setCheckedItem(R.id.nav_log_in);
+        session = new UserSession(getApplicationContext());
 
 
     }
@@ -85,18 +95,64 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
         etEmail = (EditText) findViewById(R.id.login_username);
         etPassword = (EditText) findViewById(R.id.login_password);
 
-        etEmail.setText(sharedPreferences.getString(KEY_USERNAME, ""));
-        etPassword.setText(sharedPreferences.getString(KEY_PASSWORD, ""));
-        managePrefs();
-
-    }
-
-
-    private void managePrefs() {
-        editor.putString(KEY_USERNAME, etEmail.getText().toString().trim());
-        editor.putString(KEY_PASSWORD, etPassword.getText().toString().trim());
-        editor.commit();
+        email = etEmail.getText().toString();
+        password = etPassword.getText().toString();
+        checkLogin();
 
 
     }
+
+
+    public void checkLogin() {
+        final String uri = AppConfig.apiURI + "user/login";
+        new LoginActivity.RESTCheckLogin().execute(uri);
+    }
+
+    class RESTCheckLogin extends AsyncTask<String, Void, ResponseEntity<Boolean>> {   //ulazni parametri, vrednost za racunanje procenta zavrsenosti posla, povrtna
+
+        @Override
+        protected ResponseEntity<Boolean> doInBackground(String... uri) {
+            final String url = uri[0];
+            RestTemplate restTemplate = new RestTemplate();
+            try {
+                restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.APPLICATION_JSON);
+                headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+
+                LoginDto loginDto = new LoginDto();
+                loginDto.setEmail(email);
+                loginDto.setPassword(password);
+
+                HttpEntity entity = new HttpEntity(loginDto, headers);
+
+                ResponseEntity<Boolean> response = restTemplate.postForEntity(url, entity, Boolean.class);
+
+
+                return response;
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+                return null;
+            }
+
+        }
+
+        protected void onPostExecute(ResponseEntity<Boolean> responseEntity) {
+            success = responseEntity.getBody();
+
+            if (success) {
+                session.createUserLoginSession(email, password);
+                Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(i);
+            } else {
+                Toast.makeText(getApplicationContext(),
+                        "Email/Password is incorrect",
+                        Toast.LENGTH_LONG).show();
+            }
+
+
+        }
+    }
+
 }
