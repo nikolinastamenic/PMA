@@ -208,9 +208,33 @@ public class SqlHelper extends SQLiteOpenHelper {
     public void dropTaskTable(){
         SQLiteDatabase sqlDB = this.getWritableDatabase();
         sqlDB.execSQL("DROP TABLE IF EXISTS " + TABLE_TASK);
+        sqlDB.execSQL("DROP TABLE IF EXISTS " + TABLE_REPORT);
+        sqlDB.execSQL("DROP TABLE IF EXISTS " + TABLE_REPORT_ITEM);
+        sqlDB.execSQL("DROP TABLE IF EXISTS " + JOIN_TABLE);
+        sqlDB.execSQL("DROP TABLE IF EXISTS " + TABLE_BUILDING);
+        sqlDB.execSQL("DROP TABLE IF EXISTS " + TABLE_APARTMENT);
+
         sqlDB.execSQL(TABLE_TASK_CREATE);
+        sqlDB.execSQL(TABLE_REPORT_CREATE);
+        sqlDB.execSQL(TABLE_REPORT_ITEM_CREATE);
+        sqlDB.execSQL(TABLE_REPORT_REPORT_ITEM_CREATE);
+        sqlDB.execSQL(TABLE_BUILDING_CREATE);
+        sqlDB.execSQL(TABLE_APARTMENT_CREATE);
+
 
 //        this.onUpgrade(sqlDB, sqlDB.getVersion(), sqlDB.getVersion() + 1);
+
+    }
+
+    public void dropReportTable(){
+        SQLiteDatabase sqlDB = this.getWritableDatabase();
+        sqlDB.execSQL("DROP TABLE IF EXISTS " + TABLE_REPORT);
+        sqlDB.execSQL("DROP TABLE IF EXISTS " + TABLE_REPORT_ITEM);
+        sqlDB.execSQL("DROP TABLE IF EXISTS " + JOIN_TABLE);
+
+        sqlDB.execSQL(TABLE_REPORT_CREATE);
+        sqlDB.execSQL(TABLE_REPORT_ITEM_CREATE);
+        sqlDB.execSQL(TABLE_REPORT_REPORT_ITEM_CREATE);
 
     }
 
@@ -294,5 +318,30 @@ public class SqlHelper extends SQLiteOpenHelper {
 
         return data;
     }
+
+    public Cursor getReportById (String id) {
+
+        SQLiteDatabase sqlDB = this.getWritableDatabase();
+
+        Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_REPORT + " WHERE id " + "= " + id, null);
+        return data;
+    }
+
+    public Cursor getReportItemsByReportId(String id){
+        SQLiteDatabase sqlDB = this.getWritableDatabase();
+
+        Cursor data = sqlDB.rawQuery("SELECT * FROM " + JOIN_TABLE + " WHERE report_id" + "= " + id,null);
+
+        return data;
+    }
+
+    public Cursor getReportItemById (String id) {
+
+        SQLiteDatabase sqlDB = this.getWritableDatabase();
+
+        Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_REPORT_ITEM + " WHERE id " + "= " + id, null);
+        return data;
+    }
+
 
 }

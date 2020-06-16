@@ -110,6 +110,7 @@ public class NewEntry {
         entryReportItem.put(SqlHelper.COLUMN_REPORT_ITEM_MYSQLID, reportItemDto.getId());
         entryReportItem.put(SqlHelper.COLUMN_REPORT_ITEM_FAULT_NAME, reportItemDto.getFaultName());
         entryReportItem.put(SqlHelper.COLUMN_REPORT_ITEM_DETAILS, reportItemDto.getDetails()); //TODO fali slika
+        entryReportItem.put(SqlHelper.COLUMN_REPORT_ITEM_FAULT_PICTURE, reportItemDto.getPicture());
 
         Uri reportItemUri = activity.getContentResolver().insert(DBContentProvider.CONTENT_URI_REPORT_ITEM, entryReportItem);
         return reportItemUri.toString();

@@ -23,25 +23,6 @@ public class AllTaskDto {
     public AllTaskDto() {
     }
 
-    public AllTaskDto(Long id, ApartmentDto apartmentDto, String typeOfApartment, String state, boolean urgent, Date deadline) {
-        this.id = id;
-        this.apartmentDto = apartmentDto;
-        this.typeOfApartment = typeOfApartment;
-        this.state = state;
-        this.urgent = urgent;
-        this.deadline = deadline;
-    }
-
-    public AllTaskDto(Long id, ApartmentDto apartmentDto, String typeOfApartment, String state, boolean urgent, Date deadline, UserDto userDto) {
-        this.id = id;
-        this.apartmentDto = apartmentDto;
-        this.typeOfApartment = typeOfApartment;
-        this.state = state;
-        this.urgent = urgent;
-        this.deadline = deadline;
-        this.userDto = userDto;
-    }
-
 
     public AllTaskDto(Long id, ApartmentDto apartmentDto, String typeOfApartment, String state, boolean urgent, Date deadline, UserDto userDto, ReportDto reportDto) {
         this.id = id;
@@ -50,8 +31,12 @@ public class AllTaskDto {
         this.state = state;
         this.urgent = urgent;
         this.deadline = deadline;
-        this.userDto = userDto;
-        this.reportDto = reportDto;
+        if(userDto != null){
+            this.userDto = userDto;
+        }
+        if(reportDto != null){
+            this.reportDto = reportDto;
+        }
     }
 
     public ReportDto getReportDto() {

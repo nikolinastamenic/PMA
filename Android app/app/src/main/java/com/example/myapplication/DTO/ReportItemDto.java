@@ -11,16 +11,8 @@ public class ReportItemDto {
 
     private String picture;
 
-    public ReportItemDto() {
-    }
+    public ReportItemDto() {}
 
-
-    public ReportItemDto(Long id, String faultName, String details, String picture) {
-        this.id = id;
-        this.faultName = faultName;
-        this.details = details;
-        this.picture = picture;
-    }
 
     public Long getId() {
         return id;
@@ -45,6 +37,7 @@ public class ReportItemDto {
     public void setDetails(String details) {
         this.details = details;
     }
+
 
     public String getPicture() {
         return picture;

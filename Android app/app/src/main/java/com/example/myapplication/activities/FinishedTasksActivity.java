@@ -97,7 +97,8 @@ public class FinishedTasksActivity extends AppCompatActivity implements Navigati
                         String addressId = buildungData.getString(2);
                         Cursor addressData = db.getAddressById(addressId);
                         while (addressData.moveToNext()) {
-                            apartmentAddress.add(addressData.getString(3) + ", " + addressData.getString(4) + " " + addressData.getString(5));
+                            apartmentAddress.add(addressData.getString(4) + " " + addressData.getString(5)
+                                    + ", " + addressData.getString(3));
                         }
                     }
 

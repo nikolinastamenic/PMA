@@ -167,7 +167,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void syncTasks() {
-        final String uri = AppConfig.apiURI +  "task/all";
+        final String uri = AppConfig.apiURI + "task/all";
         new MainActivity.RESTTask().execute(uri);
     }
 
@@ -233,6 +233,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         }
                     }
                 }
+
 
                 String taskUri = NewEntry.newTaskEntry(MainActivity.this, taskDto, apartmentUri, userId, reportId);
 
