@@ -20,6 +20,7 @@ public class SyncService  extends Service {
 
         Intent ints = new Intent(MainActivity.SYNC_DATA);
         int status = NetworkStateTools.getConnectivityStatus(getApplicationContext());
+        String email = intent.getStringExtra("Email");
 
         ints.putExtra(RESULT_CODE, status);
 
@@ -27,7 +28,9 @@ public class SyncService  extends Service {
         String uri = AppConfig.apiURI + "task/all";
 
         if(status == NetworkStateTools.TYPE_WIFI || status == NetworkStateTools.TYPE_MOBILE){
-            new SyncTask(getApplicationContext()).execute(uri);
+            if(!email.equals("") ) {
+                new SyncTask(getApplicationContext()).execute(uri, email);
+            }
         }
 
 //        sendBroadcast(ints);

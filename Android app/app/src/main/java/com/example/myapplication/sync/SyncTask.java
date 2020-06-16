@@ -35,6 +35,7 @@ public class SyncTask extends AsyncTask<String, Void, ResponseEntity<AllTaskDto[
     protected ResponseEntity<AllTaskDto[]> doInBackground(String... uri) {
 
         final String url = uri[0];
+        String email = uri[1];
         RestTemplate restTemplate = new RestTemplate();
         try {
             restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
@@ -43,9 +44,9 @@ public class SyncTask extends AsyncTask<String, Void, ResponseEntity<AllTaskDto[
             headers.setContentType(MediaType.APPLICATION_JSON);
             headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 
-            EmailDto emailDto = new EmailDto("user@yahoo.com");
+            EmailDto emailDto = new EmailDto(email);
 
-            HttpEntity entity = new HttpEntity(emailDto, headers);   //TODO ispraviti posle odradjenog logovanja
+            HttpEntity entity = new HttpEntity(emailDto, headers);
 
             ResponseEntity<AllTaskDto[]> response = restTemplate.postForEntity(url, entity, AllTaskDto[].class);
 
