@@ -8,5 +8,7 @@ public class LoginDto {
     private String email;
     private String password;
 
-
+    public LoginDto() {
+    }
 }
+
