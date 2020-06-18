@@ -1,15 +1,16 @@
 package com.example.myapplication.activities;
 
+import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 
-import android.net.Uri;
 import android.os.AsyncTask;
-
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,14 +28,28 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.example.myapplication.DTO.ChangeTaskStateDto;
+
 import com.example.myapplication.R;
 import com.example.myapplication.database.DBContentProvider;
 import com.example.myapplication.database.SqlHelper;
+import com.example.myapplication.sync.SyncReceiver;
+import com.example.myapplication.sync.SyncService;
+import com.example.myapplication.util.AppConfig;
 import com.example.myapplication.util.NavBarUtil;
+import com.example.myapplication.util.UserSession;
 import com.google.android.material.navigation.NavigationView;
 
 
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.client.RestTemplate;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class AllTasksActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -46,8 +61,15 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
     List<String> apartmentTitle;
     List<String> apartmentAddress;
     List<String> checkApartmentDate;
+    List<Integer> taskWaitingList;
     SqlHelper db;
     List<String> taskIds;
+    String taskMysqlId;
+    String taskId;
+    private SyncReceiver sync;
+    public static String SYNC_DATA = "SYNC_DATA";
+    private PendingIntent pendingIntent;
+    UserSession userSession;
 
 
     @Override
@@ -60,6 +82,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
         apartmentTitle = new ArrayList<>();
         apartmentAddress = new ArrayList<>();
         checkApartmentDate = new ArrayList<>();
+        taskWaitingList = new ArrayList<>();
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
         toolbar = findViewById(R.id.toolbar);
@@ -71,7 +94,21 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.setCheckedItem(R.id.nav_all_tasks);
-        listView();
+
+        Menu menu =navigationView.getMenu();
+        MenuItem menuItem = menu.findItem(R.id.nav_log_in);
+
+        menuItem.setVisible(false);
+
+        sync = new SyncReceiver();
+        userSession = new UserSession(getApplicationContext());
+
+//        startService(new Intent(this, SyncService.class));
+
+
+        // Retrieve a PendingIntent that will perform a broadcast
+        Intent intent = new Intent(this, SyncService.class);
+        pendingIntent = PendingIntent.getService(this, 0, intent, 0);
 
 
     }
@@ -90,6 +127,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
             while (data.moveToNext()) {
                 taskIds.add(data.getString(0));
                 checkApartmentDate.add(data.getString(5).substring(0, 13));
+                taskWaitingList.add(data.getInt(9));
                 apartmentId = data.getString(6);
                 Cursor apartmentData = db.getApartmentById(apartmentId);
 
@@ -125,6 +163,24 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
                 startActivity(intent);
             }
         });
+
+
+    }
+
+
+    @Override
+    protected void onResume() {
+
+
+        super.onResume();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(SYNC_DATA);
+
+        filter.addAction("android.net.wifi.WIFI_STATE_CHANGED");
+        filter.addAction("android.net.wifi.STATE_CHANGE");
+        filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
+        registerReceiver(sync, filter);
+        listView();
 
 
     }
@@ -173,6 +229,12 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
         List<String> address;
         List<String> date;
 
+
+        @Override
+        public boolean isEnabled(int position) {
+            return false;
+        }
+
         MyAdapter(Context c, List<String> title, List<String> address, List<String> date) {
             super(c, android.R.layout.simple_list_item_1, R.id.apartmentTitleTextView, title);
             this.context = c;
@@ -188,49 +250,137 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
             final View item = layoutInflater.inflate(R.layout.apartment_item, parent, false);
 
-            TextView title1 = item.findViewById(R.id.apartmentTitleTextView);
-            TextView description1 = item.findViewById(R.id.address);
-            TextView date1 = item.findViewById(R.id.apartmentDate);
+            final TextView title1 = item.findViewById(R.id.apartmentTitleTextView);
+            final TextView description1 = item.findViewById(R.id.address);
+            final TextView date1 = item.findViewById(R.id.apartmentDate);
+            final TextView waiting = item.findViewById(R.id.textViewWaiting);
+
             title1.setText(title.get(position));
             description1.setText(address.get(position));
             date1.setText(date.get(position));
+            final Button assignButton = item.findViewById(R.id.buttonAssing);
 
-            Button assignButton = item.findViewById(R.id.buttonAssing);
+
+            if (taskWaitingList.get(position) == 1) {
+
+                isEnabled(position);
+
+                title1.setTextColor(getResources().getColor(R.color.silver));
+                description1.setTextColor(getResources().getColor(R.color.silver));
+                date1.setTextColor(getResources().getColor(R.color.silver));
+                assignButton.setTextColor(getResources().getColor(R.color.silver));
+                assignButton.setEnabled(false);
+                waiting.setVisibility(View.VISIBLE);
+            } else {
+                waiting.setVisibility(View.GONE);
+
+            }
+
             assignButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
 
-                    ContentValues entryTask = new ContentValues();
-
-                    String taskId = taskIds.get(position);
+                    taskId = taskIds.get(position);
+                    waiting.setVisibility(View.VISIBLE);
                     Cursor taskData = db.getTaskById(taskId);
                     while (taskData.moveToNext()) {
                         String mysqlId = taskData.getString(1);
-                        String typeOfApartment = taskData.getString(2);
-                        String state = "IN_PROCESS";
-                        String urgent = taskData.getString(4);
-                        String deadline = taskData.getString(5);
-                        String apartmentId = taskData.getString(6);
-                        String userId = "1";                       //TODO
-
-                        entryTask.put(SqlHelper.COLUMN_TASK_MYSQLID, mysqlId);
-                        entryTask.put(SqlHelper.COLUMN_TASK_STATE, state);
-                        entryTask.put(SqlHelper.COLUMN_TASK_DEADLINE, deadline);
-                        entryTask.put(SqlHelper.COLUMN_TASK_TYPE_OF_APARTMENT, typeOfApartment);
-                        entryTask.put(SqlHelper.COLUMN_TASK_URGENT, urgent);
-                        entryTask.put(SqlHelper.COLUMN_TASK_APARTMENT_ID, apartmentId);
-
-                        entryTask.put(SqlHelper.COLUMN_TASK_USER_ID, userId);
-
-                        AllTasksActivity.this.getContentResolver().update(DBContentProvider.CONTENT_URI_TASK, entryTask, "id=" + taskId, null);
+                        taskMysqlId = mysqlId;
                     }
 
 
-                    item.setVisibility(View.GONE);
+//                    listView.getChildAt(position).setEnabled(false);
+                    isEnabled(position);
+
+                    title1.setTextColor(getResources().getColor(R.color.silver));
+                    description1.setTextColor(getResources().getColor(R.color.silver));
+                    date1.setTextColor(getResources().getColor(R.color.silver));
+                    assignButton.setTextColor(getResources().getColor(R.color.silver));
+                    assignButton.setEnabled(false);
+
+
+                    changeTaskState();
+
 
                 }
             });
 
+
             return item;
+        }
+    }
+
+
+    public void changeTaskState() {
+        final String uri = AppConfig.apiURI + "task/change/state";
+        new AllTasksActivity.RESTChangeStateTask().execute(uri);
+    }
+
+    class RESTChangeStateTask extends AsyncTask<String, Void, ResponseEntity<Boolean>> {   //ulazni parametri, vrednost za racunanje procenta zavrsenosti posla, povrtna
+
+        @Override
+        protected ResponseEntity<Boolean> doInBackground(String... uri) {
+            final String url = uri[0];
+            RestTemplate restTemplate = new RestTemplate();
+            try {
+                String email = userSession.getUserEmail();
+                if(!email.equals("")) {
+                    restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+
+                    HttpHeaders headers = new HttpHeaders();
+                    headers.setContentType(MediaType.APPLICATION_JSON);
+                    headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+
+                    ChangeTaskStateDto changeTaskStateDto = new ChangeTaskStateDto();
+                    changeTaskStateDto.setEmail(email);
+                    changeTaskStateDto.setState("IN_PROCESS");
+                    changeTaskStateDto.setTaskId(taskMysqlId);
+
+                    HttpEntity entity = new HttpEntity(changeTaskStateDto, headers);   //TODO ispraviti posle odradjenog logovanja
+
+                    ResponseEntity<Boolean> response = restTemplate.postForEntity(url, entity, Boolean.class);
+
+
+                    return response;
+                }
+                return null;
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+                return null;
+            }
+
+        }
+
+        protected void onPostExecute(ResponseEntity<Boolean> responseEntity) {
+
+            Boolean success = responseEntity.getBody();
+            SqlHelper dbHelper = new SqlHelper(AllTasksActivity.this);
+
+
+            ContentValues entryTask = new ContentValues();
+
+            Cursor taskData = db.getTaskById(taskId);
+            while (taskData.moveToNext()) {
+                String mysqlId = taskData.getString(1);
+                String typeOfApartment = taskData.getString(2);
+                String state = "IN_PROCESS";
+                String urgent = taskData.getString(4);
+                String deadline = taskData.getString(5);
+                String apartmentId = taskData.getString(6);
+                String userId = "1";                       //TODO
+
+//                        entryTask.put(SqlHelper.COLUMN_TASK_MYSQLID, mysqlId);
+                entryTask.put(SqlHelper.COLUMN_TASK_STATE, state);
+//                        entryTask.put(SqlHelper.COLUMN_TASK_DEADLINE, deadline);
+//                        entryTask.put(SqlHelper.COLUMN_TASK_TYPE_OF_APARTMENT, typeOfApartment);
+//                        entryTask.put(SqlHelper.COLUMN_TASK_URGENT, urgent);
+//                        entryTask.put(SqlHelper.COLUMN_TASK_APARTMENT_ID, apartmentId);
+                entryTask.put(SqlHelper.COLUMN_TASK_USER_ID, userId);
+                entryTask.put(SqlHelper.COLUMN_TASK_REQESTED, 1);
+
+
+                AllTasksActivity.this.getContentResolver().update(DBContentProvider.CONTENT_URI_TASK, entryTask, "id=" + taskId, null);
+            }
+
         }
     }
 

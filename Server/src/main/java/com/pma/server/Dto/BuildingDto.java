@@ -1,8 +1,9 @@
 package com.pma.server.Dto;
 
 import com.pma.server.model.Address;
+import lombok.Data;
 
-
+@Data
 public class BuildingDto {
 
     private Long id;

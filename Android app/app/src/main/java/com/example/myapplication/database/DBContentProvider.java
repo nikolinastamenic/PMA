@@ -11,7 +11,6 @@ import android.text.TextUtils;
 
 import androidx.annotation.Nullable;
 
-import java.net.URI;
 
 public class DBContentProvider extends ContentProvider {
 
@@ -39,7 +38,7 @@ public class DBContentProvider extends ContentProvider {
     private static final int REPORT_ITEM = 2;
     private static final int REPORT_ITEM_ID = 3;
 
-    private static final int REPORT_REPORT_ITEM= 88;
+    private static final int REPORT_REPORT_ITEM = 88;
     private static final int REPORT_REPORT_ITEM_ID = 3;
 
     private static final String AUTHORITY = "com.example.myapplication";
@@ -54,9 +53,6 @@ public class DBContentProvider extends ContentProvider {
     private static final String REPORT_REPORT_ITEM_PATH = "report_report_item";
 
 
-
-
-
     public static final Uri CONTENT_URI_TASK = Uri.parse("content://" + AUTHORITY + "/" + TASK_PATH);
     public static final Uri CONTENT_URI_ADDRESS = Uri.parse("content://" + AUTHORITY + "/" + ADDRESS_PATH);
     public static final Uri CONTENT_URI_BUILDING = Uri.parse("content://" + AUTHORITY + "/" + BUILDING_PATH);
@@ -65,9 +61,6 @@ public class DBContentProvider extends ContentProvider {
     public static final Uri CONTENT_URI_REPORT = Uri.parse("content://" + AUTHORITY + "/" + REPORT_PATH);
     public static final Uri CONTENT_URI_REPORT_ITEM = Uri.parse("content://" + AUTHORITY + "/" + REPORT_ITEM_PATH);
     public static final Uri CONTENT_URI_JOIN_TABLE = Uri.parse("content://" + AUTHORITY + "/" + REPORT_REPORT_ITEM_PATH);
-
-
-
 
 
     private static final UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);

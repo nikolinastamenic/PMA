@@ -52,5 +52,6 @@
     <string name="report_date">Izveštaj kreiran: </string>
     <string name="state">Stanje: </string>
     <string name="address">Adresa: </string>
+    <string name="waiting">Čeka se </string>
 
 </resources>

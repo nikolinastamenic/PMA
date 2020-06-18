@@ -36,4 +36,15 @@ public class TaskController {
     }
 
 
+    @PostMapping(value = "/change/state")
+    public ResponseEntity changeTaskState(@RequestBody ChangeTaskStateDto changeTaskStateDto) {
+        boolean success = this.taskService.changeTaskState(changeTaskStateDto);
+        if(success) {
+
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+
 }

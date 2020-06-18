@@ -52,5 +52,7 @@
     <string name="report_date">Report created: </string>
     <string name="state">State: </string>
     <string name="address">Address: </string>
+    <string name="waiting">Requested</string>
+
 
 </resources>

@@ -1,5 +1,6 @@
 package com.pma.server.controller;
 
+import com.pma.server.Dto.LoginDto;
 import com.pma.server.Dto.PictureDto;
 import com.pma.server.Dto.UserDto;
 import com.pma.server.service.UserService;
@@ -27,6 +28,15 @@ public class UserController {
     @PostMapping(value = "/{id}/picture")
     public ResponseEntity<UserDto> setUserProfilePicture(@PathVariable("id") Long id, @RequestBody PictureDto picture) {
         return new ResponseEntity(this.userService.setUserProfilePicture(id, picture), HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/login")
+    public ResponseEntity<Boolean> loginUser(@RequestBody LoginDto loginDto) {
+
+        Boolean success = this.userService.loginUser(loginDto);
+        return new ResponseEntity<>(success, HttpStatus.OK);
+
+
     }
 
 }

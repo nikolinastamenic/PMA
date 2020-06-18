@@ -1,5 +1,6 @@
 package com.pma.server.service.serviceImpl;
 
+import com.pma.server.Dto.LoginDto;
 import com.pma.server.Dto.PictureDto;
 import com.pma.server.Dto.UserDto;
 import com.pma.server.mappers.UserMapper;
@@ -61,5 +62,19 @@ public class UserServiceImpl implements UserService {
         }
 
         return UserMapper.toUserDto(user.get());
+    }
+
+    @Override
+    public boolean loginUser(LoginDto loginDto) {
+        User user = this.userRepository.findUserByEmail(loginDto.getEmail());
+        if (user == null){
+            return false;
+        } else if (user.getPassword().equals(loginDto.getPassword())){
+            return true;
+        } else
+        {
+            return false;
+        }
+
     }
 }

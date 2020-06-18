@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -56,6 +57,11 @@ public class NewItemActivity extends AppCompatActivity implements NavigationView
         toggle.syncState();
 
         navigationView.setNavigationItemSelectedListener(this);
+
+        Menu menu =navigationView.getMenu();
+        MenuItem menuItem = menu.findItem(R.id.nav_log_in);
+
+        menuItem.setVisible(false);
 
 
         cameraButton = findViewById(R.id.cameraButtonItem);

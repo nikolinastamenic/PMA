@@ -1,6 +1,7 @@
 package com.pma.server.service.serviceImpl;
 
 import com.pma.server.Dto.AllTaskDto;
+import com.pma.server.Dto.ChangeTaskStateDto;
 import com.pma.server.Dto.ReportItemDto;
 import com.pma.server.mappers.ReportItemMapper;
 import com.pma.server.mappers.TaskMapper;
@@ -77,5 +78,21 @@ public class TaskServiceImpl implements TaskService {
         }
 
         return taskDtos;
+    }
+
+    @Override
+    public boolean changeTaskState(ChangeTaskStateDto changeTaskStateDto) {
+
+        User user = userService.findUserByEmail(changeTaskStateDto.getEmail());
+        Long id = Long.parseLong(changeTaskStateDto.getTaskId());
+        Task task = this.taskRepository.findTaskById(id);
+        if(user == null || task == null){
+            return false;
+        }
+        task.setState(changeTaskStateDto.getState());
+        task.setUser(user);
+        this.taskRepository.save(task);
+
+        return true;
     }
 }

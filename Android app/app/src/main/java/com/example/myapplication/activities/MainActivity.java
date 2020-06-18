@@ -7,20 +7,30 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import android.app.PendingIntent;
+import android.content.ClipData;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.example.myapplication.DTO.AllTaskDto;
 import com.example.myapplication.DTO.EmailDto;
+import com.example.myapplication.DTO.LoginDto;
 import com.example.myapplication.DTO.ReportItemDto;
 import com.example.myapplication.R;
 import com.example.myapplication.database.NewEntry;
 import com.example.myapplication.database.SqlHelper;
+import com.example.myapplication.sync.SyncReceiver;
+import com.example.myapplication.sync.SyncService;
 import com.example.myapplication.util.AppConfig;
 import com.example.myapplication.util.NavBarUtil;
+import com.example.myapplication.util.UserSession;
 import com.google.android.material.navigation.NavigationView;
 
 import org.springframework.http.HttpEntity;
@@ -37,6 +47,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     DrawerLayout drawerLayout;
     NavigationView navigationView;
     Toolbar toolbar;
+
+    private PendingIntent pendingIntent;
+
+    private SyncReceiver sync;
+    public static String SYNC_DATA = "SYNC_DATA";
+
+    SharedPreferences sharedPreferences;
+    private static final String PREF_NAME = "login_preferences";
+
+    String userEmail = "";
+    UserSession userSession;
 
 
     @Override
@@ -56,45 +77,43 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.setCheckedItem(R.id.nav_home);
-        System.out.println("main activity ON CREATE");
+
+        sync = new SyncReceiver();
+        userSession = new UserSession(getApplicationContext());
+//        sharedPreferences = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+
+
+        boolean isUserLogedIn = userSession.checkLogin();
+
+        Menu menu =navigationView.getMenu();
+
+        if (!isUserLogedIn) {                   //TODO proveriti
+
+            userEmail = userSession.getUserEmail();
+
+            MenuItem menuItem = menu.findItem(R.id.nav_log_in);
+
+            menuItem.setVisible(false);
+
+
+            Intent i = new Intent(this, SyncService.class);
+            i.putExtra("Email", userEmail);
+            startService(i);
+
+
+            // Retrieve a PendingIntent that will perform a broadcast
+            Intent intent = new Intent(this, SyncService.class);
+            pendingIntent = PendingIntent.getService(this, 0, intent, 0);
+
+            System.out.println("main activity ON CREATE");
+
+        }
 
     }
 
-
-    public void onClickButton(View view) {
-
-        Intent intent = new Intent(MainActivity.this, TestActivity.class);
-        //da li ove dve linije znace isto?
-//        intent.setClassName("activities", "TestActivity");
-        intent.putExtra("broj", 12);
-        startActivity(intent);
-
-        System.out.println("main activity ON CLICK BUTTON");
-
-    }
-
-
-    public void onClickApartmentView(View view) {
-        Intent intent = new Intent(MainActivity.this, ApartmentActivity.class);
-
-        startActivity(intent);
-    }
 
     public void onClickReport(View view) {
         Intent intent = new Intent(MainActivity.this, ReportActivity.class);
-
-        startActivity(intent);
-    }
-
-    public void onClickSettings(View view) {
-        Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
-
-        startActivity(intent);
-    }
-
-    public void onClickAllTasks(View view) {
-        Intent intent = new Intent(MainActivity.this, AllTasksActivity.class);
-
         startActivity(intent);
     }
 
@@ -121,6 +140,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     protected void onPause() {
+
         super.onPause();
         System.out.println("main activity ON PAUSE");
 
@@ -130,8 +150,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onResume() {
         super.onResume();
-        syncTasks(); //TODO premestiti
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(SYNC_DATA);
+
+        filter.addAction("android.net.wifi.WIFI_STATE_CHANGED");
+        filter.addAction("android.net.wifi.STATE_CHANGE");
+        registerReceiver(sync, filter);
         System.out.println("main activity ON RESUME");
+
 
     }
 
@@ -166,81 +193,5 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
-    public void syncTasks() {
-        final String uri = AppConfig.apiURI + "task/all";
-        new MainActivity.RESTTask().execute(uri);
-    }
-
-    class RESTTask extends AsyncTask<String, Void, ResponseEntity<AllTaskDto[]>> {
-
-        @Override
-        protected ResponseEntity<AllTaskDto[]> doInBackground(String... uri) {
-            final String url = uri[0];
-            RestTemplate restTemplate = new RestTemplate();
-            try {
-                restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-
-                HttpHeaders headers = new HttpHeaders();
-                headers.setContentType(MediaType.APPLICATION_JSON);
-                headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-
-                EmailDto emailDto = new EmailDto("user@yahoo.com");
-
-                HttpEntity entity = new HttpEntity(emailDto, headers);   //TODO ispraviti posle odradjenog logovanja
-
-                ResponseEntity<AllTaskDto[]> response = restTemplate.postForEntity(url, entity, AllTaskDto[].class);
-
-
-                return response;
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-                return null;
-            }
-
-        }
-
-        protected void onPostExecute(ResponseEntity<AllTaskDto[]> responseEntity) {
-
-            AllTaskDto[] taskDtos = responseEntity.getBody();
-
-            SqlHelper dbHelper = new SqlHelper(MainActivity.this);
-            dbHelper.dropTaskTable();
-
-            for (AllTaskDto taskDto : taskDtos) {
-                String userId = null;
-                if (taskDto.getUserDto() != null) {
-                    String userUri = NewEntry.newUserEntry(MainActivity.this, taskDto.getUserDto()); //TODO promeniti kad se odradi logovanje!
-                    userId = userUri.split("/")[1];
-                }
-                String addressUri = NewEntry.newAddressEntry(MainActivity.this, taskDto.getApartmentDto().getBuildingDto());
-                String buildingUri = NewEntry.newBuildingEntry(MainActivity.this, taskDto.getApartmentDto().getBuildingDto(), addressUri);
-
-                String apartmentUri = NewEntry.newApartmentEntry(MainActivity.this, taskDto.getApartmentDto(), buildingUri);
-                String reportId = null;
-                if (taskDto.getReportDto() != null) {
-                    String reportUri = NewEntry.newReportEntry(MainActivity.this, taskDto.getReportDto());
-                    reportId = reportUri.split("/")[1];
-
-                    if (!taskDto.getReportDto().getItemList().isEmpty()) {
-
-                        for (ReportItemDto reportItemDto : taskDto.getReportDto().getItemList()) {
-
-                            String reportItemUri = NewEntry.newReportItemEntry(MainActivity.this, reportItemDto);
-
-                            String reportItemId = reportItemUri.split("/")[1];
-                            String reportReporetItemUri = NewEntry.newReportReportItemEntry(MainActivity.this, reportItemDto, taskDto.getReportDto(), reportId, reportItemId);
-
-                        }
-                    }
-                }
-
-
-                String taskUri = NewEntry.newTaskEntry(MainActivity.this, taskDto, apartmentUri, userId, reportId);
-
-
-            }
-
-        }
-    }
 
 }
