@@ -29,8 +29,8 @@ public class TaskController {
         List<AllTaskDto> tasksInProcess = this.taskService.getTasksInProcess(emailDto.getEmail());
 
         //todo vratiti samo tasks without user kad se podesi brisanje na androidu
-        tasksWithoutUser.addAll(finishedTasks);
-        tasksWithoutUser.addAll(tasksInProcess);
+//        tasksWithoutUser.addAll(finishedTasks);
+//        tasksWithoutUser.addAll(tasksInProcess);
 
         return new ResponseEntity<>(tasksWithoutUser,HttpStatus.OK);
     }
