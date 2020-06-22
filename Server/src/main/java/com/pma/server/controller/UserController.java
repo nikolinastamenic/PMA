@@ -2,6 +2,7 @@ package com.pma.server.controller;
 
 import com.pma.server.Dto.LoginDto;
 import com.pma.server.Dto.PictureDto;
+import com.pma.server.Dto.UserAndTaskDto;
 import com.pma.server.Dto.UserDto;
 import com.pma.server.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -31,10 +32,10 @@ public class UserController {
     }
 
     @PostMapping(value = "/login")
-    public ResponseEntity<Boolean> loginUser(@RequestBody LoginDto loginDto) {
+    public ResponseEntity<UserAndTaskDto> loginUser(@RequestBody LoginDto loginDto) {
 
-        Boolean success = this.userService.loginUser(loginDto);
-        return new ResponseEntity<>(success, HttpStatus.OK);
+        UserAndTaskDto userAndTaskDto = this.userService.loginUser(loginDto);
+        return new ResponseEntity<>(userAndTaskDto, HttpStatus.OK);
 
 
     }
