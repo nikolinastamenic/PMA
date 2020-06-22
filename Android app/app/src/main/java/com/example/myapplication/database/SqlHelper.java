@@ -213,6 +213,24 @@ public class SqlHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
+    public void dropBuildingTable(){
+        SQLiteDatabase sqlDB = this.getWritableDatabase();
+        sqlDB.execSQL("DROP TABLE IF EXISTS " + TABLE_BUILDING);
+        sqlDB.execSQL(TABLE_BUILDING_CREATE);
+    }
+
+    public void dropApartmentTable(){
+        SQLiteDatabase sqlDB = this.getWritableDatabase();
+        sqlDB.execSQL("DROP TABLE IF EXISTS " + TABLE_APARTMENT);
+        sqlDB.execSQL(TABLE_APARTMENT_CREATE);
+    }
+
+    public void dropAddressTable(){
+        SQLiteDatabase sqlDB = this.getWritableDatabase();
+        sqlDB.execSQL("DROP TABLE IF EXISTS " + TABLE_ADDRESS);
+        sqlDB.execSQL(TABLE_ADDRESS_CREATE);
+    }
+
     public void dropTaskTable(){
         SQLiteDatabase sqlDB = this.getWritableDatabase();
         sqlDB.execSQL("DROP TABLE IF EXISTS " + TABLE_TASK);
@@ -268,6 +286,13 @@ public class SqlHelper extends SQLiteOpenHelper {
         return data;
     }
 
+    public Cursor getApartmentByMySqlId (String id) {
+        SQLiteDatabase sqlDB = this.getWritableDatabase();
+        Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_APARTMENT + " WHERE mysql_id " + "= " + id, null);
+
+        return data;
+    }
+
     public Cursor getApartmentById (String id) {
         SQLiteDatabase sqlDB = this.getWritableDatabase();
         Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_APARTMENT + " WHERE id " + "= " + id, null);
@@ -283,9 +308,23 @@ public class SqlHelper extends SQLiteOpenHelper {
         return data;
     }
 
+    public Cursor getBuildingByMySqlId (String id) {
+        SQLiteDatabase sqlDB = this.getWritableDatabase();
+        Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_BUILDING + " WHERE mysql_id " + "= " + id, null);
+
+        return data;
+    }
+
     public Cursor getAddressById (String id) {
         SQLiteDatabase sqlDB = this.getWritableDatabase();
         Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_ADDRESS + " WHERE id " + "= " + id, null);
+
+        return data;
+    }
+
+    public Cursor getAddressByMySqlId (String id) {
+        SQLiteDatabase sqlDB = this.getWritableDatabase();
+        Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_ADDRESS + " WHERE mysql_id " + "= " + id, null);
 
         return data;
     }
@@ -313,9 +352,23 @@ public class SqlHelper extends SQLiteOpenHelper {
         return data;
     }
 
+    public Cursor getUserByEmail (String email) {
+        SQLiteDatabase sqlDB = this.getWritableDatabase();
+        Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_USER + " WHERE email " + "=? ", new String[]{email});
+
+        return data;
+    }
+
     public Cursor getUserByMySqlId (String id) {
         SQLiteDatabase sqlDB = this.getWritableDatabase();
         Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_USER + " WHERE mysql_id " + "= " + id, null);
+
+        return data;
+    }
+
+    public Cursor getTaskByMySqlId (String id) {
+        SQLiteDatabase sqlDB = this.getWritableDatabase();
+        Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_TASK + " WHERE mysql_id " + "= " + id, null);
 
         return data;
     }

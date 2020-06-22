@@ -29,29 +29,27 @@ public class NewEntry {
         return addressUri.toString();
     }
 
-    public static String newBuildingEntry(Context context, BuildingDto buildingDto, String addressUri) {
+    public static String newBuildingEntry(Context context, BuildingDto buildingDto, String addressId) {
 
         ContentValues entryBuilding = new ContentValues();
         entryBuilding.put(SqlHelper.COLUMN_BUILDING_MYSQLID, buildingDto.getId());
-        String addressId = addressUri.split("/")[1];
         entryBuilding.put(SqlHelper.COLUMN_BUILDING_ADDRESS_ID, addressId);
         Uri buildingUri = context.getContentResolver().insert(DBContentProvider.CONTENT_URI_BUILDING, entryBuilding);
         return buildingUri.toString();
     }
 
-    public static String newApartmentEntry(Context context, ApartmentDto apartmentDto, String buildingUri) {
+    public static String newApartmentEntry(Context context, ApartmentDto apartmentDto, String buildingId) {
 
         ContentValues entryApartment = new ContentValues();
 
         entryApartment.put(SqlHelper.COLUMN_APARTMENT_MYSQLID, apartmentDto.getId());
         entryApartment.put(SqlHelper.COLUMN_APARTMENT_NUMBER, apartmentDto.getNumber());
-        String buildingId = buildingUri.split("/")[1];
         entryApartment.put(SqlHelper.COLUMN_APARTMENT_BUILDING_ID, buildingId);
         Uri apartmentUri = context.getContentResolver().insert(DBContentProvider.CONTENT_URI_APARTMENT, entryApartment);
         return apartmentUri.toString();
     }
 
-    public static String newTaskEntry(Context context, AllTaskDto allTaskDto, String apartmentUri, String userId, String reportId) {
+    public static String newTaskEntry(Context context, AllTaskDto allTaskDto, String apartmentId, String userId, String reportId) {
         ContentValues entryTask = new ContentValues();
 
         entryTask.put(SqlHelper.COLUMN_TASK_MYSQLID, allTaskDto.getId());
@@ -59,13 +57,12 @@ public class NewEntry {
         entryTask.put(SqlHelper.COLUMN_TASK_DEADLINE, allTaskDto.getDeadline().toString());
         entryTask.put(SqlHelper.COLUMN_TASK_TYPE_OF_APARTMENT, allTaskDto.getTypeOfApartment());
         entryTask.put(SqlHelper.COLUMN_TASK_URGENT, allTaskDto.isUrgent());
-        String apartmentId = apartmentUri.split("/")[1];
         entryTask.put(SqlHelper.COLUMN_TASK_APARTMENT_ID, apartmentId);
-        if (userId != null) {
+        if (!userId.equals("")) {
             entryTask.put(SqlHelper.COLUMN_TASK_USER_ID, userId);
 
         }
-        if (reportId != null) {
+        if (!reportId.equals("")) {
             entryTask.put(SqlHelper.COLUMN_TASK_REPORT_ID, reportId);
         }
         Uri taskUri = context.getContentResolver().insert(DBContentProvider.CONTENT_URI_TASK, entryTask);

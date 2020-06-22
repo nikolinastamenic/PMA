@@ -1,4 +1,4 @@
-package com.example.myapplication.sync;
+package com.example.myapplication.sync.receiver;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

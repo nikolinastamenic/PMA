@@ -21,13 +21,13 @@
         android:usesCleartextTraffic="true">
 
 
-        <receiver android:name="com.example.myapplication.sync.SyncReceiver">
+        <receiver android:name="com.example.myapplication.sync.receiver.SyncReceiver">
             <intent-filter>
                 <action android:name="android.net.wifi.WIFI_STATE_CHANGED"/>
                 <action android:name="android.net.wifi.STATE_CHANGE"/>
             </intent-filter>
         </receiver>
-        <service android:name="com.example.myapplication.sync.SyncService"></service>
+        <service android:name="com.example.myapplication.sync.service.SyncService"></service>
 
         <activity android:name=".activities.MainActivity">
             <intent-filter>

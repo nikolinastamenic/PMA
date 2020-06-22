@@ -33,8 +33,8 @@ import com.example.myapplication.DTO.ChangeTaskStateDto;
 import com.example.myapplication.R;
 import com.example.myapplication.database.DBContentProvider;
 import com.example.myapplication.database.SqlHelper;
-import com.example.myapplication.sync.SyncReceiver;
-import com.example.myapplication.sync.SyncService;
+import com.example.myapplication.sync.receiver.SyncReceiver;
+import com.example.myapplication.sync.service.SyncService;
 import com.example.myapplication.util.AppConfig;
 import com.example.myapplication.util.NavBarUtil;
 import com.example.myapplication.util.UserSession;
@@ -108,6 +108,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
         // Retrieve a PendingIntent that will perform a broadcast
         Intent intent = new Intent(this, SyncService.class);
+        intent.putExtra("activityName", "AllTasksActivity");
         pendingIntent = PendingIntent.getService(this, 0, intent, 0);
 
 

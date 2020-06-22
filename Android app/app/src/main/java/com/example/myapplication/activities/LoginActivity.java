@@ -3,6 +3,7 @@ package com.example.myapplication.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
@@ -18,8 +19,12 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.myapplication.DTO.LoginDto;
+import com.example.myapplication.DTO.UserDto;
 import com.example.myapplication.R;
 
+import com.example.myapplication.database.NewEntry;
+import com.example.myapplication.database.SqlHelper;
+import com.example.myapplication.sync.service.SyncService;
 import com.example.myapplication.util.AppConfig;
 import com.example.myapplication.util.NavBarUtil;
 import com.example.myapplication.util.UserSession;
@@ -48,8 +53,7 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
     UserSession session;
     String email;
     String password;
-    boolean success;
-
+    SqlHelper db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,62 +101,14 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
 
         email = etEmail.getText().toString();
         password = etPassword.getText().toString();
-        checkLogin();
+
+        Intent intent = new Intent(this, SyncService.class);
+        intent.putExtra("Email", email);
+        intent.putExtra("Password", password);
+        intent.putExtra("activityName", "LoginActivity");
+        startService(intent);
 
 
-    }
-
-
-    public void checkLogin() {
-        final String uri = AppConfig.apiURI + "user/login";
-        new LoginActivity.RESTCheckLogin().execute(uri);
-    }
-
-    class RESTCheckLogin extends AsyncTask<String, Void, ResponseEntity<Boolean>> {   //ulazni parametri, vrednost za racunanje procenta zavrsenosti posla, povrtna
-
-        @Override
-        protected ResponseEntity<Boolean> doInBackground(String... uri) {
-            final String url = uri[0];
-            RestTemplate restTemplate = new RestTemplate();
-            try {
-                restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-
-                HttpHeaders headers = new HttpHeaders();
-                headers.setContentType(MediaType.APPLICATION_JSON);
-                headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-
-                LoginDto loginDto = new LoginDto();
-                loginDto.setEmail(email);
-                loginDto.setPassword(password);
-
-                HttpEntity entity = new HttpEntity(loginDto, headers);
-
-                ResponseEntity<Boolean> response = restTemplate.postForEntity(url, entity, Boolean.class);
-
-
-                return response;
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-                return null;
-            }
-
-        }
-
-        protected void onPostExecute(ResponseEntity<Boolean> responseEntity) {
-            success = responseEntity.getBody();
-
-            if (success) {
-                session.createUserLoginSession(email, password);
-                Intent i = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(i);
-            } else {
-                Toast.makeText(getApplicationContext(),
-                        "Email/Password is incorrect",
-                        Toast.LENGTH_LONG).show();
-            }
-
-
-        }
     }
 
 }
