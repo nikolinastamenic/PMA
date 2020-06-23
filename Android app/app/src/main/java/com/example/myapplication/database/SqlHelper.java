@@ -373,6 +373,13 @@ public class SqlHelper extends SQLiteOpenHelper {
         return data;
     }
 
+    public Cursor getTasksBySynchronizedAndUserId (int isSynchronized, String id) {
+        SQLiteDatabase sqlDB = this.getWritableDatabase();
+        Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_TASK + " WHERE user_id" + "= " + id + " and is_synchronized" + "= " + isSynchronized, null);
+
+        return data;
+    }
+
     public Cursor setUserPicture (String mySqlId, String pictureName) {
         SQLiteDatabase sqlDB = this.getWritableDatabase();
         Cursor data = sqlDB.rawQuery("UPDATE " + TABLE_USER + " SET picture = '" + pictureName + "' WHERE mysql_id = " + mySqlId, null);

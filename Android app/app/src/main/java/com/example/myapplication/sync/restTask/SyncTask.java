@@ -1,14 +1,13 @@
 package com.example.myapplication.sync.restTask;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 
 import com.example.myapplication.DTO.AllTaskDto;
 import com.example.myapplication.DTO.EmailDto;
-import com.example.myapplication.DTO.ReportItemDto;
-import com.example.myapplication.activities.MainActivity;
+import com.example.myapplication.database.DBContentProvider;
 import com.example.myapplication.database.NewEntry;
 import com.example.myapplication.database.SqlHelper;
 import com.example.myapplication.util.AppConfig;
@@ -21,14 +20,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+
 
 public class SyncTask extends AsyncTask<String, Void, ResponseEntity<AllTaskDto[]>> {
 
     private Context context;
-    UserSession userSession;
 
 
     public static String RESULT_CODE = "RESULT_CODE";
@@ -41,8 +38,7 @@ public class SyncTask extends AsyncTask<String, Void, ResponseEntity<AllTaskDto[
     protected ResponseEntity<AllTaskDto[]> doInBackground(String... uri) {
 
 
-
-        userSession = new UserSession(context);
+        UserSession userSession = new UserSession(context);
         final String url = uri[0];
         String email = uri[1];
         RestTemplate restTemplate = new RestTemplate();
@@ -98,30 +94,36 @@ public class SyncTask extends AsyncTask<String, Void, ResponseEntity<AllTaskDto[
             Cursor taskData = db.getTaskByMySqlId(String.valueOf(mySqlId));
             Cursor apartmentData = db.getApartmentByMySqlId(String.valueOf(taskDto.getApartmentDto().getId()));
 
-            System.out.println(addressData.getCount() + " COUNT");
-            if (!(addressData.moveToFirst()) || addressData.getCount() == 0 ) {
+            if (!(addressData.moveToFirst()) || addressData.getCount() == 0) {
                 addressId = (NewEntry.newAddressEntry(context, taskDto.getApartmentDto().getBuildingDto())).split("/")[1];
             } else {
                 addressData.moveToFirst();
                 addressId = Integer.toString(addressData.getInt(0));
             }
 
-            if (!(buildingData.moveToFirst()) || buildingData.getCount() ==0) {
+            if (!(buildingData.moveToFirst()) || buildingData.getCount() == 0) {
                 buildingId = (NewEntry.newBuildingEntry(context, taskDto.getApartmentDto().getBuildingDto(), addressId)).split("/")[1];
             } else {
                 buildingData.moveToFirst();
                 buildingId = Integer.toString(buildingData.getInt(0));
             }
 
-            if (!(apartmentData.moveToFirst()) || apartmentData.getCount() ==0) {
+            if (!(apartmentData.moveToFirst()) || apartmentData.getCount() == 0) {
                 apartmentId = (NewEntry.newApartmentEntry(context, taskDto.getApartmentDto(), buildingId)).split("/")[1];
             } else {
                 apartmentData.moveToFirst();
                 apartmentId = Integer.toString(apartmentData.getInt(0));
             }
 
-            if (!(taskData.moveToFirst()) || taskData.getCount() ==0) {
+            if (!(taskData.moveToFirst()) || taskData.getCount() == 0) {
                 String taskUri = NewEntry.newTaskEntry(context, taskDto, apartmentId, userId, reportId);
+            } else {
+
+                ContentValues entryTask = new ContentValues();
+                String state = taskDto.getState();
+                entryTask.put(SqlHelper.COLUMN_TASK_STATE, state);
+
+                context.getContentResolver().update(DBContentProvider.CONTENT_URI_TASK, entryTask, "id=" + taskData.getInt(0), null);
             }
 
             addressData.close();
@@ -130,14 +132,6 @@ public class SyncTask extends AsyncTask<String, Void, ResponseEntity<AllTaskDto[
             taskData.close();
 
         }
-
-//        db.dropTaskTable();
-//        db.dropReportTable();
-//        db.dropUserTable();
-//        db.dropReportTable();
-//        db.dropAddressTable();
-//        db.dropApartmentTable();
-//        db.dropBuildingTable();
 
     }
 }
