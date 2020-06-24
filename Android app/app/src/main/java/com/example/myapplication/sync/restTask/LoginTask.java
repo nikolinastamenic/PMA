@@ -80,6 +80,15 @@ public class LoginTask extends AsyncTask<String, Void, ResponseEntity<UserAndTas
 
         UserAndTaskDto userAndTaskDto = responseEntity.getBody();
 
+//        db.dropTaskTable();
+//        db.dropReportTable();
+//        db.dropUserTable();
+//        db.dropReportTable();
+//        db.dropAddressTable();
+//        db.dropApartmentTable();
+//        db.dropBuildingTable();
+
+
         if (userAndTaskDto != null) {
             session.createUserLoginSession(email, password);
             Intent i = new Intent(context, MainActivity.class);
@@ -139,7 +148,6 @@ public class LoginTask extends AsyncTask<String, Void, ResponseEntity<UserAndTas
                         if (taskDto.getReportDto() != null) {
                             String reportUri = NewEntry.newReportEntry(context, taskDto.getReportDto());
                             reportId = reportUri.split("/")[1];
-                            System.out.println(reportId + " report IDDDDDDDDDDDDDDDDDDDDDD");
 
                             if (!taskDto.getReportDto().getItemList().isEmpty()) {
 

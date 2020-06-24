@@ -89,7 +89,7 @@ public class TasksInProgressActivity extends AppCompatActivity implements Naviga
         } else {
             while (data.moveToNext()) {
 
-                if (data.getInt(10) == 1) {
+                if (data.getInt(9) == 1 || data.getInt(9) == 2) {
 
                     taskIds.add(data.getString(0));
                     checkApartmentDate.add(data.getString(5).substring(0, 13));

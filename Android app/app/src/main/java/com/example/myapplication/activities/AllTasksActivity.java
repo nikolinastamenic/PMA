@@ -108,7 +108,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
             while (data.moveToNext()) {
                 taskIds.add(data.getString(0));
                 checkApartmentDate.add(data.getString(5).substring(0, 13));
-                taskWaitingList.add(data.getInt(10));
+                taskWaitingList.add(data.getInt(9));
                 apartmentId = data.getString(6);
                 Cursor apartmentData = db.getApartmentById(apartmentId);
 
@@ -249,7 +249,6 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
 
             if (taskWaitingList.get(position) == 0) {
-
 
                 isEnabled(position);
 

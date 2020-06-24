@@ -71,13 +71,7 @@ public class SyncTask extends AsyncTask<String, Void, ResponseEntity<AllTaskDto[
 
         SqlHelper db = new SqlHelper(context);
 
-//        db.dropTaskTable();
-//        db.dropReportTable();
-//        db.dropUserTable();
-//        db.dropReportTable();
-//        db.dropAddressTable();
-//        db.dropApartmentTable();
-//        db.dropBuildingTable();
+
 
         for (AllTaskDto taskDto : taskDtos) {
 
@@ -116,6 +110,7 @@ public class SyncTask extends AsyncTask<String, Void, ResponseEntity<AllTaskDto[
             }
 
             if (!(taskData.moveToFirst()) || taskData.getCount() == 0) {
+
                 String taskUri = NewEntry.newTaskEntry(context, taskDto, apartmentId, userId, reportId);
             } else {
 

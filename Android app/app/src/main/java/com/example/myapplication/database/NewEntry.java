@@ -58,6 +58,7 @@ public class NewEntry {
         entryTask.put(SqlHelper.COLUMN_TASK_TYPE_OF_APARTMENT, allTaskDto.getTypeOfApartment());
         entryTask.put(SqlHelper.COLUMN_TASK_URGENT, allTaskDto.isUrgent());
         entryTask.put(SqlHelper.COLUMN_TASK_APARTMENT_ID, apartmentId);
+        entryTask.put(SqlHelper.COLUMN_TASK_IS_SYNCHRONIZED, 2);     //default vrednost, tek je stigao task, 0 nije sinh, 1 jeste sinh
         if (!userId.equals("")) {
             entryTask.put(SqlHelper.COLUMN_TASK_USER_ID, userId);
 

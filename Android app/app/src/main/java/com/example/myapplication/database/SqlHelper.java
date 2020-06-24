@@ -77,7 +77,6 @@ public class SqlHelper extends SQLiteOpenHelper {
     public static final String COLUMN_TASK_STATE = "state";
     public static final String COLUMN_TASK_URGENT = "urgent";
     public static final String COLUMN_TASK_DEADLINE = "deadline";
-    public static final String COLUMN_TASK_REQESTED = "requested";
     public static final String COLUMN_TASK_IS_SYNCHRONIZED = "is_synchronized";
     public static final String COLUMN_TASK_APARTMENT_ID = "apartment_id";
     public static final String COLUMN_TASK_USER_ID = "user_id";
@@ -173,7 +172,6 @@ public class SqlHelper extends SQLiteOpenHelper {
             +  COLUMN_TASK_APARTMENT_ID+ " integer, "
             + COLUMN_TASK_REPORT_ID + " integer, "
             + COLUMN_TASK_USER_ID + " integer, "
-            + COLUMN_TASK_REQESTED + " integer, "
             + COLUMN_TASK_IS_SYNCHRONIZED + " integer, "
             + "FOREIGN KEY(apartment_id) REFERENCES apartment(id), "
             + "FOREIGN KEY(report_id) REFERENCES report(id), "

@@ -92,17 +92,19 @@ public class RequestTaskTask extends AsyncTask<String, Void, ResponseEntity<Chan
 
         if (changeTaskStateDto != null) {
 
-            for (String taskId : changeTaskStateDto.getTaskIds()) {
+            for (String mySqlTaskId : changeTaskStateDto.getTaskIds()) {
 
                 ContentValues entryTask = new ContentValues();
 
-                Cursor taskData = db.getTaskByMySqlId(taskId);
+                Cursor taskData = db.getTaskByMySqlId(mySqlTaskId);
                 while (taskData.moveToNext()) {
                     String state = "IN_PROCESS";
                     entryTask.put(SqlHelper.COLUMN_TASK_STATE, state);
                     entryTask.put(SqlHelper.COLUMN_TASK_IS_SYNCHRONIZED, 1);
+                    String id = taskData.getString(0);
 
-                    context.getContentResolver().update(DBContentProvider.CONTENT_URI_TASK, entryTask, "id=" + taskId, null);
+
+                    context.getContentResolver().update(DBContentProvider.CONTENT_URI_TASK, entryTask, "id=" + id, null);
 
                 }
             }
