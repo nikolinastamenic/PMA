@@ -8,39 +8,20 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.app.PendingIntent;
-import android.content.ClipData;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.example.myapplication.DTO.AllTaskDto;
-import com.example.myapplication.DTO.EmailDto;
-import com.example.myapplication.DTO.LoginDto;
-import com.example.myapplication.DTO.ReportItemDto;
 import com.example.myapplication.R;
-import com.example.myapplication.database.NewEntry;
-import com.example.myapplication.database.SqlHelper;
-import com.example.myapplication.sync.SyncReceiver;
-import com.example.myapplication.sync.SyncService;
-import com.example.myapplication.util.AppConfig;
+import com.example.myapplication.sync.receiver.SyncReceiver;
+import com.example.myapplication.sync.service.SyncService;
 import com.example.myapplication.util.NavBarUtil;
 import com.example.myapplication.util.UserSession;
 import com.google.android.material.navigation.NavigationView;
-
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.web.client.RestTemplate;
-
-import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -98,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             Intent i = new Intent(this, SyncService.class);
             i.putExtra("Email", userEmail);
+            i.putExtra("activityName", "MainActivity");
             startService(i);
 
 
