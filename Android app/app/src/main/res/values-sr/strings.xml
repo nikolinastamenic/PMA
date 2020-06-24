@@ -14,7 +14,7 @@
     <string name="login_rememberMe">Zapamti me</string>
     <string name="login_forgotPassword">Zaboravljena lozinka</string>
     <string name="home">Početna strana</string>
-    <string name="all_tasks">Svi pregledi</string>
+    <string name="all_tasks">Nedodeljeni pregledi</string>
     <string name="tasks_in_process">Pregledi u procesu</string>
     <string name="finished_tasks">Završeni pregledi</string>
     <string name="profile">Profil</string>

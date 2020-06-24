@@ -1,11 +1,11 @@
 package com.pma.server.service.serviceImpl;
 
-import com.pma.server.Dto.LoginDto;
-import com.pma.server.Dto.PictureDto;
-import com.pma.server.Dto.UserDto;
+import com.pma.server.Dto.*;
 import com.pma.server.mappers.UserMapper;
+import com.pma.server.model.Task;
 import com.pma.server.model.User;
 import com.pma.server.repository.UserRepository;
+import com.pma.server.service.TaskService;
 import com.pma.server.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -21,9 +23,11 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private UserRepository userRepository;
+    private TaskService taskService;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, TaskService taskService) {
         this.userRepository = userRepository;
+        this.taskService = taskService;
     }
 
     @Override
@@ -65,15 +69,32 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean loginUser(LoginDto loginDto) {
+    public UserAndTaskDto loginUser(LoginDto loginDto) {
+
         User user = this.userRepository.findUserByEmail(loginDto.getEmail());
+        UserAndTaskDto userAndTaskDto = new UserAndTaskDto();
+
         if (user == null){
-            return false;
+            return null;
         } else if (user.getPassword().equals(loginDto.getPassword())){
-            return true;
-        } else
-        {
-            return false;
+            userAndTaskDto.setUser(UserMapper.toUserDto(user));
+            List<AllTaskDto> tasksInProcess = this.taskService.getTasksInProcess(loginDto.getEmail());
+            List<AllTaskDto> finishedTasks = this.taskService.getFinishedTasks(loginDto.getEmail());
+
+            if(!tasksInProcess.isEmpty() && !finishedTasks.isEmpty()) {
+                tasksInProcess.addAll(finishedTasks);
+                userAndTaskDto.setTasks(tasksInProcess);
+            } else if (tasksInProcess.isEmpty() && !finishedTasks.isEmpty()){
+                userAndTaskDto.setTasks(finishedTasks);
+            } else if (finishedTasks.isEmpty() && !tasksInProcess.isEmpty()){
+                userAndTaskDto.setTasks(tasksInProcess);
+            } else {
+                userAndTaskDto.setTasks(new ArrayList<>());
+            }
+
+            return userAndTaskDto;
+        } else {
+            return null;
         }
 
     }

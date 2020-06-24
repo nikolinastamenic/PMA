@@ -130,7 +130,8 @@ public class ReportActivity extends AppCompatActivity implements NavigationView.
 
         while (data.moveToNext()) {
             reportId = data.getString(7);
-            if (reportId != null) {
+            System.out.println(reportId + " report idddddddddddddddddddddddd");
+            if (!reportId.equals("")) {
                 Cursor reportData = db.getReportById(reportId);
                 while (reportData.moveToNext()) {
                     reportIdMySQL = reportData.getString(1);

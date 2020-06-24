@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -28,28 +27,17 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
-import com.example.myapplication.DTO.ChangeTaskStateDto;
 
 import com.example.myapplication.R;
 import com.example.myapplication.database.DBContentProvider;
 import com.example.myapplication.database.SqlHelper;
-import com.example.myapplication.sync.SyncReceiver;
-import com.example.myapplication.sync.SyncService;
-import com.example.myapplication.util.AppConfig;
+import com.example.myapplication.sync.receiver.SyncReceiver;
+import com.example.myapplication.sync.service.SyncService;
 import com.example.myapplication.util.NavBarUtil;
 import com.example.myapplication.util.UserSession;
 import com.google.android.material.navigation.NavigationView;
 
-
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.web.client.RestTemplate;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class AllTasksActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -69,6 +57,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
     private SyncReceiver sync;
     public static String SYNC_DATA = "SYNC_DATA";
     private PendingIntent pendingIntent;
+    private Intent intentService;
     UserSession userSession;
 
 
@@ -95,20 +84,13 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.setCheckedItem(R.id.nav_all_tasks);
 
-        Menu menu =navigationView.getMenu();
+        Menu menu = navigationView.getMenu();
         MenuItem menuItem = menu.findItem(R.id.nav_log_in);
 
         menuItem.setVisible(false);
 
         sync = new SyncReceiver();
         userSession = new UserSession(getApplicationContext());
-
-//        startService(new Intent(this, SyncService.class));
-
-
-        // Retrieve a PendingIntent that will perform a broadcast
-        Intent intent = new Intent(this, SyncService.class);
-        pendingIntent = PendingIntent.getService(this, 0, intent, 0);
 
 
     }
@@ -119,7 +101,6 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
         db = new SqlHelper(this);
         Cursor data = db.getAllTasks();
         String apartmentId = "";
-        String apartmentNumber = "";
         String buildingId = "";
         if (data.getCount() == 0) {
             System.out.println("prazna lista");
@@ -181,6 +162,12 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
         filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
         registerReceiver(sync, filter);
         listView();
+
+        Intent intent = new Intent(AllTasksActivity.this, SyncService.class);
+        intent.putExtra("activityName", "AllTasksActivity");
+        intent.putExtra("Email", userSession.getUserEmail());
+
+        startService(intent);
 
 
     }
@@ -261,7 +248,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
             final Button assignButton = item.findViewById(R.id.buttonAssing);
 
 
-            if (taskWaitingList.get(position) == 1) {
+            if (taskWaitingList.get(position) == 0) {
 
                 isEnabled(position);
 
@@ -279,13 +266,41 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
             assignButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
 
+                    ContentValues entryTask = new ContentValues();
+
+                    String userId = "";
+                    Cursor userData = db.getUserByEmail(userSession.getUserEmail());
+                    while (userData.moveToNext()) {
+                        userId = Integer.toString(userData.getInt(0));
+                    }
                     taskId = taskIds.get(position);
                     waiting.setVisibility(View.VISIBLE);
                     Cursor taskData = db.getTaskById(taskId);
                     while (taskData.moveToNext()) {
                         String mysqlId = taskData.getString(1);
                         taskMysqlId = mysqlId;
+
+
+                        entryTask.put(SqlHelper.COLUMN_TASK_USER_ID, userId);
+                        entryTask.put(SqlHelper.COLUMN_TASK_IS_SYNCHRONIZED, 0);
+
+
+                        context.getContentResolver().update(DBContentProvider.CONTENT_URI_TASK, entryTask, "id=" + taskId, null);
+
                     }
+
+                    Intent i = new Intent(AllTasksActivity.this, SyncService.class);
+                    i.putExtra("activityName", "AllTasksActivity");
+                    i.putExtra("Email", userSession.getUserEmail());
+
+                    startService(i);
+
+                    // Retrieve a PendingIntent that will perform a broadcast
+//                    intentService = new Intent(AllTasksActivity.this, SyncService.class);
+//                    intentService.putExtra("activityName", "AllTasksActivity");
+//                    intentService.putExtra("mySqlTaskId", taskMysqlId);
+//
+//                    pendingIntent = PendingIntent.getService(AllTasksActivity.this, 0, intentService, 0);
 
 
 //                    listView.getChildAt(position).setEnabled(false);
@@ -298,89 +313,11 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
                     assignButton.setEnabled(false);
 
 
-                    changeTaskState();
-
-
                 }
             });
 
 
             return item;
-        }
-    }
-
-
-    public void changeTaskState() {
-        final String uri = AppConfig.apiURI + "task/change/state";
-        new AllTasksActivity.RESTChangeStateTask().execute(uri);
-    }
-
-    class RESTChangeStateTask extends AsyncTask<String, Void, ResponseEntity<Boolean>> {   //ulazni parametri, vrednost za racunanje procenta zavrsenosti posla, povrtna
-
-        @Override
-        protected ResponseEntity<Boolean> doInBackground(String... uri) {
-            final String url = uri[0];
-            RestTemplate restTemplate = new RestTemplate();
-            try {
-                String email = userSession.getUserEmail();
-                if(!email.equals("")) {
-                    restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-
-                    HttpHeaders headers = new HttpHeaders();
-                    headers.setContentType(MediaType.APPLICATION_JSON);
-                    headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-
-                    ChangeTaskStateDto changeTaskStateDto = new ChangeTaskStateDto();
-                    changeTaskStateDto.setEmail(email);
-                    changeTaskStateDto.setState("IN_PROCESS");
-                    changeTaskStateDto.setTaskId(taskMysqlId);
-
-                    HttpEntity entity = new HttpEntity(changeTaskStateDto, headers);   //TODO ispraviti posle odradjenog logovanja
-
-                    ResponseEntity<Boolean> response = restTemplate.postForEntity(url, entity, Boolean.class);
-
-
-                    return response;
-                }
-                return null;
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-                return null;
-            }
-
-        }
-
-        protected void onPostExecute(ResponseEntity<Boolean> responseEntity) {
-
-            Boolean success = responseEntity.getBody();
-            SqlHelper dbHelper = new SqlHelper(AllTasksActivity.this);
-
-
-            ContentValues entryTask = new ContentValues();
-
-            Cursor taskData = db.getTaskById(taskId);
-            while (taskData.moveToNext()) {
-                String mysqlId = taskData.getString(1);
-                String typeOfApartment = taskData.getString(2);
-                String state = "IN_PROCESS";
-                String urgent = taskData.getString(4);
-                String deadline = taskData.getString(5);
-                String apartmentId = taskData.getString(6);
-                String userId = "1";                       //TODO
-
-//                        entryTask.put(SqlHelper.COLUMN_TASK_MYSQLID, mysqlId);
-                entryTask.put(SqlHelper.COLUMN_TASK_STATE, state);
-//                        entryTask.put(SqlHelper.COLUMN_TASK_DEADLINE, deadline);
-//                        entryTask.put(SqlHelper.COLUMN_TASK_TYPE_OF_APARTMENT, typeOfApartment);
-//                        entryTask.put(SqlHelper.COLUMN_TASK_URGENT, urgent);
-//                        entryTask.put(SqlHelper.COLUMN_TASK_APARTMENT_ID, apartmentId);
-                entryTask.put(SqlHelper.COLUMN_TASK_USER_ID, userId);
-                entryTask.put(SqlHelper.COLUMN_TASK_REQESTED, 1);
-
-
-                AllTasksActivity.this.getContentResolver().update(DBContentProvider.CONTENT_URI_TASK, entryTask, "id=" + taskId, null);
-            }
-
         }
     }
 

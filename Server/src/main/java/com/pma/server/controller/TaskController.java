@@ -29,20 +29,21 @@ public class TaskController {
         List<AllTaskDto> tasksInProcess = this.taskService.getTasksInProcess(emailDto.getEmail());
 
         //todo vratiti samo tasks without user kad se podesi brisanje na androidu
-        tasksWithoutUser.addAll(finishedTasks);
-        tasksWithoutUser.addAll(tasksInProcess);
+//        tasksWithoutUser.addAll(finishedTasks);
+//        tasksWithoutUser.addAll(tasksInProcess);
 
         return new ResponseEntity<>(tasksWithoutUser,HttpStatus.OK);
     }
 
 
     @PostMapping(value = "/change/state")
-    public ResponseEntity changeTaskState(@RequestBody ChangeTaskStateDto changeTaskStateDto) {
-        boolean success = this.taskService.changeTaskState(changeTaskStateDto);
-        if(success) {
+    public ResponseEntity<ChangeTaskStateDto> changeTaskState(@RequestBody ChangeTaskStateDto changeTaskStateDto) {
+        ChangeTaskStateDto changeTaskState = this.taskService.changeTaskState(changeTaskStateDto);
 
-            return ResponseEntity.ok().build();
+        if(changeTaskState != null) {
+            return new ResponseEntity(changeTaskState, HttpStatus.OK);
         }
+
         return ResponseEntity.notFound().build();
     }
 

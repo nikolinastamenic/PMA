@@ -41,8 +41,8 @@ public class TaskServiceImpl implements TaskService {
 
         List<AllTaskDto> dtos = new ArrayList<>();
 
-        for(Task task: taskRepository.findAll()) {
-            if(task.getUser() == null){
+        for (Task task : taskRepository.findAll()) {
+            if (task.getUser() == null) {
                 AllTaskDto dto = TaskMapper.toTaskDto(task);
                 dtos.add(dto);
             }
@@ -57,7 +57,7 @@ public class TaskServiceImpl implements TaskService {
         User user = this.userService.findUserByEmail(email);
         List<Task> tasks = this.taskRepository.findAllByUserAndState(user, "IN_PROCESS");
 
-        for(Task task: tasks){
+        for (Task task : tasks) {
             AllTaskDto dto = TaskMapper.toTaskDto(task);
             dtos.add(dto);
         }
@@ -72,7 +72,7 @@ public class TaskServiceImpl implements TaskService {
         List<Task> tasks = this.taskRepository.findAllByUserAndState(user, "FINISHED");
         List<AllTaskDto> taskDtos = new ArrayList<>();
 
-        for(Task t: tasks){
+        for (Task t : tasks) {
             AllTaskDto dto = TaskMapper.toTaskDto(t);
             taskDtos.add(dto);
         }
@@ -81,18 +81,36 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public boolean changeTaskState(ChangeTaskStateDto changeTaskStateDto) {
+    public ChangeTaskStateDto changeTaskState(ChangeTaskStateDto changeTaskStateDto) {
 
         User user = userService.findUserByEmail(changeTaskStateDto.getEmail());
-        Long id = Long.parseLong(changeTaskStateDto.getTaskId());
-        Task task = this.taskRepository.findTaskById(id);
-        if(user == null || task == null){
-            return false;
+        if (user == null) {
+            return null;
         }
-        task.setState(changeTaskStateDto.getState());
-        task.setUser(user);
-        this.taskRepository.save(task);
+        ChangeTaskStateDto returned = new ChangeTaskStateDto();
+        List<String> ids = new ArrayList<>();
 
-        return true;
+        for (String taskId : changeTaskStateDto.getTaskIds()) {
+            Long id = Long.parseLong(taskId);
+            Task task = this.taskRepository.findTaskById(id);
+
+            if (task != null) {
+
+                if (task.getState().equals("NEW")) {
+
+                    task.setState(changeTaskStateDto.getState());
+                    task.setUser(user);
+                    this.taskRepository.save(task);
+                    ids.add(taskId);
+                }
+
+            }
+
+        }
+        returned.setTaskIds(ids);
+        returned.setEmail(user.getEmail());
+        returned.setState(changeTaskStateDto.getState());
+
+        return returned;
     }
 }

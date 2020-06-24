@@ -89,7 +89,6 @@ public class ApartmentActivity extends AppCompatActivity implements NavigationVi
         } else {
             while (data.moveToNext()) {
 
-                System.out.println(data.getString(7) + "REPORTTTTTTTTTT ID");
 
                 stateName = data.getString(3);
                 apartmentId = data.getString(6);

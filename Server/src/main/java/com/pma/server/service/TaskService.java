@@ -13,6 +13,6 @@ public interface TaskService {
     List<AllTaskDto> getAllTasks();
     List<AllTaskDto> getTasksInProcess(String username);
     List<AllTaskDto> getFinishedTasks(String username);
-    boolean changeTaskState (ChangeTaskStateDto changeTaskStateDto);
+    ChangeTaskStateDto changeTaskState (ChangeTaskStateDto changeTaskStateDto);
 
 }

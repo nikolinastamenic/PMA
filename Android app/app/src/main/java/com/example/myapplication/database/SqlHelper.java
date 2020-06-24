@@ -55,12 +55,14 @@ public class SqlHelper extends SQLiteOpenHelper {
     public static final String COLUMN_REPORT_ITEM_FAULT_NAME = "faultName";
     public static final String COLUMN_REPORT_ITEM_DETAILS = "details";
     public static final String COLUMN_REPORT_ITEM_FAULT_PICTURE = "picture";
+    public static final String COLUMN_REPORT_ITEM_IS_SYNCHRONIZED = "is_synchronized";
 
 
     public static final String COLUMN_REPORT_ID = "id";
     public static final String COLUMN_REPORT_MYSQLID = "mysql_id";
     public static final String COLUMN_REPORT_DATE = "date";
     public static final String COLUMN_REPORT_TASK_ID = "task_id";
+    public static final String COLUMN_REPORT_IS_SYNCHRONIZED = "is_synchronized";
 
 
     public static final String COLUMN_REPORT_REPORT_ITEM_REPORT_ID = "report_id";
@@ -75,8 +77,7 @@ public class SqlHelper extends SQLiteOpenHelper {
     public static final String COLUMN_TASK_STATE = "state";
     public static final String COLUMN_TASK_URGENT = "urgent";
     public static final String COLUMN_TASK_DEADLINE = "deadline";
-    public static final String COLUMN_TASK_REQESTED = "requested";
-
+    public static final String COLUMN_TASK_IS_SYNCHRONIZED = "is_synchronized";
     public static final String COLUMN_TASK_APARTMENT_ID = "apartment_id";
     public static final String COLUMN_TASK_USER_ID = "user_id";
     public static final String COLUMN_TASK_REPORT_ID = "report_id";
@@ -136,7 +137,8 @@ public class SqlHelper extends SQLiteOpenHelper {
             + COLUMN_REPORT_ITEM_MYSQLID + " integer, "
             + COLUMN_REPORT_ITEM_FAULT_NAME + " text, "
             + COLUMN_REPORT_ITEM_DETAILS + " text, "
-            + COLUMN_REPORT_ITEM_FAULT_PICTURE + " text"
+            + COLUMN_REPORT_ITEM_FAULT_PICTURE + " text, "
+            + COLUMN_REPORT_ITEM_IS_SYNCHRONIZED + " integer"
             + ")";
 
     private static final String TABLE_REPORT_CREATE = "create table "
@@ -145,6 +147,7 @@ public class SqlHelper extends SQLiteOpenHelper {
             + COLUMN_REPORT_MYSQLID + " integer, "
             + COLUMN_REPORT_DATE + " date, "
             + COLUMN_REPORT_TASK_ID + " integer, "
+            + COLUMN_REPORT_IS_SYNCHRONIZED + " integer, "
             + "FOREIGN KEY(task_id) REFERENCES task(id)"
             + ")";
 
@@ -169,7 +172,7 @@ public class SqlHelper extends SQLiteOpenHelper {
             +  COLUMN_TASK_APARTMENT_ID+ " integer, "
             + COLUMN_TASK_REPORT_ID + " integer, "
             + COLUMN_TASK_USER_ID + " integer, "
-            + COLUMN_TASK_REQESTED + " integer, "
+            + COLUMN_TASK_IS_SYNCHRONIZED + " integer, "
             + "FOREIGN KEY(apartment_id) REFERENCES apartment(id), "
             + "FOREIGN KEY(report_id) REFERENCES report(id), "
             + "FOREIGN KEY(user_id) REFERENCES user(id)"
@@ -206,6 +209,24 @@ public class SqlHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_TASK);
 
         onCreate(db);
+    }
+
+    public void dropBuildingTable(){
+        SQLiteDatabase sqlDB = this.getWritableDatabase();
+        sqlDB.execSQL("DROP TABLE IF EXISTS " + TABLE_BUILDING);
+        sqlDB.execSQL(TABLE_BUILDING_CREATE);
+    }
+
+    public void dropApartmentTable(){
+        SQLiteDatabase sqlDB = this.getWritableDatabase();
+        sqlDB.execSQL("DROP TABLE IF EXISTS " + TABLE_APARTMENT);
+        sqlDB.execSQL(TABLE_APARTMENT_CREATE);
+    }
+
+    public void dropAddressTable(){
+        SQLiteDatabase sqlDB = this.getWritableDatabase();
+        sqlDB.execSQL("DROP TABLE IF EXISTS " + TABLE_ADDRESS);
+        sqlDB.execSQL(TABLE_ADDRESS_CREATE);
     }
 
     public void dropTaskTable(){
@@ -263,6 +284,13 @@ public class SqlHelper extends SQLiteOpenHelper {
         return data;
     }
 
+    public Cursor getApartmentByMySqlId (String id) {
+        SQLiteDatabase sqlDB = this.getWritableDatabase();
+        Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_APARTMENT + " WHERE mysql_id " + "= " + id, null);
+
+        return data;
+    }
+
     public Cursor getApartmentById (String id) {
         SQLiteDatabase sqlDB = this.getWritableDatabase();
         Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_APARTMENT + " WHERE id " + "= " + id, null);
@@ -278,9 +306,23 @@ public class SqlHelper extends SQLiteOpenHelper {
         return data;
     }
 
+    public Cursor getBuildingByMySqlId (String id) {
+        SQLiteDatabase sqlDB = this.getWritableDatabase();
+        Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_BUILDING + " WHERE mysql_id " + "= " + id, null);
+
+        return data;
+    }
+
     public Cursor getAddressById (String id) {
         SQLiteDatabase sqlDB = this.getWritableDatabase();
         Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_ADDRESS + " WHERE id " + "= " + id, null);
+
+        return data;
+    }
+
+    public Cursor getAddressByMySqlId (String id) {
+        SQLiteDatabase sqlDB = this.getWritableDatabase();
+        Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_ADDRESS + " WHERE mysql_id " + "= " + id, null);
 
         return data;
     }
@@ -308,9 +350,30 @@ public class SqlHelper extends SQLiteOpenHelper {
         return data;
     }
 
+    public Cursor getUserByEmail (String email) {
+        SQLiteDatabase sqlDB = this.getWritableDatabase();
+        Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_USER + " WHERE email " + "=? ", new String[]{email});
+
+        return data;
+    }
+
     public Cursor getUserByMySqlId (String id) {
         SQLiteDatabase sqlDB = this.getWritableDatabase();
         Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_USER + " WHERE mysql_id " + "= " + id, null);
+
+        return data;
+    }
+
+    public Cursor getTaskByMySqlId (String id) {
+        SQLiteDatabase sqlDB = this.getWritableDatabase();
+        Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_TASK + " WHERE mysql_id " + "= " + id, null);
+
+        return data;
+    }
+
+    public Cursor getTasksBySynchronizedAndUserId (int isSynchronized, String id) {
+        SQLiteDatabase sqlDB = this.getWritableDatabase();
+        Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_TASK + " WHERE user_id" + "= " + id + " and is_synchronized" + "= " + isSynchronized, null);
 
         return data;
     }

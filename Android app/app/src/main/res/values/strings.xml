@@ -13,7 +13,7 @@
     <string name="login_rememberMe">Remember me</string>
     <string name="login_forgotPassword">Forgot password</string>
     <string name="home">Home</string>
-    <string name="all_tasks">All tasks</string>
+    <string name="all_tasks">Unassigned tasks</string>
     <string name="tasks_in_process">Tasks in process</string>
     <string name="finished_tasks">Finished tasks</string>
     <string name="profile">Profile</string>

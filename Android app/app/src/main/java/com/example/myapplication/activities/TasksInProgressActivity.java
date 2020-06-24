@@ -1,6 +1,5 @@
 package com.example.myapplication.activities;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -90,27 +89,31 @@ public class TasksInProgressActivity extends AppCompatActivity implements Naviga
         } else {
             while (data.moveToNext()) {
 
-                taskIds.add(data.getString(0));
-                checkApartmentDate.add(data.getString(5).substring(0, 13));
-                apartmentId = data.getString(6);
-                Cursor apartmentData = db.getApartmentById(apartmentId);
-                while (apartmentData.moveToNext()) {
-                    apartmentTitle.add("Apartment number: " + apartmentData.getString(2));
+                if (data.getInt(9) == 1 || data.getInt(9) == 2) {
 
-                    buildingId = apartmentData.getString(3);
-                    Cursor buildungData = db.getBuildingById(buildingId);
-                    while (buildungData.moveToNext()) {
-                        String addressId = buildungData.getString(2);
-                        Cursor addressData = db.getAddressById(addressId);
-                        while (addressData.moveToNext()) {
-                            apartmentAddress.add(addressData.getString(3) + ", " + addressData.getString(4) + " " + addressData.getString(5));
+                    taskIds.add(data.getString(0));
+                    checkApartmentDate.add(data.getString(5).substring(0, 13));
+                    apartmentId = data.getString(6);
+                    Cursor apartmentData = db.getApartmentById(apartmentId);
+                    while (apartmentData.moveToNext()) {
+                        apartmentTitle.add("Apartment number: " + apartmentData.getString(2));
+
+                        buildingId = apartmentData.getString(3);
+                        Cursor buildungData = db.getBuildingById(buildingId);
+                        while (buildungData.moveToNext()) {
+                            String addressId = buildungData.getString(2);
+                            Cursor addressData = db.getAddressById(addressId);
+                            while (addressData.moveToNext()) {
+                                apartmentAddress.add(addressData.getString(3) + ", " + addressData.getString(4) + " " + addressData.getString(5));
+                            }
                         }
+
                     }
 
-                }
+                    TasksInProgressActivity.MyAdapter myAdapter = new TasksInProgressActivity.MyAdapter(this, apartmentTitle, apartmentAddress, checkApartmentDate);
+                    listView.setAdapter(myAdapter);
 
-                TasksInProgressActivity.MyAdapter myAdapter = new TasksInProgressActivity.MyAdapter(this, apartmentTitle, apartmentAddress, checkApartmentDate);
-                listView.setAdapter(myAdapter);
+                }
             }
         }
 
