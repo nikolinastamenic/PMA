@@ -71,7 +71,6 @@ public class TasksInProgressActivity extends AppCompatActivity implements Naviga
         MenuItem menuItem = menu.findItem(R.id.nav_log_in);
 
         menuItem.setVisible(false);
-        listView();
 
 
     }
@@ -126,6 +125,8 @@ public class TasksInProgressActivity extends AppCompatActivity implements Naviga
 
                 Intent intent = new Intent(TasksInProgressActivity.this, ApartmentActivity.class);
                 intent.putExtra("taskId", taskId);
+                intent.putExtra("activityName", "TasksInProgressActivity");
+
                 startActivity(intent);
             }
         });
@@ -147,6 +148,13 @@ public class TasksInProgressActivity extends AppCompatActivity implements Naviga
     @Override
     protected void onStop() {
         super.onStop();
+    }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        listView();
     }
 
     @Override

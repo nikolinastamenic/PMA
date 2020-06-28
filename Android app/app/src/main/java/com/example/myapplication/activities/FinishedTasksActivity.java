@@ -70,7 +70,6 @@ public class FinishedTasksActivity extends AppCompatActivity implements Navigati
         MenuItem menuItem = menu.findItem(R.id.nav_log_in);
 
         menuItem.setVisible(false);
-        listView();
 
 
     }
@@ -124,6 +123,8 @@ public class FinishedTasksActivity extends AppCompatActivity implements Navigati
 
                 Intent intent = new Intent(FinishedTasksActivity.this, ApartmentActivity.class);
                 intent.putExtra("taskId", taskId);
+                intent.putExtra("activityName", "FinishedTasksActivity");
+
                 startActivity(intent);
             }
         });
@@ -146,6 +147,14 @@ public class FinishedTasksActivity extends AppCompatActivity implements Navigati
     protected void onStop() {
         super.onStop();
     }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        listView();
+    }
+
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {

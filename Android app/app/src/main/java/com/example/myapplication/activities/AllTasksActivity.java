@@ -316,7 +316,6 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
                         }
                         taskId = taskIds.get(position);
 
-                        System.out.println(taskId + " JIODHSNFUOIHSDOIUFHSOUISHDOIFHSIOHDFSOIHDSIOHFIOS TAAAAAAAAAAAAAAASLOD");
 
                         waiting.setVisibility(View.VISIBLE);
                         Cursor taskData = db.getTaskById(taskId);
@@ -324,7 +323,6 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
                             String mysqlId = taskData.getString(1);
                             taskMysqlId = mysqlId;
 
-                            System.out.println(taskMysqlId + " AAAAAAAAAAAAAAAAAAAAAAAAAAASJIOFUHAUOSHFOUAHOIL");
 
                             entryTask.put(SqlHelper.COLUMN_TASK_USER_ID, userId);
                             entryTask.put(SqlHelper.COLUMN_TASK_IS_SYNCHRONIZED, 0);

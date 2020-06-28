@@ -82,6 +82,10 @@ public class NewEntry {
 //        entryUser.put(SqlHelper.COLUMN_USER_PASSWORD, userDto.getPassword());
         entryUser.put(SqlHelper.COLUMN_USER_NAME, userDto.getName());
         entryUser.put(SqlHelper.COLUMN_USER_SURNAME, userDto.getSurname());
+        if (userDto.getPictureName() != null) {
+            entryUser.put(SqlHelper.COLUMN_USER_PICTURE, userDto.getPictureName());
+
+        }
 
 
         Uri userUri = context.getContentResolver().insert(DBContentProvider.CONTENT_URI_USER, entryUser);
@@ -93,9 +97,12 @@ public class NewEntry {
 
     public static String newReportEntry(Context context, ReportDto reportDto) {
         ContentValues entryReport = new ContentValues();
-        entryReport.put(SqlHelper.COLUMN_REPORT_MYSQLID, reportDto.getId());
-        entryReport.put(SqlHelper.COLUMN_REPORT_DATE, reportDto.getDate().toString());
-
+        if (reportDto.getId() != null) {
+            entryReport.put(SqlHelper.COLUMN_REPORT_MYSQLID, reportDto.getId());
+        }
+        if (reportDto.getDate() != null) {
+            entryReport.put(SqlHelper.COLUMN_REPORT_DATE, reportDto.getDate().toString());
+        }
         Uri reportUri = context.getContentResolver().insert(DBContentProvider.CONTENT_URI_REPORT, entryReport);
 
         return reportUri.toString();
@@ -107,7 +114,7 @@ public class NewEntry {
         entryReportItem.put(SqlHelper.COLUMN_REPORT_ITEM_MYSQLID, reportItemDto.getId());
         entryReportItem.put(SqlHelper.COLUMN_REPORT_ITEM_FAULT_NAME, reportItemDto.getFaultName());
         entryReportItem.put(SqlHelper.COLUMN_REPORT_ITEM_DETAILS, reportItemDto.getDetails()); //TODO fali slika
-        entryReportItem.put(SqlHelper.COLUMN_REPORT_ITEM_FAULT_PICTURE, reportItemDto.getPicture());
+        entryReportItem.put(SqlHelper.COLUMN_REPORT_ITEM_FAULT_PICTURE, reportItemDto.getPicture().getPictureName());
 
         Uri reportItemUri = context.getContentResolver().insert(DBContentProvider.CONTENT_URI_REPORT_ITEM, entryReportItem);
         return reportItemUri.toString();

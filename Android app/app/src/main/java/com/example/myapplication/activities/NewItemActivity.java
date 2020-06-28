@@ -3,6 +3,7 @@ package com.example.myapplication.activities;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Build;
@@ -24,13 +25,18 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.example.myapplication.DTO.PictureDto;
 import com.example.myapplication.DTO.ReportItemDto;
 import com.example.myapplication.R;
 import com.example.myapplication.database.NewEntry;
+import com.example.myapplication.sync.receiver.SyncReceiver;
+import com.example.myapplication.sync.restTask.NewReportItemTask;
+import com.example.myapplication.sync.service.SyncService;
 import com.example.myapplication.util.AppConfig;
 import com.example.myapplication.util.MiscUtil;
 import com.example.myapplication.util.NavBarUtil;
 import com.example.myapplication.util.SavePictureUtil;
+import com.example.myapplication.util.UserSession;
 import com.google.android.material.navigation.NavigationView;
 
 import java.io.ByteArrayOutputStream;
@@ -49,6 +55,13 @@ public class NewItemActivity extends AppCompatActivity implements NavigationView
     String picName;
     String reportId;
     String taskId;
+    ImageView cameraButton;
+    ImageView galleryButton;
+    Button createReportItem;
+    private SyncReceiver sync;
+    public static String SYNC_DATA = "SYNC_DATA";
+    String reportItemId;
+    UserSession userSession;
 
 
     @Override
@@ -79,14 +92,22 @@ public class NewItemActivity extends AppCompatActivity implements NavigationView
         MenuItem menuItem = menu.findItem(R.id.nav_log_in);
 
         menuItem.setVisible(false);
-        Button createReportItem = findViewById(R.id.finishButtonanewItem);
-        ImageView cameraButton = findViewById(R.id.cameraButtonItem);
-        ImageView galleryButton = findViewById(R.id.galleryButtonItem);
+        createReportItem = findViewById(R.id.finishButtonanewItem);
+        cameraButton = findViewById(R.id.cameraButtonItem);
+        galleryButton = findViewById(R.id.galleryButtonItem);
 
         faultNameET = (EditText) findViewById(R.id.nameOfFaultEditText);
         faultDescriptionET = (EditText) findViewById(R.id.descriptionOfFaultEditText);
+        userSession = new UserSession(getApplicationContext());
+
+        sync = new SyncReceiver();
 
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         cameraButton.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
@@ -130,23 +151,46 @@ public class NewItemActivity extends AppCompatActivity implements NavigationView
                 ReportItemDto reportItemDto = new ReportItemDto();
                 reportItemDto.setFaultName(faultNameET.getText().toString());
                 reportItemDto.setDetails(faultDescriptionET.getText().toString());
-                reportItemDto.setPicture(picName);
+                PictureDto pictureDto = new PictureDto();
+                pictureDto.setPictureName(picName);
+                reportItemDto.setPicture(pictureDto);
                 String reportItemUri = NewEntry.newReportItemEntry(NewItemActivity.this, reportItemDto);
 
-                String reportItemId = reportItemUri.split("/")[1];
+                reportItemId = reportItemUri.split("/")[1];
                 String reportReporetItemUri = NewEntry.newReportReportItemEntryWithoutMysqlIds(NewItemActivity.this, reportId, reportItemId);
+
+
+
+                Intent i = new Intent(NewItemActivity.this, SyncService.class);
+                i.putExtra("activityName", "NewItemActivity");
+                i.putExtra("TaskId", taskId );
+                i.putExtra("ReportItemId", reportItemId);
+                i.putExtra("Email", userSession.getUserEmail());
+
+                startService(i);
+
+
 
                 Intent intent = new Intent(NewItemActivity.this, ReportActivity.class);
                 intent.putExtra("taskId", taskId);
+                intent.putExtra("activityName", "NewItemActivity");
+
 
                 startActivity(intent);
 
             }
         });
 
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(SYNC_DATA);
+
+        filter.addAction("android.net.wifi.WIFI_STATE_CHANGED");
+        filter.addAction("android.net.wifi.STATE_CHANGE");
+        filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
+        registerReceiver(sync, filter);
+
 
     }
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

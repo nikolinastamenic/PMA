@@ -1,5 +1,6 @@
 package com.example.myapplication.activities;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
@@ -14,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -26,13 +28,20 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.example.myapplication.DTO.ReportDto;
 import com.example.myapplication.R;
+import com.example.myapplication.database.DBContentProvider;
+import com.example.myapplication.database.NewEntry;
 import com.example.myapplication.database.SqlHelper;
 import com.example.myapplication.util.NavBarUtil;
 import com.google.android.material.navigation.NavigationView;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class ReportActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -50,6 +59,7 @@ public class ReportActivity extends AppCompatActivity implements NavigationView.
     List<Bitmap> images;
     List<ImageView> imageViews;
     String reportId;
+    String activityName;
 
 
     String taskId;
@@ -68,7 +78,8 @@ public class ReportActivity extends AppCompatActivity implements NavigationView.
 
         Intent intent = getIntent();
         taskId = intent.getStringExtra("taskId");
-        System.out.println(taskId + " YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY");
+        activityName = intent.getStringExtra("activityName");
+
         listView = findViewById(R.id.listViewReport);
         imageViews = new ArrayList<>();
 
@@ -89,7 +100,16 @@ public class ReportActivity extends AppCompatActivity implements NavigationView.
 
         menuItem.setVisible(false);
 
-        listView();
+        Button newItemButton = findViewById(R.id.newItemButtonReport);
+        Button finishReportButton = findViewById(R.id.finishButtonReport);
+
+        if(activityName.equals( "FinishedTasksActivity")) {
+            newItemButton.setVisibility(View.GONE);
+            finishReportButton.setVisibility(View.GONE);
+
+
+        }
+
 
 
 //        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -109,39 +129,53 @@ public class ReportActivity extends AppCompatActivity implements NavigationView.
         reportId = "";
 
         while (data.moveToNext()) {
-            if(data.getString(7) != null) {
+            if (data.getString(7) != null) {
                 reportId = data.getString(7);
+            } else {
+                ReportDto reportDto = new ReportDto();
+
+                Date date = new Date();
+                reportDto.setDate(date);
+
+                String reportUri = NewEntry.newReportEntry(ReportActivity.this, reportDto);
+                reportId = reportUri.split("/")[1];
+
+                ContentValues entryTask = new ContentValues();
+
+                entryTask.put(SqlHelper.COLUMN_TASK_REPORT_ID, reportId);
+
+                ReportActivity.this.getContentResolver().update(DBContentProvider.CONTENT_URI_TASK, entryTask, "id=" + taskId, null);
+
+
             }
             if (!reportId.equals("")) {
                 Cursor reportData = db.getReportById(reportId);
                 while (reportData.moveToNext()) {
-                    reportIdMySQL = reportData.getString(1);
-                    reportDate = reportData.getString(2);
+                    if (reportData.getString(1) != null) {
+                        reportIdMySQL = reportData.getString(1);
+                    }
+                    if (reportData.getString(2) != null) {
+
+                        reportDate = reportData.getString(2);
+                    }
                 }
                 Cursor reportItemData = db.getReportItemsByReportId(reportId);
                 while (reportItemData.moveToNext()) {
                     Cursor reportItems = db.getReportItemById(reportItemData.getString(2));
-                    String imageName = "";
                     while (reportItems.moveToNext()) {
 
                         itemTitle.add(reportItems.getString(2));
                         itemDescription.add(reportItems.getString(3));
-//                        imageName = reportItems.getString(4);
-//
-//                        String imgname = imageName.split("\\.")[0];
-//                        System.out.println(imgname + " imageeName");
-
 
 
                         ContextWrapper contextWrapper = new ContextWrapper(getApplicationContext());
                         File directory = contextWrapper.getDir(getFilesDir().getName(), Context.MODE_PRIVATE);
-                        File file = new File(directory, reportItems.getString(4));
-                        Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+                        if (reportItems.getString(4) != null) {
+                            File file = new File(directory, reportItems.getString(4));
+                            Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
 
-//                        String uri = "drawable/" + imgname;
-
-//                        int imageResource = getResources().getIdentifier(uri, null, getPackageName());
-                        images.add(bitmap);
+                            images.add(bitmap);
+                        }
 
 
                     }
@@ -203,11 +237,26 @@ public class ReportActivity extends AppCompatActivity implements NavigationView.
         }
     }
 
+
     public void onClickNewItem(View view) {
         Intent intent = new Intent(ReportActivity.this, NewItemActivity.class);
         intent.putExtra("reportId", reportId);
         intent.putExtra("taskId", taskId);
 
+
+        startActivity(intent);
+    }
+
+    public void onClickFinishReport(View view) {
+
+        ContentValues entryTask = new ContentValues();
+
+        entryTask.put(SqlHelper.COLUMN_TASK_STATE, "FINISHED");
+
+        ReportActivity.this.getContentResolver().update(DBContentProvider.CONTENT_URI_TASK, entryTask, "id=" + taskId, null);
+
+
+        Intent intent = new Intent(ReportActivity.this, TasksInProgressActivity.class);
 
         startActivity(intent);
     }

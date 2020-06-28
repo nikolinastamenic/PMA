@@ -1,6 +1,9 @@
 package com.example.myapplication.DTO;
 
 
+import lombok.Data;
+
+@Data
 public class ReportItemDto {
 
     private Long id;
@@ -9,41 +12,10 @@ public class ReportItemDto {
 
     private String details;
 
-    private String picture;
+    private PictureDto picture;
 
-    public ReportItemDto() {}
-
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getFaultName() {
-        return faultName;
-    }
-
-    public void setFaultName(String faultName) {
-        this.faultName = faultName;
-    }
-
-    public String getDetails() {
-        return details;
-    }
-
-    public void setDetails(String details) {
-        this.details = details;
+    public ReportItemDto() {
     }
 
 
-    public String getPicture() {
-        return picture;
-    }
-
-    public void setPicture(String picture) {
-        this.picture = picture;
-    }
 }

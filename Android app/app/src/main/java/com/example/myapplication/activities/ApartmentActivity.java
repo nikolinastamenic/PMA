@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -39,6 +40,8 @@ public class ApartmentActivity extends AppCompatActivity implements NavigationVi
 
     Toolbar toolbar;
 
+    String activityName;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +49,7 @@ public class ApartmentActivity extends AppCompatActivity implements NavigationVi
 
         Intent intent = getIntent();
         taskId = intent.getStringExtra("taskId");
+        activityName = intent.getStringExtra("activityName");
 
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
@@ -58,17 +62,28 @@ public class ApartmentActivity extends AppCompatActivity implements NavigationVi
         toggle.syncState();
 
         navigationView.setNavigationItemSelectedListener(this);
-        Menu menu =navigationView.getMenu();
+        Menu menu = navigationView.getMenu();
         MenuItem menuItem = menu.findItem(R.id.nav_log_in);
 
         menuItem.setVisible(false);
 
+        Button button = findViewById(R.id.assignMeButton);
 
+        if (activityName.equals("FinishedTasksActivity")) {
+            button.setText(R.string.view_report);
+        }
+
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         getTask(taskId);
 
     }
 
-    public void getTask(String taskId){
+    public void getTask(String taskId) {
 
         db = new SqlHelper(this);
         Cursor data = db.getTaskById(taskId);
@@ -95,19 +110,19 @@ public class ApartmentActivity extends AppCompatActivity implements NavigationVi
 
                 Cursor dataApartment = db.getApartmentById(apartmentId);
 
-                while (dataApartment.moveToNext()){
+                while (dataApartment.moveToNext()) {
 
                     apartmentNumber = dataApartment.getString(2);
                     buildingId = dataApartment.getString(3);
 
                     Cursor buildingData = db.getBuildingById(buildingId);
 
-                    while (buildingData.moveToNext()){
+                    while (buildingData.moveToNext()) {
 
                         addressId = buildingData.getString(2);
                         Cursor addressData = db.getAddressById(addressId);
 
-                        while (addressData.moveToNext()){
+                        while (addressData.moveToNext()) {
 
                             apartmentAddress = addressData.getString(4) + " " + addressData.getString(5)
                                     + ", " + addressData.getString(3);
@@ -118,11 +133,11 @@ public class ApartmentActivity extends AppCompatActivity implements NavigationVi
 
 
                 }
-                if(stateName.equals("IN_PROCESS")) {
+                if (stateName.equals("IN_PROCESS")) {
                     state.setText("In process");
-                } else if (stateName.equals("FINISHED")){
+                } else if (stateName.equals("FINISHED")) {
                     state.setText("Finished");
-                } else if (stateName.equals("NEW")){
+                } else if (stateName.equals("NEW")) {
                     state.setText("New");
                 }
 
@@ -162,11 +177,11 @@ public class ApartmentActivity extends AppCompatActivity implements NavigationVi
 
         Intent intent = new Intent(ApartmentActivity.this, ReportActivity.class);
         intent.putExtra("taskId", taskId);
+        intent.putExtra("activityName", activityName);
+
 
         startActivity(intent);
     }
-
-
 
 
 }

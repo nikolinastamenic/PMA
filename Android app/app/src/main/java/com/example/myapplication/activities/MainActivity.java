@@ -96,6 +96,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public void onClickReport(View view) {
         Intent intent = new Intent(MainActivity.this, ReportActivity.class);
+        intent.putExtra("activityName", "MainActivity");
+
         startActivity(intent);
     }
 

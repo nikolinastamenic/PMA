@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 
 import com.example.myapplication.activities.MainActivity;
 import com.example.myapplication.sync.restTask.LoginTask;
+import com.example.myapplication.sync.restTask.NewReportItemTask;
 import com.example.myapplication.sync.restTask.RequestTaskTask;
 import com.example.myapplication.sync.restTask.SyncTask;
 import com.example.myapplication.util.AppConfig;
@@ -38,6 +39,11 @@ public class SyncService extends Service {
             } else if (!email.equals("") && activity.equals("AllTasksActivity")) {
                 String mysqlId = intent.getStringExtra("MySqlId");
                 new RequestTaskTask(getApplicationContext()).execute(AppConfig.apiURI + "task/change/state", email, mysqlId);
+
+            } else if (!email.equals("") &&  activity.equals("NewItemActivity")) {
+                String taskId = intent.getStringExtra("TaskId");
+                String reportItemId = intent.getStringExtra("ReportItemId");
+                new NewReportItemTask(getApplicationContext()).execute(AppConfig.apiURI + "report/item/new", taskId, reportItemId);
 
             }
 

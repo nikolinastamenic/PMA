@@ -246,6 +246,39 @@ public class DBContentProvider extends ContentProvider {
                             selectionArgs);
                 }
                 break;
+            case REPORT_ID:
+                String idReport = uri.getLastPathSegment();
+                if (TextUtils.isEmpty(selection)) {
+                    rowsUpdated = sqlDB.update(SqlHelper.TABLE_REPORT,
+                            values,
+                            SqlHelper.COLUMN_REPORT_ID + "=" + idReport,
+                            null);
+                } else {
+                    rowsUpdated = sqlDB.update(SqlHelper.TABLE_REPORT,
+                            values,
+                            SqlHelper.COLUMN_REPORT_ID + "=" + idReport
+                                    + " and "
+                                    + selection,
+                            selectionArgs);
+                }
+                break;
+            case REPORT_ITEM_ID:
+                String idReportItem = uri.getLastPathSegment();
+                if (TextUtils.isEmpty(selection)) {
+                    rowsUpdated = sqlDB.update(SqlHelper.TABLE_REPORT_ITEM,
+                            values,
+                            SqlHelper.COLUMN_REPORT_ITEM_ID + "=" + idReportItem,
+                            null);
+                } else {
+                    rowsUpdated = sqlDB.update(SqlHelper.TABLE_REPORT_ITEM,
+                            values,
+                            SqlHelper.COLUMN_REPORT_ITEM_ID + "=" + idReportItem
+                                    + " and "
+                                    + selection,
+                            selectionArgs);
+                }
+                break;
+
             default:
                 throw new IllegalArgumentException("Unknown URI: " + uri);
         }

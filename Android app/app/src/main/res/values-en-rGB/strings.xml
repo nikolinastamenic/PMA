@@ -55,6 +55,8 @@
     <string name="waiting">Requested</string>
     <string name="gallery_access_allowed">Gallery permission granted</string>
     <string name="gallery_access_denied">Gallery permission denied</string>
+    <string name="view_report">View report</string>
+
 
 
 </resources>

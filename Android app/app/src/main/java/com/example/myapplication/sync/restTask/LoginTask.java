@@ -3,6 +3,8 @@ package com.example.myapplication.sync.restTask;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
@@ -14,6 +16,8 @@ import com.example.myapplication.DTO.UserDto;
 import com.example.myapplication.activities.MainActivity;
 import com.example.myapplication.database.NewEntry;
 import com.example.myapplication.database.SqlHelper;
+import com.example.myapplication.util.MiscUtil;
+import com.example.myapplication.util.SavePictureUtil;
 import com.example.myapplication.util.UserSession;
 
 import org.springframework.http.HttpEntity;
@@ -23,6 +27,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
@@ -100,10 +105,10 @@ public class LoginTask extends AsyncTask<String, Void, ResponseEntity<UserAndTas
 
             userData.moveToFirst();
 
-            if (!(userData.moveToFirst()) || userData.getCount() ==0) {
+            if (!(userData.moveToFirst()) || userData.getCount() == 0) {
                 String userUri = NewEntry.newUserEntry(context, userAndTaskDto.getUser());
 
-                if(!userAndTaskDto.getTasks().isEmpty()){
+                if (!userAndTaskDto.getTasks().isEmpty()) {
 
                     for (AllTaskDto taskDto : userAndTaskDto.getTasks()) {
 
@@ -123,21 +128,21 @@ public class LoginTask extends AsyncTask<String, Void, ResponseEntity<UserAndTas
                         Cursor apartmentData = db.getApartmentByMySqlId(String.valueOf(taskDto.getApartmentDto().getId()));
 
                         System.out.println(addressData.getCount() + " COUNT");
-                        if (!(addressData.moveToFirst()) || addressData.getCount() == 0 ) {
+                        if (!(addressData.moveToFirst()) || addressData.getCount() == 0) {
                             addressId = (NewEntry.newAddressEntry(context, taskDto.getApartmentDto().getBuildingDto())).split("/")[1];
                         } else {
                             addressData.moveToFirst();
                             addressId = Integer.toString(addressData.getInt(0));
                         }
 
-                        if (!(buildingData.moveToFirst()) || buildingData.getCount() ==0) {
+                        if (!(buildingData.moveToFirst()) || buildingData.getCount() == 0) {
                             buildingId = (NewEntry.newBuildingEntry(context, taskDto.getApartmentDto().getBuildingDto(), addressId)).split("/")[1];
                         } else {
                             buildingData.moveToFirst();
                             buildingId = Integer.toString(buildingData.getInt(0));
                         }
 
-                        if (!(apartmentData.moveToFirst()) || apartmentData.getCount() ==0) {
+                        if (!(apartmentData.moveToFirst()) || apartmentData.getCount() == 0) {
                             apartmentId = (NewEntry.newApartmentEntry(context, taskDto.getApartmentDto(), buildingId)).split("/")[1];
                         } else {
                             apartmentData.moveToFirst();
@@ -154,6 +159,15 @@ public class LoginTask extends AsyncTask<String, Void, ResponseEntity<UserAndTas
                                 for (ReportItemDto reportItemDto : taskDto.getReportDto().getItemList()) {
 
                                     String reportItemUri = NewEntry.newReportItemEntry(context, reportItemDto);
+                                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+
+                                    Bitmap photo = BitmapFactory.decodeByteArray(reportItemDto.getPicture().getPicture(), 0, reportItemDto.getPicture().getPicture().length);
+
+
+                                    photo.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                                    String picName = reportItemDto.getPicture().getPictureName();
+                                    SavePictureUtil.writeToFile(stream.toByteArray(), picName, context, context.getFilesDir());
+
 
                                     String reportItemId = reportItemUri.split("/")[1];
                                     String reportReporetItemUri = NewEntry.newReportReportItemEntry(context, reportItemDto, taskDto.getReportDto(), reportId, reportItemId);
@@ -162,7 +176,7 @@ public class LoginTask extends AsyncTask<String, Void, ResponseEntity<UserAndTas
                             }
                         }
 
-                        if (!(taskData.moveToFirst()) || taskData.getCount() ==0) {
+                        if (!(taskData.moveToFirst()) || taskData.getCount() == 0) {
                             String taskUri = NewEntry.newTaskEntry(context, taskDto, apartmentId, userId, reportId);
                         }
 

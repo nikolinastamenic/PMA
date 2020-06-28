@@ -409,5 +409,11 @@ public class SqlHelper extends SQLiteOpenHelper {
         return data;
     }
 
+    public Cursor getRRIByRIdAndRIId (String reportItemId) {
+        SQLiteDatabase sqlDB = this.getWritableDatabase();
+        Cursor data = sqlDB.rawQuery("SELECT * FROM " + JOIN_TABLE + " WHERE report_item_id " + "= " + reportItemId, null);
+        return data;
+    }
+
 
 }
