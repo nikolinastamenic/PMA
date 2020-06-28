@@ -2,10 +2,14 @@ package com.example.myapplication.sync.restTask;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.AsyncTask;
+import android.os.Handler;
 
 import com.example.myapplication.DTO.ChangeTaskStateDto;
+import com.example.myapplication.activities.AllTasksActivity;
 import com.example.myapplication.database.DBContentProvider;
 import com.example.myapplication.database.SqlHelper;
 
@@ -26,7 +30,8 @@ public class RequestTaskTask extends AsyncTask<String, Void, ResponseEntity<Chan
     private String email;
     private SqlHelper db;
     private String userId = "";
-
+    private AllTasksActivity.MyReceiver myReceiver;
+    private String mySqlId;
 
     public RequestTaskTask(Context applicationContext) {
         this.context = applicationContext;
@@ -41,6 +46,7 @@ public class RequestTaskTask extends AsyncTask<String, Void, ResponseEntity<Chan
 
         final String url = params[0];
         email = params[1];
+        mySqlId = params[2];
 
         RestTemplate restTemplate = new RestTemplate();
 
@@ -58,14 +64,15 @@ public class RequestTaskTask extends AsyncTask<String, Void, ResponseEntity<Chan
                 headers.setContentType(MediaType.APPLICATION_JSON);
                 headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 
-                Cursor requestedData = db.getTasksBySynchronizedAndUserId(0, userId);
+//                Cursor requestedData = db.getTasksBySynchronizedAndUserId(0, userId);
 
+                Cursor requestedData = db.getTaskByMySqlId(mySqlId);
                 ChangeTaskStateDto changeTaskStateDto = new ChangeTaskStateDto();
                 changeTaskStateDto.setEmail(email);
                 changeTaskStateDto.setState("IN_PROCESS");
                 List<String> tasksIds = new ArrayList<>();
 
-                while (requestedData.moveToNext()){
+                while (requestedData.moveToNext()) {
                     String id = Integer.toString(requestedData.getInt(1));
                     tasksIds.add(id);
                 }
@@ -89,30 +96,46 @@ public class RequestTaskTask extends AsyncTask<String, Void, ResponseEntity<Chan
 
         ChangeTaskStateDto changeTaskStateDto = responseEntity.getBody();
         SqlHelper db = new SqlHelper(context);
+        Intent intent = new Intent("com.example.myapplication.ACTION");
+
 
         if (changeTaskStateDto != null) {
 
-            for (String mySqlTaskId : changeTaskStateDto.getTaskIds()) {
+            if (!changeTaskStateDto.getTaskIds().isEmpty()) {
+                for (String mySqlTaskId : changeTaskStateDto.getTaskIds()) {
 
-                ContentValues entryTask = new ContentValues();
+                    ContentValues entryTask = new ContentValues();
 
-                Cursor taskData = db.getTaskByMySqlId(mySqlTaskId);
-                while (taskData.moveToNext()) {
-                    String state = "IN_PROCESS";
-                    entryTask.put(SqlHelper.COLUMN_TASK_STATE, state);
-                    entryTask.put(SqlHelper.COLUMN_TASK_IS_SYNCHRONIZED, 1);
-                    String id = taskData.getString(0);
+                    Cursor taskData = db.getTaskByMySqlId(mySqlTaskId);
+                    while (taskData.moveToNext()) {
+                        String state = "IN_PROCESS";
+                        entryTask.put(SqlHelper.COLUMN_TASK_STATE, state);
+                        entryTask.put(SqlHelper.COLUMN_TASK_IS_SYNCHRONIZED, 1);
+                        String id = taskData.getString(0);
 
 
-                    context.getContentResolver().update(DBContentProvider.CONTENT_URI_TASK, entryTask, "id=" + id, null);
+                        context.getContentResolver().update(DBContentProvider.CONTENT_URI_TASK, entryTask, "id=" + id, null);
+
+                    }
+                }
+
+                intent.putExtra("success", "true");
+                context.sendBroadcast(intent);
+
+            } else {
+                Cursor forDelete = db.getTaskByMySqlId(mySqlId);
+
+                if (forDelete.getCount() > 0) {
+
+                    forDelete.moveToFirst();
+
+                    int taskId = forDelete.getInt(0);
+                    context.getContentResolver().delete(DBContentProvider.CONTENT_URI_TASK, "id=" + taskId, null);
+
+                    intent.putExtra("success", "false");
+                    context.sendBroadcast(intent);
 
                 }
-            }
-            Cursor forDelete = db.getTasksBySynchronizedAndUserId(0, userId);
-
-            while (forDelete.moveToNext()){
-                int taskId = forDelete.getInt(0);
-                context.getContentResolver().delete(DBContentProvider.CONTENT_URI_TASK, "id=" + taskId, null);
 
             }
 

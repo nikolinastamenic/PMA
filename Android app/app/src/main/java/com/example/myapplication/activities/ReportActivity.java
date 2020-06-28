@@ -89,6 +89,7 @@ public class ReportActivity extends AppCompatActivity implements NavigationView.
 
         Intent intent = getIntent();
         taskId = intent.getStringExtra("taskId");
+        System.out.println(taskId + " YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY");
         listView = findViewById(R.id.listViewReport);
         imageViews = new ArrayList<>();
 
@@ -109,7 +110,6 @@ public class ReportActivity extends AppCompatActivity implements NavigationView.
 
         menuItem.setVisible(false);
 
-        listView();
 
 
 //        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -128,9 +128,13 @@ public class ReportActivity extends AppCompatActivity implements NavigationView.
         Cursor data = db.getTaskById(taskId);
         String reportId = "";
 
-        while (data.moveToNext()) {
-            reportId = data.getString(7);
-            System.out.println(reportId + " report idddddddddddddddddddddddd");
+        while (data.moveToNext() && data.getCount() > 0) {
+
+            if(data.getString(7) != null){
+                reportId = data.getString(7);
+                System.out.println(reportId + " report idddddddddddddddddddddddd");
+            }
+
             if (!reportId.equals("")) {
                 Cursor reportData = db.getReportById(reportId);
                 while (reportData.moveToNext()) {
@@ -168,6 +172,13 @@ public class ReportActivity extends AppCompatActivity implements NavigationView.
         ReportActivity.MyAdapter adapter = new ReportActivity.MyAdapter(this, itemTitle, itemDescription, images);
         listView.setAdapter(adapter);
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        listView();
+    }
+
 
     class MyAdapter extends ArrayAdapter<String> {
 

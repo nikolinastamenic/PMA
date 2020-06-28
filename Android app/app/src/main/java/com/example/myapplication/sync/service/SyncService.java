@@ -36,7 +36,8 @@ public class SyncService extends Service {
             } else if (!email.equals("") && activity.equals("LoginActivity")) {
                 new LoginTask(getApplicationContext()).execute(AppConfig.apiURI + "user/login", email, intent.getStringExtra("Password"));
             } else if (!email.equals("") && activity.equals("AllTasksActivity")) {
-                new RequestTaskTask(getApplicationContext()).execute(AppConfig.apiURI + "task/change/state", email);
+                String mysqlId = intent.getStringExtra("MySqlId");
+                new RequestTaskTask(getApplicationContext()).execute(AppConfig.apiURI + "task/change/state", email, mysqlId);
 
             }
 

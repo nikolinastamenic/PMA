@@ -1,6 +1,7 @@
 package com.example.myapplication.activities;
 
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -8,16 +9,19 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,6 +30,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 
 import com.example.myapplication.R;
@@ -34,6 +39,7 @@ import com.example.myapplication.database.SqlHelper;
 import com.example.myapplication.sync.receiver.SyncReceiver;
 import com.example.myapplication.sync.service.SyncService;
 import com.example.myapplication.util.NavBarUtil;
+import com.example.myapplication.util.NetworkStateTools;
 import com.example.myapplication.util.UserSession;
 import com.google.android.material.navigation.NavigationView;
 
@@ -59,6 +65,8 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
     private PendingIntent pendingIntent;
     private Intent intentService;
     UserSession userSession;
+    public MyAdapter myAdapter;
+    private MyReceiver myReceiver;
 
 
     @Override
@@ -67,10 +75,10 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
         super.onCreate(savedInstanceState);
         setContentView(R.layout.all_tasks);
 
+        System.out.println(" on create usao..................");
+
+
         taskIds = new ArrayList<>();
-        apartmentTitle = new ArrayList<>();
-        apartmentAddress = new ArrayList<>();
-        checkApartmentDate = new ArrayList<>();
         taskWaitingList = new ArrayList<>();
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
@@ -96,6 +104,10 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
     }
 
     public void listView() {
+
+        apartmentTitle = new ArrayList<>();
+        apartmentAddress = new ArrayList<>();
+        checkApartmentDate = new ArrayList<>();
 
         listView = (ListView) findViewById(R.id.listViewAllTasks);
         db = new SqlHelper(this);
@@ -127,7 +139,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
                 }
 
-                MyAdapter myAdapter = new MyAdapter(this, apartmentTitle, apartmentAddress, checkApartmentDate);
+                myAdapter = new MyAdapter(this, apartmentTitle, apartmentAddress, checkApartmentDate);
                 listView.setAdapter(myAdapter);
             }
         }
@@ -154,6 +166,9 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
 
         super.onResume();
+
+        System.out.println(" on resume usao..................");
+
         IntentFilter filter = new IntentFilter();
         filter.addAction(SYNC_DATA);
 
@@ -161,30 +176,42 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
         filter.addAction("android.net.wifi.STATE_CHANGE");
         filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
         registerReceiver(sync, filter);
+
         listView();
 
         Intent intent = new Intent(AllTasksActivity.this, SyncService.class);
         intent.putExtra("activityName", "AllTasksActivity");
         intent.putExtra("Email", userSession.getUserEmail());
 
-        startService(intent);
-
+//        startService(intent);
 
     }
 
+    @Override
+    protected void onPause() {
+        System.out.println(" on pause usao..................");
+
+        super.onPause();
+    }
 
     @Override
     protected void onDestroy() {
+        System.out.println(" on destroy usao..................");
+
         super.onDestroy();
     }
 
     @Override
     protected void onStart() {
+        System.out.println(" on start usao..................");
+
         super.onStart();
     }
 
     @Override
     protected void onStop() {
+        System.out.println(" on stop usao..................");
+
         super.onStop();
     }
 
@@ -200,7 +227,6 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
     @Override
     public void onBackPressed() {
-
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
         } else {
@@ -208,6 +234,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
         }
 
     }
+
 
     class MyAdapter extends ArrayAdapter<String> {
 
@@ -266,52 +293,75 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
             assignButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
 
-                    ContentValues entryTask = new ContentValues();
+                    IntentFilter intentFilter = new IntentFilter();
+                    myReceiver = new AllTasksActivity.MyReceiver(new Handler());
+                    intentFilter.addAction("com.example.myapplication.ACTION");
+                    registerReceiver(myReceiver, intentFilter);
 
-                    String userId = "";
-                    Cursor userData = db.getUserByEmail(userSession.getUserEmail());
-                    while (userData.moveToNext()) {
-                        userId = Integer.toString(userData.getInt(0));
-                    }
-                    taskId = taskIds.get(position);
-                    waiting.setVisibility(View.VISIBLE);
-                    Cursor taskData = db.getTaskById(taskId);
-                    while (taskData.moveToNext()) {
-                        String mysqlId = taskData.getString(1);
-                        taskMysqlId = mysqlId;
+                    int status = NetworkStateTools.getConnectivityStatus(context);
 
-
-                        entryTask.put(SqlHelper.COLUMN_TASK_USER_ID, userId);
-                        entryTask.put(SqlHelper.COLUMN_TASK_IS_SYNCHRONIZED, 0);
+                    if (status == 0) {
+                        Intent intent = new Intent("com.example.myapplication.ACTION");
+                        intent.putExtra("connectivity", "false");
+                        sendBroadcast(intent);
+                    } else {
 
 
-                        context.getContentResolver().update(DBContentProvider.CONTENT_URI_TASK, entryTask, "id=" + taskId, null);
+                        ContentValues entryTask = new ContentValues();
 
-                    }
+                        String userId = "";
+                        Cursor userData = db.getUserByEmail(userSession.getUserEmail());
+                        while (userData.moveToNext()) {
+                            userId = Integer.toString(userData.getInt(0));
+                        }
+                        taskId = taskIds.get(position);
 
-                    Intent i = new Intent(AllTasksActivity.this, SyncService.class);
-                    i.putExtra("activityName", "AllTasksActivity");
-                    i.putExtra("Email", userSession.getUserEmail());
+                        System.out.println(taskId + " JIODHSNFUOIHSDOIUFHSOUISHDOIFHSIOHDFSOIHDSIOHFIOS TAAAAAAAAAAAAAAASLOD");
 
-                    startService(i);
+                        waiting.setVisibility(View.VISIBLE);
+                        Cursor taskData = db.getTaskById(taskId);
+                        while (taskData.moveToNext()) {
+                            String mysqlId = taskData.getString(1);
+                            taskMysqlId = mysqlId;
 
-                    // Retrieve a PendingIntent that will perform a broadcast
+                            System.out.println(taskMysqlId + " AAAAAAAAAAAAAAAAAAAAAAAAAAASJIOFUHAUOSHFOUAHOIL");
+
+                            entryTask.put(SqlHelper.COLUMN_TASK_USER_ID, userId);
+                            entryTask.put(SqlHelper.COLUMN_TASK_IS_SYNCHRONIZED, 0);
+
+                            context.getContentResolver().update(DBContentProvider.CONTENT_URI_TASK, entryTask, "id=" + taskId, null);
+                        }
+
+                        Intent i = new Intent(AllTasksActivity.this, SyncService.class);
+                        i.putExtra("activityName", "AllTasksActivity");
+                        i.putExtra("Email", userSession.getUserEmail());
+//                        i.putExtra("position", position);
+                        i.putExtra("MySqlId", taskMysqlId);
+                        startService(i);
+
+                        // Retrieve a PendingIntent that will perform a broadcast
 //                    intentService = new Intent(AllTasksActivity.this, SyncService.class);
 //                    intentService.putExtra("activityName", "AllTasksActivity");
 //                    intentService.putExtra("mySqlTaskId", taskMysqlId);
 //
 //                    pendingIntent = PendingIntent.getService(AllTasksActivity.this, 0, intentService, 0);
 
-
 //                    listView.getChildAt(position).setEnabled(false);
-                    isEnabled(position);
 
-                    title1.setTextColor(getResources().getColor(R.color.silver));
-                    description1.setTextColor(getResources().getColor(R.color.silver));
-                    date1.setTextColor(getResources().getColor(R.color.silver));
-                    assignButton.setTextColor(getResources().getColor(R.color.silver));
-                    assignButton.setEnabled(false);
+                        isEnabled(position);
 
+                        title1.setTextColor(getResources().getColor(R.color.silver));
+                        description1.setTextColor(getResources().getColor(R.color.silver));
+                        date1.setTextColor(getResources().getColor(R.color.silver));
+                        assignButton.setTextColor(getResources().getColor(R.color.silver));
+                        assignButton.setEnabled(false);
+
+                        taskIds.remove(position);
+                        apartmentTitle.remove(position);
+                        apartmentAddress.remove(position);
+                        checkApartmentDate.remove(position);
+
+                    }
 
                 }
             });
@@ -321,5 +371,58 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
         }
     }
 
+
+    public void updateUI(Intent intent) {
+
+//        Intent intent1 = new Intent(AllTasksActivity.this, AllTasksActivity.class);
+//        startActivity(intent1);
+
+        myAdapter.notifyDataSetChanged();
+
+    }
+
+    public class MyReceiver extends BroadcastReceiver {
+
+        private final Handler handler; // Handler used to execute code on the UI thread
+
+        public MyReceiver(Handler handler) {
+            this.handler = handler;
+        }
+
+        @Override
+        public void onReceive(final Context context, final Intent intent) {
+            // Post the UI updating code to our Handler
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+
+                    if (intent.getStringExtra("connectivity") != null && intent.getStringExtra("connectivity").equals("false")) {
+                        Toast.makeText(context, "Nema konekcije sa internetom", Toast.LENGTH_SHORT).show();
+                        if (null != myReceiver) {
+                            unregisterReceiver(myReceiver);
+                            myReceiver = null;
+                        }
+
+                    } else {
+
+                        if (intent.getStringExtra("success").equals("false")) {
+
+                            Toast.makeText(context, "Task koji ste zatrazili je zauzet!", Toast.LENGTH_SHORT).show();
+                            if (null != myReceiver) {
+                                unregisterReceiver(myReceiver);
+                                myReceiver = null;
+                            }
+                            AllTasksActivity.this.updateUI(intent);
+                        }
+
+                        AllTasksActivity.this.updateUI(intent);
+
+                    }
+                }
+            });
+
+
+        }
+    }
 
 }

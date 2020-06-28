@@ -43,5 +43,6 @@ dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.12'
     annotationProcessor 'org.projectlombok:lombok:1.18.12'
     implementation "commons-io:commons-io:+"
+    implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0'
 
 }
