@@ -28,6 +28,12 @@
                 <action android:name="android.net.wifi.STATE_CHANGE"/>
             </intent-filter>
         </receiver>
+        <receiver android:name="com.example.myapplication.activities.AllTasksActivity$MyReceiver">
+            <intent-filter>
+                <action android:name="com.example.myapplication.ACTION"/>
+
+            </intent-filter>
+        </receiver>
         <service android:name="com.example.myapplication.sync.service.SyncService"></service>
 
         <activity android:name=".activities.MainActivity">
