@@ -1,6 +1,7 @@
 package com.example.myapplication.activities;
 
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -26,6 +27,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 
 import com.example.myapplication.R;
@@ -59,7 +61,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
     private PendingIntent pendingIntent;
     private Intent intentService;
     UserSession userSession;
-
+    private MyAdapter myAdapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -127,7 +129,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
                 }
 
-                MyAdapter myAdapter = new MyAdapter(this, apartmentTitle, apartmentAddress, checkApartmentDate);
+                myAdapter = new MyAdapter(this, apartmentTitle, apartmentAddress, checkApartmentDate);
                 listView.setAdapter(myAdapter);
             }
         }
@@ -160,7 +162,15 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
         filter.addAction("android.net.wifi.WIFI_STATE_CHANGED");
         filter.addAction("android.net.wifi.STATE_CHANGE");
         filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
+
         registerReceiver(sync, filter);
+
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("com.example.myapplication.ACTION");
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, filter);
+
+
         listView();
 
         Intent intent = new Intent(AllTasksActivity.this, SyncService.class);
@@ -320,6 +330,14 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
             return item;
         }
     }
+
+
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            myAdapter.notifyDataSetChanged();
+        }
+    };
 
 
 }

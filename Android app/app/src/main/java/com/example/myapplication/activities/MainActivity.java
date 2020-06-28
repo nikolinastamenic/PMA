@@ -139,6 +139,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         filter.addAction("android.net.wifi.WIFI_STATE_CHANGED");
         filter.addAction("android.net.wifi.STATE_CHANGE");
         registerReceiver(sync, filter);
+
         System.out.println("main activity ON RESUME");
 
 

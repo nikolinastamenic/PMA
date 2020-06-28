@@ -127,5 +127,16 @@ public class NewEntry {
 
     }
 
+    public static String newReportReportItemEntryWithoutMysqlIds(Context context, String reportId, String reportItemId) {
+
+        ContentValues entryReportReportItem = new ContentValues();
+        entryReportReportItem.put(SqlHelper.COLUMN_REPORT_REPORT_ITEM_REPORT_ID, reportId);
+        entryReportReportItem.put(SqlHelper.COLUMN_REPORT_REPORT_ITEM_REPOR_ITEM_ID, reportItemId);
+
+        Uri reportReportItemUri = context.getContentResolver().insert(DBContentProvider.CONTENT_URI_JOIN_TABLE, entryReportReportItem);
+        return reportReportItemUri.toString();
+
+    }
+
 
 }

@@ -2,11 +2,13 @@ package com.example.myapplication.sync.restTask;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
 
 import com.example.myapplication.DTO.AllTaskDto;
 import com.example.myapplication.DTO.EmailDto;
+import com.example.myapplication.activities.AllTasksActivity;
 import com.example.myapplication.database.DBContentProvider;
 import com.example.myapplication.database.NewEntry;
 import com.example.myapplication.database.SqlHelper;
@@ -127,6 +129,8 @@ public class SyncTask extends AsyncTask<String, Void, ResponseEntity<AllTaskDto[
             taskData.close();
 
         }
+
+
 
     }
 }

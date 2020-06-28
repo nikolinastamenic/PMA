@@ -121,6 +121,14 @@
             android:background="@null"
             android:src="@drawable/gallery" />
 
+        <ImageView
+            android:id="@+id/reportItemImage"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_marginTop="300dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"/>
+
     </RelativeLayout>
 
 </androidx.drawerlayout.widget.DrawerLayout>

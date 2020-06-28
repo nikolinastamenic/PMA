@@ -2,10 +2,12 @@ package com.example.myapplication.sync.restTask;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
 
 import com.example.myapplication.DTO.ChangeTaskStateDto;
+import com.example.myapplication.activities.AllTasksActivity;
 import com.example.myapplication.database.DBContentProvider;
 import com.example.myapplication.database.SqlHelper;
 
@@ -119,6 +121,12 @@ public class RequestTaskTask extends AsyncTask<String, Void, ResponseEntity<Chan
 
         }
 
+
+        Intent intent = new Intent(AllTasksActivity.SYNC_DATA);
+
+        intent.putExtra("success", "true");
+        context.sendBroadcast(intent);
+        
     }
 
 }

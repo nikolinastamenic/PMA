@@ -1,25 +1,18 @@
 package com.example.myapplication.activities;
 
-import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
-import android.media.Image;
-import android.net.Uri;
-import android.os.AsyncTask;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -33,28 +26,13 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
-import com.example.myapplication.DTO.ReportDto;
-import com.example.myapplication.DTO.ReportItemDto;
-import com.example.myapplication.DTO.UserDto;
 import com.example.myapplication.R;
-import com.example.myapplication.database.DBContentProvider;
-import com.example.myapplication.database.NewEntry;
 import com.example.myapplication.database.SqlHelper;
-import com.example.myapplication.util.AppConfig;
 import com.example.myapplication.util.NavBarUtil;
-import com.example.myapplication.util.SavePictureUtil;
 import com.google.android.material.navigation.NavigationView;
-
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class ReportActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -69,8 +47,9 @@ public class ReportActivity extends AppCompatActivity implements NavigationView.
     String reportDate = "";
     String reportIdMySQL = "1";
 
-    List<Integer> images;
+    List<Bitmap> images;
     List<ImageView> imageViews;
+    String reportId;
 
 
     String taskId;
@@ -104,7 +83,7 @@ public class ReportActivity extends AppCompatActivity implements NavigationView.
         toggle.syncState();
 
         navigationView.setNavigationItemSelectedListener(this);
-        Menu menu =navigationView.getMenu();
+        Menu menu = navigationView.getMenu();
         MenuItem menuItem = menu.findItem(R.id.nav_log_in);
 
         menuItem.setVisible(false);
@@ -126,11 +105,10 @@ public class ReportActivity extends AppCompatActivity implements NavigationView.
         listView = (ListView) findViewById(R.id.listViewReport);
         db = new SqlHelper(this);
         Cursor data = db.getTaskById(taskId);
-        String reportId = "";
+        reportId = "";
 
         while (data.moveToNext()) {
             reportId = data.getString(7);
-            System.out.println(reportId + " report idddddddddddddddddddddddd");
             if (!reportId.equals("")) {
                 Cursor reportData = db.getReportById(reportId);
                 while (reportData.moveToNext()) {
@@ -145,13 +123,22 @@ public class ReportActivity extends AppCompatActivity implements NavigationView.
 
                         itemTitle.add(reportItems.getString(2));
                         itemDescription.add(reportItems.getString(3));
-                        imageName = reportItems.getString(4);
+//                        imageName = reportItems.getString(4);
+//
+//                        String imgname = imageName.split("\\.")[0];
+//                        System.out.println(imgname + " imageeName");
 
-                        String imgname = imageName.split("\\.")[0];
-                        String uri = "drawable/" + imgname;
 
-                        int imageResource = getResources().getIdentifier(uri, null, getPackageName());
-                        images.add(imageResource);
+
+                        ContextWrapper contextWrapper = new ContextWrapper(getApplicationContext());
+                        File directory = contextWrapper.getDir(getFilesDir().getName(), Context.MODE_PRIVATE);
+                        File file = new File(directory, reportItems.getString(4));
+                        Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+
+//                        String uri = "drawable/" + imgname;
+
+//                        int imageResource = getResources().getIdentifier(uri, null, getPackageName());
+                        images.add(bitmap);
 
 
                     }
@@ -174,9 +161,9 @@ public class ReportActivity extends AppCompatActivity implements NavigationView.
         Context context;
         List<String> title;
         List<String> description;
-        List<Integer> images;
+        List<Bitmap> images;
 
-        MyAdapter(Context c, List<String> title, List<String> description, List<Integer> images) {
+        MyAdapter(Context c, List<String> title, List<String> description, List<Bitmap> images) {
             super(c, R.layout.item, R.id.reportItemTitle, title);
             this.context = c;
             this.title = title;
@@ -193,8 +180,8 @@ public class ReportActivity extends AppCompatActivity implements NavigationView.
             View item = layoutInflater.inflate(R.layout.item, parent, false);
             ImageView images1 = item.findViewById(R.id.image);
 
-            Drawable image = getResources().getDrawable(images.get(position));
-            images1.setImageDrawable(image);
+            Bitmap image = images.get(position);
+            images1.setImageBitmap(image);
 
             TextView title1 = item.findViewById(R.id.reportItemTitle);
             TextView description1 = item.findViewById(R.id.reportItemDescription);
@@ -208,6 +195,9 @@ public class ReportActivity extends AppCompatActivity implements NavigationView.
 
     public void onClickNewItem(View view) {
         Intent intent = new Intent(ReportActivity.this, NewItemActivity.class);
+        intent.putExtra("reportId", reportId);
+        intent.putExtra("taskId", taskId);
+
 
         startActivity(intent);
     }
