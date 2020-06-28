@@ -29,12 +29,12 @@ INSERT INTO apartment (number, building_id) values (15, 4);
 INSERT INTO apartment (number, building_id) values (16, 5);
 INSERT INTO apartment (number, building_id) values (17, 6);
 
--- INSERT INTO report_item (details, fault_name, picture) values ('Tiles in kitchen are broken', 'Broken tiles', 'broken_tiles.jpg');
--- INSERT INTO report_item (details, fault_name, picture) values ('Window is broken', 'Broken window', 'broken_window.jpg');
+INSERT INTO report_item (details, fault_name, picture) values ('Tiles in kitchen are broken', 'Broken tiles', 'broken_tiles.jpg');
+INSERT INTO report_item (details, fault_name, picture) values ('Window is broken', 'Broken window', 'broken_window.jpg');
 
 INSERT INTO report (id, date) values (1, '2020-09-10 14:45');
--- INSERT INTO report_item_list (report_id, item_list_id) values (1,1);
--- INSERT INTO report_item_list (report_id, item_list_id) values (1,2);
+INSERT INTO report_item_list (report_id, item_list_id) values (1,1);
+INSERT INTO report_item_list (report_id, item_list_id) values (1,2);
 
 INSERT INTO task (deadline, state, type_of_apartment, urgent, apartment_id) values ('2020-09-10 14:45', 'NEW', 'NEW', true, 1);
 INSERT INTO task (deadline, state, type_of_apartment, urgent, apartment_id) values ('2020-10-10 14:45', 'NEW', 'NEW', true, 2);

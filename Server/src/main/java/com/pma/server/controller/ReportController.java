@@ -23,7 +23,7 @@ public class ReportController {
     @GetMapping(value = "/{id}")
     public ResponseEntity<UserDto> getReportById(@PathVariable("id") Long id) {
 
-        ReportDto reportDto = this.reportService.findReportById(id);
+        ReportDto reportDto = this.reportService.findReportDtoById(id);
         return new ResponseEntity(reportDto, HttpStatus.OK);
     }
 

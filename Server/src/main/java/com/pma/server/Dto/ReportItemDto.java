@@ -8,6 +8,6 @@ public class ReportItemDto {
     private Long id;
     private String faultName;
     private String details;
-    private String picture;
+    private PictureDto picture;
 
 }
