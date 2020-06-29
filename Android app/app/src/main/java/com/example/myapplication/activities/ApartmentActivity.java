@@ -15,37 +15,44 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentActivity;
 
 import com.example.myapplication.R;
 import com.example.myapplication.database.SqlHelper;
 import com.example.myapplication.util.NavBarUtil;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.Date;
 
-public class ApartmentActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class ApartmentActivity extends  FragmentActivity implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
 
     DrawerLayout drawerLayout;
     NavigationView navigationView;
-//    SqlHelper db;
 
-    private String typeOfApartment;
-
-    private String state;
-
-    private boolean urgent;
-
-    private Date deadline;
     String taskId;
 
     Toolbar toolbar;
 
     String activityName;
+    GoogleMap map;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
         setContentView(R.layout.apartment);
+
+
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
 
         Intent intent = getIntent();
         taskId = intent.getStringExtra("taskId");
@@ -56,7 +63,7 @@ public class ApartmentActivity extends AppCompatActivity implements NavigationVi
         toolbar = findViewById(R.id.toolbar);
 
         navigationView.bringToFront();
-        setSupportActionBar(toolbar);
+//        setSupportActionBar(toolbar);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.app_name, R.string.all_tasks);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
@@ -74,6 +81,14 @@ public class ApartmentActivity extends AppCompatActivity implements NavigationVi
         }
 
 
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        map = googleMap;
+        LatLng ns = new LatLng(45.259333, 19.831826);
+        map.addMarker(new MarkerOptions().position(ns).title("Novi Sad"));
+        map.moveCamera(CameraUpdateFactory.newLatLng(ns));
     }
 
     @Override
