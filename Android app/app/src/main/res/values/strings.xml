@@ -55,6 +55,8 @@
     <string name="gallery_access_allowed">Gallery permission granted</string>
     <string name="gallery_access_denied">Gallery permission denied</string>
     <string name="view_report">View report</string>
+    <string name="request_new_password">Request new password</string>
+    <string name="forgot_pass_notice">Insert your email and new password will be sent to you</string>
 
 
 </resources>

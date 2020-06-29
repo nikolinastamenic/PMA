@@ -41,8 +41,18 @@ public class UserController {
 
         UserAndTaskDto userAndTaskDto = this.userService.loginUser(loginDto);
         return new ResponseEntity<>(userAndTaskDto, HttpStatus.OK);
-
-
     }
+
+    @PostMapping(value = "/forgot-password/{email}")
+    public ResponseEntity<?> forgotPassword(@PathVariable("email") String email) {
+        try {
+            this.userService.changePassword(email);
+            return ResponseEntity.ok().build();
+        }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
 
 }

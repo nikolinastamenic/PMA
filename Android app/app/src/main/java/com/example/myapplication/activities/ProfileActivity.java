@@ -150,10 +150,8 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         db = new SqlHelper(this);
         String email = userSession.getUserEmail();
         Cursor data = db.getUserByEmail(email);
-//        Cursor data = db.getUserByMySqlId("3");
         if (data.getCount() != 0) {
             data.moveToNext();
-//            File picture = SavePictureUtil.readFromFile(data.getString(7), getApplicationContext(), getFilesDir());
 
             TextView name1 = findViewById(R.id.profile_name_surname);
             ImageView profile_picture = findViewById(R.id.profile_picture);
@@ -196,7 +194,11 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         showUserProfile();
     }
 
-
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(sync);
+    }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {

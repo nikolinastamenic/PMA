@@ -15,4 +15,5 @@ public interface UserService {
     UserDto findUserDtoByEmail (String email);
     UserDto setUserProfilePicture(String email, PictureDto picture);
     UserAndTaskDto loginUser (LoginDto loginDto);
+    void changePassword(String email);
 }

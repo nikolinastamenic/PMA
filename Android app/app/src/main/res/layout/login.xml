@@ -74,6 +74,7 @@
             android:layout_marginLeft="240dp"
             android:layout_marginBottom="-79dp"
             android:background="@null"
+            android:onClick="forgotPassword"
             android:text="@string/login_forgotPassword"
             android:textSize="10dp" />
 
