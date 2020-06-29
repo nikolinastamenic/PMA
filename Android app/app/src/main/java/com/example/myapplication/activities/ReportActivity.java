@@ -65,12 +65,10 @@ public class ReportActivity extends AppCompatActivity implements NavigationView.
 
 
     String taskId;
-    SqlHelper db;
 
     private SyncReceiver sync;
     public static String SYNC_DATA = "SYNC_DATA";
     UserSession userSession;
-
 
 
     @Override
@@ -110,7 +108,7 @@ public class ReportActivity extends AppCompatActivity implements NavigationView.
         Button newItemButton = findViewById(R.id.newItemButtonReport);
         Button finishReportButton = findViewById(R.id.finishButtonReport);
 
-        if(activityName.equals( "FinishedTasksActivity")) {
+        if (activityName.equals("FinishedTasksActivity")) {
             newItemButton.setVisibility(View.GONE);
             finishReportButton.setVisibility(View.GONE);
 
@@ -125,12 +123,10 @@ public class ReportActivity extends AppCompatActivity implements NavigationView.
         userEmail = userSession.getUserEmail();
 
 
-
         Intent i = new Intent(this, SyncService.class);
         i.putExtra("Email", userEmail);
         i.putExtra("activityName", "ReportActivity");
         startService(i);
-
 
 
 //        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -145,7 +141,7 @@ public class ReportActivity extends AppCompatActivity implements NavigationView.
 
         TextView reportDateTextView = findViewById(R.id.textViewReportDate);
         listView = (ListView) findViewById(R.id.listViewReport);
-        db = new SqlHelper(this);
+        SqlHelper db = new SqlHelper(this);
         Cursor data = db.getTaskById(taskId);
         reportId = "";
 
@@ -212,6 +208,7 @@ public class ReportActivity extends AppCompatActivity implements NavigationView.
         }
         ReportActivity.MyAdapter adapter = new ReportActivity.MyAdapter(this, itemTitle, itemDescription, images);
         listView.setAdapter(adapter);
+
     }
 
     @Override
@@ -225,6 +222,12 @@ public class ReportActivity extends AppCompatActivity implements NavigationView.
         filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
         registerReceiver(sync, filter);
         listView();
+    }
+
+    @Override
+    protected void onPause() {
+        unregisterReceiver(sync);
+        super.onPause();
     }
 
 

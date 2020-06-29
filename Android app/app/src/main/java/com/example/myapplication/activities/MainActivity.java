@@ -124,10 +124,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     protected void onPause() {
-
+        unregisterReceiver(sync);
         super.onPause();
-        System.out.println("main activity ON PAUSE");
-
     }
 
 

@@ -45,7 +45,6 @@ public class FinishedTasksActivity extends AppCompatActivity implements Navigati
     List<String> apartmentTitle;
     List<String> apartmentAddress;
     List<String> checkApartmentDate;
-    SqlHelper db;
     List<String> taskIds;
     private SyncReceiver sync;
     public static String SYNC_DATA = "SYNC_DATA";
@@ -73,7 +72,7 @@ public class FinishedTasksActivity extends AppCompatActivity implements Navigati
 
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.setCheckedItem(R.id.nav_finished_tasks);
-        Menu menu =navigationView.getMenu();
+        Menu menu = navigationView.getMenu();
         MenuItem menuItem = menu.findItem(R.id.nav_log_in);
 
         menuItem.setVisible(false);
@@ -94,7 +93,7 @@ public class FinishedTasksActivity extends AppCompatActivity implements Navigati
     public void listView() {
 
         listView = (ListView) findViewById(R.id.listViewFinishedTasks);
-        db = new SqlHelper(this);
+        SqlHelper db = new SqlHelper(this);
         Cursor data = db.getFinishedTasks();
         String apartmentId = "";
         String apartmentNumber = "";
@@ -166,8 +165,7 @@ public class FinishedTasksActivity extends AppCompatActivity implements Navigati
     }
 
     @Override
-    protected void onResume()
-    {
+    protected void onResume() {
         super.onResume();
         IntentFilter filter = new IntentFilter();
         filter.addAction(SYNC_DATA);
@@ -180,6 +178,11 @@ public class FinishedTasksActivity extends AppCompatActivity implements Navigati
         listView();
     }
 
+    @Override
+    protected void onPause() {
+        unregisterReceiver(sync);
+        super.onPause();
+    }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {

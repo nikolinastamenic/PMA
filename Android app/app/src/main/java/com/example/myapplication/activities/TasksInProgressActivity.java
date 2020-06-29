@@ -42,7 +42,7 @@ public class TasksInProgressActivity extends AppCompatActivity implements Naviga
     List<String> apartmentTitle;
     List<String> apartmentAddress;
     List<String> checkApartmentDate;
-    SqlHelper db;
+//    SqlHelper db;
     List<String> taskIds;
 
 
@@ -78,7 +78,7 @@ public class TasksInProgressActivity extends AppCompatActivity implements Naviga
     public void listView() {
 
         listView = (ListView) findViewById(R.id.listViewTasksInProcess);
-        db = new SqlHelper(this);
+        SqlHelper db = new SqlHelper(this);
         Cursor data = db.getTasksInProcess();
         String apartmentId = "";
         String apartmentNumber = "";
@@ -113,7 +113,9 @@ public class TasksInProgressActivity extends AppCompatActivity implements Naviga
                     listView.setAdapter(myAdapter);
 
                 }
+
             }
+
         }
 
 

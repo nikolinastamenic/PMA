@@ -166,7 +166,6 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
         super.onResume();
 
-        System.out.println(" on resume usao..................");
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(SYNC_DATA);
@@ -188,8 +187,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
     @Override
     protected void onPause() {
-        System.out.println(" on pause usao..................");
-
+        unregisterReceiver(sync);
         super.onPause();
     }
 

@@ -167,13 +167,14 @@ public class LoginTask extends AsyncTask<String, Void, ResponseEntity<UserAndTas
                                         String reportItemUri = NewEntry.newReportItemEntry(context, reportItemDto, false);
                                         ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
-                                        Bitmap photo = BitmapFactory.decodeByteArray(reportItemDto.getPicture().getPicture(), 0, reportItemDto.getPicture().getPicture().length);
+                                        if (reportItemDto.getPicture().getPicture() != null) {
+                                            Bitmap photo = BitmapFactory.decodeByteArray(reportItemDto.getPicture().getPicture(), 0, reportItemDto.getPicture().getPicture().length);
 
 
-                                        photo.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                                        String picName = reportItemDto.getPicture().getPictureName();
-                                        SavePictureUtil.writeToFile(stream.toByteArray(), picName, context, context.getFilesDir());
-
+                                            photo.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                                            String picName = reportItemDto.getPicture().getPictureName();
+                                            SavePictureUtil.writeToFile(stream.toByteArray(), picName, context, context.getFilesDir());
+                                        }
 
                                         String reportItemId = reportItemUri.split("/")[1];
                                         String reportReporetItemUri = NewEntry.newReportReportItemEntry(context, reportItemDto, taskDto.getReportDto(), reportId, reportItemId);

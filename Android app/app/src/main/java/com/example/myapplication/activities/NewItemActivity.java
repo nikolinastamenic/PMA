@@ -266,4 +266,10 @@ public class NewItemActivity extends AppCompatActivity implements NavigationView
         return true;
     }
 
+    @Override
+    protected void onPause() {
+        unregisterReceiver(sync);
+        super.onPause();
+    }
+
 }

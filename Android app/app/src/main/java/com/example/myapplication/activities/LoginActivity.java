@@ -53,7 +53,6 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
     UserSession session;
     String email;
     String password;
-    SqlHelper db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,16 +80,16 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
         return true;
     }
 
-    @Override
-    public void onBackPressed() {
-
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-
-    }
+//    @Override
+//    public void onBackPressed() {
+//
+//        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+//            drawerLayout.closeDrawer(GravityCompat.START);
+//        } else {
+//            super.onBackPressed();
+//        }
+//
+//    }
 
     public void login(View view) {
 

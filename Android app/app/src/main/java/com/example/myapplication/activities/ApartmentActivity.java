@@ -27,7 +27,7 @@ public class ApartmentActivity extends AppCompatActivity implements NavigationVi
 
     DrawerLayout drawerLayout;
     NavigationView navigationView;
-    SqlHelper db;
+//    SqlHelper db;
 
     private String typeOfApartment;
 
@@ -85,7 +85,7 @@ public class ApartmentActivity extends AppCompatActivity implements NavigationVi
 
     public void getTask(String taskId) {
 
-        db = new SqlHelper(this);
+        SqlHelper db = new SqlHelper(this);
         Cursor data = db.getTaskById(taskId);
 
 
@@ -148,7 +148,6 @@ public class ApartmentActivity extends AppCompatActivity implements NavigationVi
             }
 
         }
-
 
     }
 
