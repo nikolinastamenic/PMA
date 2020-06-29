@@ -61,9 +61,10 @@ public class ApartmentActivity extends  FragmentActivity implements NavigationVi
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
         toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle("Quickinspect");
+
 
         navigationView.bringToFront();
-//        setSupportActionBar(toolbar);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.app_name, R.string.all_tasks);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();

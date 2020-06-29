@@ -226,7 +226,6 @@ public class NewItemActivity extends AppCompatActivity implements NavigationView
     @SneakyThrows
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        //TODO cuvanje u bazi i slanje na back kada se kreira ceo report item
         super.onActivityResult(requestCode, resultCode, data);
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         if (requestCode == AppConfig.CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
