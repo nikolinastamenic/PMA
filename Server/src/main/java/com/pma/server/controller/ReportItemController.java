@@ -9,6 +9,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(value = "/api/report/item", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ReportItemController {
@@ -19,8 +21,9 @@ public class ReportItemController {
     @PostMapping(value = "/new")
     public ResponseEntity<ReportMysqlIdsDto> newReportItem(@RequestBody NewReportItemDto newReportItemDto) {
 
-        ReportMysqlIdsDto reportDto = this.reportItemService.newReportItem(newReportItemDto);
-        return new ResponseEntity(reportDto, HttpStatus.OK);
+        ReportMysqlIdsDto reportDtos = this.reportItemService.newReportItem(newReportItemDto);
+
+        return new ResponseEntity<>(reportDtos, HttpStatus.OK);
     }
 
 
