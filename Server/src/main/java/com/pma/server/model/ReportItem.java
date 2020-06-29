@@ -22,6 +22,12 @@ public class ReportItem implements Serializable {
 
     public ReportItem() {}
 
+    public ReportItem(String faultName, String details, String picture) {
+        this.faultName = faultName;
+        this.details = details;
+        this.picture = picture;
+    }
+
     public Long getId() {
         return id;
     }

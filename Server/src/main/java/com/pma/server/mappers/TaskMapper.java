@@ -18,7 +18,7 @@ public class TaskMapper {
         taskDto.setUrgent(task.isUrgent());
 
         if(task.getReport() != null) {
-            taskDto.setReportDto(ReportMapper.toReportDto(task.getReport()));
+            taskDto.setReportDto(ReportMapper.toReportDtoWithItemsWithPictures(task.getReport()));
         }
         if(task.getUser() != null) {
             taskDto.setUserDto(UserMapper.toUserDto(task.getUser()));

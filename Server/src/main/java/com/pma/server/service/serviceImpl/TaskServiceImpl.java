@@ -90,16 +90,23 @@ public class TaskServiceImpl implements TaskService {
         ChangeTaskStateDto returned = new ChangeTaskStateDto();
         List<String> ids = new ArrayList<>();
 
-        for (String taskId : changeTaskStateDto.getTaskIds()) {
+        for (String taskId : changeTaskStateDto.getMysqlTaskIds()) {
             Long id = Long.parseLong(taskId);
             Task task = this.taskRepository.findTaskById(id);
 
             if (task != null) {
 
-                if (task.getState().equals("NEW")) {
+                if (changeTaskStateDto.getState().equals("IN_PROCESS")) {
+                    if (task.getState().equals("NEW")) {
 
+                        task.setState(changeTaskStateDto.getState());
+                        task.setUser(user);
+                        this.taskRepository.save(task);
+                        ids.add(taskId);
+                    }
+                }
+                else if (changeTaskStateDto.getState().equals("FINISHED")){
                     task.setState(changeTaskStateDto.getState());
-                    task.setUser(user);
                     this.taskRepository.save(task);
                     ids.add(taskId);
                 }
@@ -107,10 +114,20 @@ public class TaskServiceImpl implements TaskService {
             }
 
         }
-        returned.setTaskIds(ids);
+        returned.setMysqlTaskIds(ids);
         returned.setEmail(user.getEmail());
         returned.setState(changeTaskStateDto.getState());
 
         return returned;
+    }
+
+    @Override
+    public Task getTaskById(Long id) {
+        return this.taskRepository.findTaskById(id);
+    }
+
+    @Override
+    public Task save(Task task) {
+        return this.taskRepository.save(task);
     }
 }

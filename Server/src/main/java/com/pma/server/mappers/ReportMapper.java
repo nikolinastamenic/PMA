@@ -10,22 +10,22 @@ import java.util.List;
 
 public class ReportMapper {
 
-    public static ReportDto toReportDto(Report report){
-        ReportDto reportDto = new ReportDto();
-
-        reportDto.setDate(report.getDate());
-        reportDto.setId(report.getId());
-
-        List<ReportItemDto> reportItemDtos = new ArrayList<>();
-
-        for(ReportItem reportItem: report.getItemList()){
-            ReportItemDto reportItemDto = ReportItemMapper.toReportItemDto(reportItem);
-            reportItemDtos.add(reportItemDto);
-        }
-        reportDto.setItemList(reportItemDtos);
-
-        return reportDto;
-    }
+//    public static ReportDto toReportDto(Report report){
+//        ReportDto reportDto = new ReportDto();
+//
+//        reportDto.setDate(report.getDate());
+//        reportDto.setId(report.getId());
+//
+//        List<ReportItemDto> reportItemDtos = new ArrayList<>();
+//
+//        for(ReportItem reportItem: report.getItemList()){
+//            ReportItemDto reportItemDto = ReportItemMapper.toReportItemDto(reportItem);
+//            reportItemDtos.add(reportItemDto);
+//        }
+//        reportDto.setItemList(reportItemDtos);
+//
+//        return reportDto;
+//    }
 
 
     public static ReportDto toReportDtoWithItemsWithPictures(Report report){

@@ -82,6 +82,10 @@ public class NewEntry {
 //        entryUser.put(SqlHelper.COLUMN_USER_PASSWORD, userDto.getPassword());
         entryUser.put(SqlHelper.COLUMN_USER_NAME, userDto.getName());
         entryUser.put(SqlHelper.COLUMN_USER_SURNAME, userDto.getSurname());
+        if (userDto.getPictureName() != null) {
+            entryUser.put(SqlHelper.COLUMN_USER_PICTURE, userDto.getPictureName());
+
+        }
 
 
         Uri userUri = context.getContentResolver().insert(DBContentProvider.CONTENT_URI_USER, entryUser);
@@ -91,23 +95,39 @@ public class NewEntry {
 
     }
 
-    public static String newReportEntry(Context context, ReportDto reportDto) {
+    public static String newReportEntry(Context context, ReportDto reportDto, String taskId) {
         ContentValues entryReport = new ContentValues();
-        entryReport.put(SqlHelper.COLUMN_REPORT_MYSQLID, reportDto.getId());
-        entryReport.put(SqlHelper.COLUMN_REPORT_DATE, reportDto.getDate().toString());
+        if (reportDto.getId() != null) {
+            entryReport.put(SqlHelper.COLUMN_REPORT_MYSQLID, reportDto.getId());
+        }
+        if (reportDto.getDate() != null) {
+            entryReport.put(SqlHelper.COLUMN_REPORT_DATE, reportDto.getDate().toString());
+        }
 
+        if (taskId != "") {
+            entryReport.put(SqlHelper.COLUMN_REPORT_TASK_ID, taskId);
+
+        }
         Uri reportUri = context.getContentResolver().insert(DBContentProvider.CONTENT_URI_REPORT, entryReport);
 
         return reportUri.toString();
     }
 
-    public static String newReportItemEntry(Context context, ReportItemDto reportItemDto) {
+    public static String newReportItemEntry(Context context, ReportItemDto reportItemDto, boolean isNew) {
 
         ContentValues entryReportItem = new ContentValues();
         entryReportItem.put(SqlHelper.COLUMN_REPORT_ITEM_MYSQLID, reportItemDto.getId());
         entryReportItem.put(SqlHelper.COLUMN_REPORT_ITEM_FAULT_NAME, reportItemDto.getFaultName());
-        entryReportItem.put(SqlHelper.COLUMN_REPORT_ITEM_DETAILS, reportItemDto.getDetails()); //TODO fali slika
-        entryReportItem.put(SqlHelper.COLUMN_REPORT_ITEM_FAULT_PICTURE, reportItemDto.getPicture());
+        entryReportItem.put(SqlHelper.COLUMN_REPORT_ITEM_DETAILS, reportItemDto.getDetails());
+        entryReportItem.put(SqlHelper.COLUMN_REPORT_ITEM_FAULT_PICTURE, reportItemDto.getPicture().getPictureName());
+        if(isNew) {
+            entryReportItem.put(SqlHelper.COLUMN_REPORT_ITEM_IS_SYNCHRONIZED, 0);
+
+        } else  {
+            entryReportItem.put(SqlHelper.COLUMN_REPORT_ITEM_IS_SYNCHRONIZED, 2);
+
+        }
+
 
         Uri reportItemUri = context.getContentResolver().insert(DBContentProvider.CONTENT_URI_REPORT_ITEM, entryReportItem);
         return reportItemUri.toString();
@@ -121,6 +141,17 @@ public class NewEntry {
         entryReportReportItem.put(SqlHelper.COLUMN_REPORT_REPORT_ITEM_REPORT_MYSQLIDID, reportDto.getId());
         entryReportReportItem.put(SqlHelper.COLUMN_REPORT_REPORT_ITEM_REPOR_ITEM_ID, reportItemId);
         entryReportReportItem.put(SqlHelper.COLUMN_REPORT_REPORT_ITEM_REPORT_ITEM_MYSQLID, reportItemDto.getId());
+
+        Uri reportReportItemUri = context.getContentResolver().insert(DBContentProvider.CONTENT_URI_JOIN_TABLE, entryReportReportItem);
+        return reportReportItemUri.toString();
+
+    }
+
+    public static String newReportReportItemEntryWithoutMysqlIds(Context context, String reportId, String reportItemId) {
+
+        ContentValues entryReportReportItem = new ContentValues();
+        entryReportReportItem.put(SqlHelper.COLUMN_REPORT_REPORT_ITEM_REPORT_ID, reportId);
+        entryReportReportItem.put(SqlHelper.COLUMN_REPORT_REPORT_ITEM_REPOR_ITEM_ID, reportItemId);
 
         Uri reportReportItemUri = context.getContentResolver().insert(DBContentProvider.CONTENT_URI_JOIN_TABLE, entryReportReportItem);
         return reportReportItemUri.toString();

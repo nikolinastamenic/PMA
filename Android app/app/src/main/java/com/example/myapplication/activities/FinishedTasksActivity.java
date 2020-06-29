@@ -2,6 +2,7 @@ package com.example.myapplication.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 
 import android.os.Bundle;
@@ -26,7 +27,10 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.myapplication.R;
 import com.example.myapplication.database.SqlHelper;
+import com.example.myapplication.sync.receiver.SyncReceiver;
+import com.example.myapplication.sync.service.SyncService;
 import com.example.myapplication.util.NavBarUtil;
+import com.example.myapplication.util.UserSession;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
@@ -43,6 +47,9 @@ public class FinishedTasksActivity extends AppCompatActivity implements Navigati
     List<String> checkApartmentDate;
     SqlHelper db;
     List<String> taskIds;
+    private SyncReceiver sync;
+    public static String SYNC_DATA = "SYNC_DATA";
+    UserSession userSession;
 
 
     @Override
@@ -70,7 +77,16 @@ public class FinishedTasksActivity extends AppCompatActivity implements Navigati
         MenuItem menuItem = menu.findItem(R.id.nav_log_in);
 
         menuItem.setVisible(false);
-        listView();
+
+        sync = new SyncReceiver();
+
+
+        Intent i = new Intent(this, SyncService.class);
+        i.putExtra("Email", "");
+        i.putExtra("activityName", "FinishedTasksActivity");
+        i.putExtra("finishTask", "true");
+
+        startService(i);
 
 
     }
@@ -90,7 +106,7 @@ public class FinishedTasksActivity extends AppCompatActivity implements Navigati
 
                 taskIds.add(data.getString(0));
 
-                checkApartmentDate.add(data.getString(5).substring(0, 13));
+                checkApartmentDate.add(data.getString(5).substring(0, 16));
                 apartmentId = data.getString(6);
                 Cursor apartmentData = db.getApartmentById(apartmentId);
                 while (apartmentData.moveToNext()) {
@@ -124,6 +140,8 @@ public class FinishedTasksActivity extends AppCompatActivity implements Navigati
 
                 Intent intent = new Intent(FinishedTasksActivity.this, ApartmentActivity.class);
                 intent.putExtra("taskId", taskId);
+                intent.putExtra("activityName", "FinishedTasksActivity");
+
                 startActivity(intent);
             }
         });
@@ -146,6 +164,22 @@ public class FinishedTasksActivity extends AppCompatActivity implements Navigati
     protected void onStop() {
         super.onStop();
     }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(SYNC_DATA);
+
+        filter.addAction("android.net.wifi.WIFI_STATE_CHANGED");
+        filter.addAction("android.net.wifi.STATE_CHANGE");
+        filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
+        registerReceiver(sync, filter);
+
+        listView();
+    }
+
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {

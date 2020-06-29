@@ -15,7 +15,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -119,7 +118,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
         } else {
             while (data.moveToNext()) {
                 taskIds.add(data.getString(0));
-                checkApartmentDate.add(data.getString(5).substring(0, 13));
+                checkApartmentDate.add(data.getString(5).substring(0, 16));
                 taskWaitingList.add(data.getInt(9));
                 apartmentId = data.getString(6);
                 Cursor apartmentData = db.getApartmentById(apartmentId);
@@ -316,7 +315,6 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
                         }
                         taskId = taskIds.get(position);
 
-                        System.out.println(taskId + " JIODHSNFUOIHSDOIUFHSOUISHDOIFHSIOHDFSOIHDSIOHFIOS TAAAAAAAAAAAAAAASLOD");
 
                         waiting.setVisibility(View.VISIBLE);
                         Cursor taskData = db.getTaskById(taskId);
@@ -324,7 +322,6 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
                             String mysqlId = taskData.getString(1);
                             taskMysqlId = mysqlId;
 
-                            System.out.println(taskMysqlId + " AAAAAAAAAAAAAAAAAAAAAAAAAAASJIOFUHAUOSHFOUAHOIL");
 
                             entryTask.put(SqlHelper.COLUMN_TASK_USER_ID, userId);
                             entryTask.put(SqlHelper.COLUMN_TASK_IS_SYNCHRONIZED, 0);

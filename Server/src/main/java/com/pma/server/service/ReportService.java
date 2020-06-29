@@ -7,7 +7,9 @@ import org.springframework.stereotype.Service;
 @Service
 public interface ReportService {
 
-    ReportDto findReportById(Long id);
+    ReportDto findReportDtoById(Long id);
+    Report findReportById(Long id);
+    Report save(Report report);
 
 
 }
