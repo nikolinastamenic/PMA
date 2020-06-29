@@ -49,6 +49,7 @@ public class FinishedTasksActivity extends AppCompatActivity implements Navigati
     private SyncReceiver sync;
     public static String SYNC_DATA = "SYNC_DATA";
     UserSession userSession;
+    MyAdapter myAdapter;
 
 
     @Override
@@ -124,7 +125,7 @@ public class FinishedTasksActivity extends AppCompatActivity implements Navigati
 
                 }
 
-                FinishedTasksActivity.MyAdapter myAdapter = new FinishedTasksActivity.MyAdapter(this, apartmentTitle, apartmentAddress, checkApartmentDate);
+                myAdapter = new FinishedTasksActivity.MyAdapter(this, apartmentTitle, apartmentAddress, checkApartmentDate);
                 listView.setAdapter(myAdapter);
             }
         }
@@ -156,6 +157,9 @@ public class FinishedTasksActivity extends AppCompatActivity implements Navigati
 
     @Override
     protected void onStart() {
+        if (myAdapter != null) {
+            myAdapter.clear();
+        }
         super.onStart();
     }
 

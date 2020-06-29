@@ -200,14 +200,14 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
     @Override
     protected void onStart() {
-        System.out.println(" on start usao..................");
-
+        if (myAdapter != null) {
+            myAdapter.clear();
+        }
         super.onStart();
     }
 
     @Override
     protected void onStop() {
-        System.out.println(" on stop usao..................");
 
         super.onStop();
     }

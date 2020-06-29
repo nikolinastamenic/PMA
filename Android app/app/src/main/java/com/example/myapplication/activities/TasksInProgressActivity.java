@@ -42,8 +42,9 @@ public class TasksInProgressActivity extends AppCompatActivity implements Naviga
     List<String> apartmentTitle;
     List<String> apartmentAddress;
     List<String> checkApartmentDate;
-//    SqlHelper db;
+    //    SqlHelper db;
     List<String> taskIds;
+    MyAdapter myAdapter;
 
 
     @Override
@@ -108,8 +109,7 @@ public class TasksInProgressActivity extends AppCompatActivity implements Naviga
                         }
 
                     }
-
-                    TasksInProgressActivity.MyAdapter myAdapter = new TasksInProgressActivity.MyAdapter(this, apartmentTitle, apartmentAddress, checkApartmentDate);
+                    myAdapter = new TasksInProgressActivity.MyAdapter(this, apartmentTitle, apartmentAddress, checkApartmentDate);
                     listView.setAdapter(myAdapter);
 
                 }
@@ -144,6 +144,9 @@ public class TasksInProgressActivity extends AppCompatActivity implements Naviga
 
     @Override
     protected void onStart() {
+        if (myAdapter != null) {
+            myAdapter.clear();
+        }
         super.onStart();
     }
 
@@ -153,9 +156,9 @@ public class TasksInProgressActivity extends AppCompatActivity implements Naviga
     }
 
     @Override
-    protected void onResume()
-    {
+    protected void onResume() {
         super.onResume();
+
         listView();
     }
 

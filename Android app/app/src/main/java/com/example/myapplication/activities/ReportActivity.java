@@ -69,6 +69,7 @@ public class ReportActivity extends AppCompatActivity implements NavigationView.
     private SyncReceiver sync;
     public static String SYNC_DATA = "SYNC_DATA";
     UserSession userSession;
+    MyAdapter adapter;
 
 
     @Override
@@ -206,7 +207,7 @@ public class ReportActivity extends AppCompatActivity implements NavigationView.
             TextView textView = findViewById(R.id.textViewReportDateString);
             textView.setVisibility(View.GONE);
         }
-        ReportActivity.MyAdapter adapter = new ReportActivity.MyAdapter(this, itemTitle, itemDescription, images);
+        adapter = new ReportActivity.MyAdapter(this, itemTitle, itemDescription, images);
         listView.setAdapter(adapter);
 
     }
@@ -310,5 +311,12 @@ public class ReportActivity extends AppCompatActivity implements NavigationView.
         return true;
     }
 
+    @Override
+    protected void onStart() {
+        if (adapter != null) {
+            adapter.clear();
+        }
+        super.onStart();
+    }
 
 }
