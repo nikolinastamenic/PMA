@@ -12,6 +12,7 @@ public interface UserService {
 
     UserDto getUserById(Long id);
     User findUserByEmail (String email);
-    UserDto setUserProfilePicture(Long id, PictureDto picture);
+    UserDto findUserDtoByEmail (String email);
+    UserDto setUserProfilePicture(String email, PictureDto picture);
     UserAndTaskDto loginUser (LoginDto loginDto);
 }

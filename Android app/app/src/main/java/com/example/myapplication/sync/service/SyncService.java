@@ -10,6 +10,7 @@ import com.example.myapplication.activities.MainActivity;
 import com.example.myapplication.sync.restTask.LoginTask;
 import com.example.myapplication.sync.restTask.RequestTaskTask;
 import com.example.myapplication.sync.restTask.SyncTask;
+import com.example.myapplication.sync.restTask.UserTask;
 import com.example.myapplication.util.AppConfig;
 import com.example.myapplication.util.NetworkStateTools;
 
@@ -38,7 +39,8 @@ public class SyncService extends Service {
             } else if (!email.equals("") && activity.equals("AllTasksActivity")) {
                 String mysqlId = intent.getStringExtra("MySqlId");
                 new RequestTaskTask(getApplicationContext()).execute(AppConfig.apiURI + "task/change/state", email, mysqlId);
-
+            } else if (!email.equals("") && activity.equals("ProfileActivity")) {
+                new UserTask(getApplicationContext()).execute(AppConfig.apiURI + "user/email/" + email, email);
             }
 
         }
@@ -50,7 +52,6 @@ public class SyncService extends Service {
         return START_REDELIVER_INTENT;      //ako nismo povezani na internet necemo da pokrenemo sinhronizaciju,
         //hocu da vidim da li trenutno ima interneta, ako ne onda nemoj pokretati sinhronizaciju
     }
-
 
     @Nullable
     @Override
