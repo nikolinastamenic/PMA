@@ -225,6 +225,12 @@ public class DBContentProvider extends ContentProvider {
         long id = 0;
         int rowsUpdated = 0;
         switch (uriType) {
+            case USER:
+                rowsUpdated = sqlDB.update(SqlHelper.TABLE_USER,
+                        values,
+                        selection,
+                        selectionArgs);
+                break;
             case TASK:
                 rowsUpdated = sqlDB.update(SqlHelper.TABLE_TASK,
                         values,
