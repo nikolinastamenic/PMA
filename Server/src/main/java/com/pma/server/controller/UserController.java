@@ -1,9 +1,6 @@
 package com.pma.server.controller;
 
-import com.pma.server.Dto.LoginDto;
-import com.pma.server.Dto.PictureDto;
-import com.pma.server.Dto.UserAndTaskDto;
-import com.pma.server.Dto.UserDto;
+import com.pma.server.Dto.*;
 import com.pma.server.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -46,7 +43,7 @@ public class UserController {
     @PostMapping(value = "/forgot-password/{email}")
     public ResponseEntity<?> forgotPassword(@PathVariable("email") String email) {
         try {
-            this.userService.changePassword(email);
+            this.userService.forgotPassword(email);
             return ResponseEntity.ok().build();
         }
         catch (Exception e) {
@@ -54,5 +51,15 @@ public class UserController {
         }
     }
 
+    @PostMapping(value = "/change-password")
+    public ResponseEntity<?> changePassword(@RequestBody ChangePasswordDto userDto) {
+        try {
+            this.userService.newUserPassword(userDto);
+            return ResponseEntity.ok().build();
+        }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
 
 }

@@ -7,6 +7,7 @@ import android.os.IBinder;
 import androidx.annotation.Nullable;
 
 import com.example.myapplication.activities.MainActivity;
+import com.example.myapplication.sync.restTask.ChangePasswordTask;
 import com.example.myapplication.sync.restTask.FinishTaskTask;
 import com.example.myapplication.sync.restTask.ForgotPasswordTask;
 import com.example.myapplication.sync.restTask.LoginTask;
@@ -58,6 +59,9 @@ public class SyncService extends Service {
                 new FinishTaskTask(getApplicationContext()).execute(AppConfig.apiURI + "task/change/state");
             } else if (!email.equals("") && activity.equals("ForgotPasswordActivity")) {
                 new ForgotPasswordTask(getApplicationContext()).execute(AppConfig.apiURI + "user/forgot-password/" + email, email);
+            } else if (activity.equals("ChangePasswordActivity")) {
+                String password = intent.getStringExtra("newPassword");
+                new ChangePasswordTask(getApplicationContext()).execute(AppConfig.apiURI + "user/change-password", password);
             }
 
         }

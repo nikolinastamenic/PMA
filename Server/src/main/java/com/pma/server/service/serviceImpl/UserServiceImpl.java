@@ -17,22 +17,17 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Slf4j
 @Service
 public class UserServiceImpl implements UserService {
 
-    private UserRepository userRepository;
-    private TaskService taskService;
-    private JavaMailSender mailSender;
+    private final UserRepository userRepository;
+    private final TaskService taskService;
+    private final JavaMailSender mailSender;
 
     @Value("${spring.mail.username}")
     private String sender;
@@ -126,7 +121,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public void changePassword(String email) {
+    public void forgotPassword(String email) {
 
         String newPass = UtilService.generateRandom(7);
         Optional<User> user = userRepository.getUserByEmail(email);
@@ -138,6 +133,18 @@ public class UserServiceImpl implements UserService {
         user.get().setPassword(newPass);
         userRepository.save(user.get());
         sendEmail(email, newPass);
+    }
+
+    @Override
+    public void newUserPassword(ChangePasswordDto userDto) {
+        Optional<User> user = this.userRepository.getUserByEmail(userDto.getEmail());
+        if (!user.isPresent()) {
+            log.error("User with email: " + userDto.getEmail() + " doesn't exist!");
+            throw new NullPointerException("User doesn't exist");
+        }
+
+        user.get().setPassword(userDto.getPassword());
+        userRepository.save(user.get());
     }
 
     @Async

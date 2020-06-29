@@ -87,13 +87,11 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
 
         Menu menu = navigationView.getMenu();
         MenuItem menuItem = menu.findItem(R.id.nav_log_in);
+        menuItem.setVisible(false);
 
         sync = new SyncReceiver();
         userSession = new UserSession(getApplicationContext());
 
-        menuItem.setVisible(false);
-
-//        getUserProfile("3");
         showUserProfile();
 
         profilePicture = findViewById(R.id.profile_picture);
@@ -215,6 +213,11 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         final String uri = AppConfig.apiURI + "user/" + email + "/picture";
         updatedPicture = pictureDto;
         new RESTSetUserProfilePictureTask().execute(uri);
+    }
+
+    public void changePassword(View view) {
+        Intent intent = new Intent(this, ChangePasswordActivity.class);
+        startActivity(intent);
     }
 
     class RESTSetUserProfilePictureTask extends AsyncTask<String, Void, ResponseEntity<UserDto>> {
