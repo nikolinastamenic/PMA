@@ -95,7 +95,7 @@ public class NewEntry {
 
     }
 
-    public static String newReportEntry(Context context, ReportDto reportDto) {
+    public static String newReportEntry(Context context, ReportDto reportDto, String taskId) {
         ContentValues entryReport = new ContentValues();
         if (reportDto.getId() != null) {
             entryReport.put(SqlHelper.COLUMN_REPORT_MYSQLID, reportDto.getId());
@@ -103,18 +103,31 @@ public class NewEntry {
         if (reportDto.getDate() != null) {
             entryReport.put(SqlHelper.COLUMN_REPORT_DATE, reportDto.getDate().toString());
         }
+
+        if (taskId != "") {
+            entryReport.put(SqlHelper.COLUMN_REPORT_TASK_ID, taskId);
+
+        }
         Uri reportUri = context.getContentResolver().insert(DBContentProvider.CONTENT_URI_REPORT, entryReport);
 
         return reportUri.toString();
     }
 
-    public static String newReportItemEntry(Context context, ReportItemDto reportItemDto) {
+    public static String newReportItemEntry(Context context, ReportItemDto reportItemDto, boolean isNew) {
 
         ContentValues entryReportItem = new ContentValues();
         entryReportItem.put(SqlHelper.COLUMN_REPORT_ITEM_MYSQLID, reportItemDto.getId());
         entryReportItem.put(SqlHelper.COLUMN_REPORT_ITEM_FAULT_NAME, reportItemDto.getFaultName());
-        entryReportItem.put(SqlHelper.COLUMN_REPORT_ITEM_DETAILS, reportItemDto.getDetails()); //TODO fali slika
+        entryReportItem.put(SqlHelper.COLUMN_REPORT_ITEM_DETAILS, reportItemDto.getDetails());
         entryReportItem.put(SqlHelper.COLUMN_REPORT_ITEM_FAULT_PICTURE, reportItemDto.getPicture().getPictureName());
+        if(isNew) {
+            entryReportItem.put(SqlHelper.COLUMN_REPORT_ITEM_IS_SYNCHRONIZED, 0);
+
+        } else  {
+            entryReportItem.put(SqlHelper.COLUMN_REPORT_ITEM_IS_SYNCHRONIZED, 2);
+
+        }
+
 
         Uri reportItemUri = context.getContentResolver().insert(DBContentProvider.CONTENT_URI_REPORT_ITEM, entryReportItem);
         return reportItemUri.toString();

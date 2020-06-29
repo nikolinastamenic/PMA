@@ -40,10 +40,9 @@ public class SyncService extends Service {
                 String mysqlId = intent.getStringExtra("MySqlId");
                 new RequestTaskTask(getApplicationContext()).execute(AppConfig.apiURI + "task/change/state", email, mysqlId);
 
-            } else if (!email.equals("") &&  activity.equals("NewItemActivity")) {
-                String taskId = intent.getStringExtra("TaskId");
-                String reportItemId = intent.getStringExtra("ReportItemId");
-                new NewReportItemTask(getApplicationContext()).execute(AppConfig.apiURI + "report/item/new", taskId, reportItemId);
+            } else if (!email.equals("") &&  (activity.equals("NewItemActivity") || activity.equals("ReportActivity") )) {
+
+                new NewReportItemTask(getApplicationContext()).execute(AppConfig.apiURI + "report/item/new");
 
             }
 

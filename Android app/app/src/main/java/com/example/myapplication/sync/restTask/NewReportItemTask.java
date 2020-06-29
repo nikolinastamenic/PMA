@@ -2,19 +2,16 @@ package com.example.myapplication.sync.restTask;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
+
 import android.database.Cursor;
 import android.os.AsyncTask;
 
-import com.example.myapplication.DTO.ChangeTaskStateDto;
 import com.example.myapplication.DTO.NewReportItemDto;
+import com.example.myapplication.DTO.NewReportItemItemDto;
 import com.example.myapplication.DTO.PictureDto;
-import com.example.myapplication.DTO.ReportItemDto;
 import com.example.myapplication.DTO.ReportMysqlIdsDto;
-import com.example.myapplication.DTO.UserAndTaskDto;
-import com.example.myapplication.activities.AllTasksActivity;
-import com.example.myapplication.activities.ReportActivity;
+import com.example.myapplication.DTO.ReportMysqlIdsItemDto;
+
 import com.example.myapplication.database.DBContentProvider;
 import com.example.myapplication.database.SqlHelper;
 import com.example.myapplication.util.SavePictureUtil;
@@ -30,7 +27,6 @@ import org.springframework.web.client.RestTemplate;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -43,9 +39,6 @@ public class NewReportItemTask extends AsyncTask<String, Void, ResponseEntity<Re
     private Context context;
     private SqlHelper db;
     String taskId;
-    String reportItemId;
-    int reportId;
-
 
 
     public NewReportItemTask(Context applicationContext) {
@@ -57,120 +50,157 @@ public class NewReportItemTask extends AsyncTask<String, Void, ResponseEntity<Re
     protected ResponseEntity<ReportMysqlIdsDto> doInBackground(String... params) {
 
 
+        NewReportItemDto reportItemsDto = new NewReportItemDto();
+        List<NewReportItemItemDto> newReportItemItemDtos = new ArrayList<>();
+
         db = new SqlHelper(context);
 
         final String url = params[0];
-        taskId = params[1];
-        reportItemId = params[2];
 
         RestTemplate restTemplate = new RestTemplate();
 
+        Cursor reportItemsData = db.getReportItemBySynchronized(0);
 
-        Cursor taskData = db.getTaskById(taskId);
-        taskData.moveToFirst();
-        int taskMySqlId = taskData.getInt(1);
-        reportId = taskData.getInt(7);
+        while (reportItemsData.moveToNext()) {
+
+            int reportItemId = 0;
+            int reportId = 0;
+            int taskId = 0;
+            int taskMySqlId = 0;
+            int mySqlReportId = 0;
+            int mySqlReportItemId = 0;
+
+            reportItemId = reportItemsData.getInt(0);
+
+            Cursor joinTableData = db.getRRIByRIdAndRIId(String.valueOf(reportItemId));
+            if (joinTableData.moveToFirst()) {
+                reportId = joinTableData.getInt(0);
+            }
 
 
-        Cursor reportItemData = db.getReportItemById(reportItemId);
-        reportItemData.moveToFirst();
-        int mySqlReportItemId = 0;
-        String faultName = reportItemData.getString(2);
-        String description = reportItemData.getString(3);
-        String pictureName = reportItemData.getString(4);
-        if (reportItemData.getInt(1) != 0) {
-            mySqlReportItemId = reportItemData.getInt(1);
+            ContentValues entryReport = new ContentValues();
+
+            entryReport.put(SqlHelper.COLUMN_REPORT_DATE, new Date().toString());
+
+            context.getContentResolver().update(DBContentProvider.CONTENT_URI_REPORT, entryReport, "id=" + reportId, null);
+
+
+            Cursor reportData = db.getReportById(String.valueOf(reportId));
+            if (reportData.moveToFirst()) {
+                mySqlReportId = reportData.getInt(1);
+                taskId = reportData.getInt(3);
+
+
+            }
+
+
+            Cursor taskData = db.getTaskById(String.valueOf(taskId));
+
+            if (taskData.moveToFirst()) {
+                taskMySqlId = taskData.getInt(1);
+
+            }
+
+            String faultName = reportItemsData.getString(2);
+            String description = reportItemsData.getString(3);
+            String pictureName = reportItemsData.getString(4);
+            if (reportItemsData.getInt(1) != 0) {
+                mySqlReportItemId = reportItemsData.getInt(1);
+            }
+
+
+            String reportDate = reportData.getString(2);
+
+            NewReportItemItemDto newReportItemItemDto = new NewReportItemItemDto();
+            PictureDto pictureDto = new PictureDto();
+            pictureDto.setPictureName(pictureName);
+
+            newReportItemItemDto.setMySqlTaskId(taskMySqlId);
+            newReportItemItemDto.setMySqlReportId(mySqlReportId);
+            newReportItemItemDto.setMySqlReportItemId(mySqlReportItemId);
+            newReportItemItemDto.setReportCreatedDate(reportDate);
+            newReportItemItemDto.setFaultName(faultName);
+            newReportItemItemDto.setDetails(description);
+
+            File file = SavePictureUtil.readFromFile(pictureName, context, context.getFilesDir());
+            try {
+                pictureDto.setPicture(IOUtils.toByteArray(new FileInputStream(file)));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+            newReportItemItemDto.setPicture(pictureDto);
+            newReportItemItemDto.setReportId(reportId);
+            newReportItemItemDto.setReportItemId(reportItemId);
+
+            newReportItemItemDtos.add(newReportItemItemDto);
+            reportItemsDto.setNewReportItemItemDtoList(newReportItemItemDtos);
+
         }
 
-        int mySqlReportId = 0;
-        Cursor reportData = db.getReportById(Integer.toString(reportId));
-        reportData.moveToFirst();
-        if (reportData.getInt(1) != 0) {
-            mySqlReportId = reportData.getInt(1);
+
+        if (reportItemsData.getCount() > 0) {
+
+            try {
+                restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.APPLICATION_JSON);
+                headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+
+                HttpEntity entity = new HttpEntity(reportItemsDto, headers);
+                ResponseEntity<ReportMysqlIdsDto> response = restTemplate.postForEntity(url, entity, ReportMysqlIdsDto.class);
+
+                return response;
+
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+                return null;
+
+            }
         }
-        String reportDate = reportData.getString(2);
-//        Date date = new SimpleDateFormat("dd/MM/yyyy").parse(reportDate);
-
-        NewReportItemDto newReportItemDto = new NewReportItemDto();
-        PictureDto pictureDto = new PictureDto();
-        pictureDto.setPictureName(pictureName);
-
-        newReportItemDto.setMySqlTaskId(taskMySqlId);
-        newReportItemDto.setMySqlReportId(mySqlReportId);
-        newReportItemDto.setMySqlReportItemId(mySqlReportItemId);
-        newReportItemDto.setReportCreatedDate(reportDate);
-        newReportItemDto.setFaultName(faultName);
-        newReportItemDto.setDetails(description);
-
-        File file = SavePictureUtil.readFromFile(pictureName, context, context.getFilesDir());
-        try {
-            pictureDto.setPicture(IOUtils.toByteArray(new FileInputStream(file)));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
-        newReportItemDto.setPicture(pictureDto);
-
-
-        try {
-            restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-
-            HttpEntity entity = new HttpEntity(newReportItemDto, headers);
-            ResponseEntity<ReportMysqlIdsDto> response = restTemplate.postForEntity(url, entity, ReportMysqlIdsDto.class);
-
-            return response;
-
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return null;
-
-
-        }
+        return null;
 
 
     }
 
 
     protected void onPostExecute(ResponseEntity<ReportMysqlIdsDto> responseEntity) {
-//
-//        ReportMysqlIdsDto reportMysqlIdsDto = responseEntity.getBody();
-//
-//
-//        ContentValues entryTask = new ContentValues();
-//
-//        entryTask.put(SqlHelper.COLUMN_REPORT_MYSQLID, reportMysqlIdsDto.getReportMysqlId());
-//
-//        context.getContentResolver().update(DBContentProvider.CONTENT_URI_REPORT, entryTask, "id=" + reportId, null);
-//
-//        ContentValues entryTask1 = new ContentValues();
-//
-//        entryTask1.put(SqlHelper.COLUMN_REPORT_ITEM_MYSQLID, reportMysqlIdsDto.getReportItemMysqlId());
-//
-//        context.getContentResolver().update(DBContentProvider.CONTENT_URI_REPORT_ITEM, entryTask1, "id=" + reportItemId, null);
-//
-//
-//        Cursor reportReportItemData = db.getRRIByRIdAndRIId(reportItemId);
-//        reportReportItemData.moveToFirst();
-//
-//        int reportReportItemId = reportReportItemData.getInt(0);
-//
-//        ContentValues entryTask2 = new ContentValues();
-//
-//        entryTask2.put(SqlHelper.COLUMN_REPORT_REPORT_ITEM_REPORT_MYSQLIDID, reportMysqlIdsDto.getReportMysqlId());
-//        entryTask2.put(SqlHelper.COLUMN_REPORT_REPORT_ITEM_REPORT_ITEM_MYSQLID, reportMysqlIdsDto.getReportItemMysqlId());
-//
-//        context.getContentResolver().update(DBContentProvider.CONTENT_URI_JOIN_TABLE, entryTask2, "id=" + reportReportItemId, null);
+
+        if (responseEntity != null) {
+
+            ReportMysqlIdsDto reportMysqlIdsDto = responseEntity.getBody();
+
+            for (ReportMysqlIdsItemDto reportMysqlIdsItemDto : reportMysqlIdsDto.getReportMysqlIdsItemDtos()) {
 
 
+                ContentValues entryTask = new ContentValues();
+
+                entryTask.put(SqlHelper.COLUMN_REPORT_MYSQLID, reportMysqlIdsItemDto.getReportMysqlId());
+
+                context.getContentResolver().update(DBContentProvider.CONTENT_URI_REPORT, entryTask, "id=" + reportMysqlIdsItemDto.getReportId(), null);
+
+                ContentValues entryReportItem = new ContentValues();
+
+                entryReportItem.put(SqlHelper.COLUMN_REPORT_ITEM_MYSQLID, reportMysqlIdsItemDto.getReportItemMysqlId());
+                entryReportItem.put(SqlHelper.COLUMN_REPORT_ITEM_IS_SYNCHRONIZED, 1);
 
 
+                context.getContentResolver().update(DBContentProvider.CONTENT_URI_REPORT_ITEM, entryReportItem, "id=" + reportMysqlIdsItemDto.getReportItemId(), null);
+
+                ContentValues entryTask2 = new ContentValues();
+
+                entryTask2.put(SqlHelper.COLUMN_REPORT_REPORT_ITEM_REPORT_MYSQLIDID, reportMysqlIdsItemDto.getReportMysqlId());
+                entryTask2.put(SqlHelper.COLUMN_REPORT_REPORT_ITEM_REPORT_ITEM_MYSQLID, reportMysqlIdsItemDto.getReportItemMysqlId());
+
+                context.getContentResolver().update(DBContentProvider.CONTENT_URI_JOIN_TABLE, entryTask2, "report_item_id=" + reportMysqlIdsItemDto.getReportItemId(), null);
 
 
+            }
 
+
+        }
     }
+
 }

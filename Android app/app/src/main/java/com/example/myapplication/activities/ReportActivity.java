@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -33,14 +34,14 @@ import com.example.myapplication.R;
 import com.example.myapplication.database.DBContentProvider;
 import com.example.myapplication.database.NewEntry;
 import com.example.myapplication.database.SqlHelper;
+import com.example.myapplication.sync.receiver.SyncReceiver;
+import com.example.myapplication.sync.service.SyncService;
 import com.example.myapplication.util.NavBarUtil;
+import com.example.myapplication.util.UserSession;
 import com.google.android.material.navigation.NavigationView;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -64,6 +65,11 @@ public class ReportActivity extends AppCompatActivity implements NavigationView.
 
     String taskId;
     SqlHelper db;
+
+    private SyncReceiver sync;
+    public static String SYNC_DATA = "SYNC_DATA";
+    UserSession userSession;
+
 
 
     @Override
@@ -110,6 +116,20 @@ public class ReportActivity extends AppCompatActivity implements NavigationView.
 
         }
 
+        userSession = new UserSession(getApplicationContext());
+
+        sync = new SyncReceiver();
+
+
+        String userEmail = userSession.getUserEmail();
+
+
+
+        Intent i = new Intent(this, SyncService.class);
+        i.putExtra("Email", userEmail);
+        i.putExtra("activityName", "ReportActivity");
+        startService(i);
+
 
 
 //        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -137,7 +157,7 @@ public class ReportActivity extends AppCompatActivity implements NavigationView.
                 Date date = new Date();
                 reportDto.setDate(date);
 
-                String reportUri = NewEntry.newReportEntry(ReportActivity.this, reportDto);
+                String reportUri = NewEntry.newReportEntry(ReportActivity.this, reportDto, taskId);
                 reportId = reportUri.split("/")[1];
 
                 ContentValues entryTask = new ContentValues();
@@ -184,7 +204,7 @@ public class ReportActivity extends AppCompatActivity implements NavigationView.
         }
 
         if (reportDate != "") {
-            reportDateTextView.setText(reportDate.substring(0, 13));
+            reportDateTextView.setText(reportDate.substring(0, 16));
         } else {
             TextView textView = findViewById(R.id.textViewReportDateString);
             textView.setVisibility(View.GONE);
@@ -196,6 +216,13 @@ public class ReportActivity extends AppCompatActivity implements NavigationView.
     @Override
     protected void onResume() {
         super.onResume();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(SYNC_DATA);
+
+        filter.addAction("android.net.wifi.WIFI_STATE_CHANGED");
+        filter.addAction("android.net.wifi.STATE_CHANGE");
+        filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
+        registerReceiver(sync, filter);
         listView();
     }
 

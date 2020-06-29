@@ -30,7 +30,6 @@ import com.example.myapplication.DTO.ReportItemDto;
 import com.example.myapplication.R;
 import com.example.myapplication.database.NewEntry;
 import com.example.myapplication.sync.receiver.SyncReceiver;
-import com.example.myapplication.sync.restTask.NewReportItemTask;
 import com.example.myapplication.sync.service.SyncService;
 import com.example.myapplication.util.AppConfig;
 import com.example.myapplication.util.MiscUtil;
@@ -108,6 +107,13 @@ public class NewItemActivity extends AppCompatActivity implements NavigationView
     @Override
     protected void onResume() {
         super.onResume();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(SYNC_DATA);
+
+        filter.addAction("android.net.wifi.WIFI_STATE_CHANGED");
+        filter.addAction("android.net.wifi.STATE_CHANGE");
+        filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
+        registerReceiver(sync, filter);
         cameraButton.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
@@ -154,7 +160,7 @@ public class NewItemActivity extends AppCompatActivity implements NavigationView
                 PictureDto pictureDto = new PictureDto();
                 pictureDto.setPictureName(picName);
                 reportItemDto.setPicture(pictureDto);
-                String reportItemUri = NewEntry.newReportItemEntry(NewItemActivity.this, reportItemDto);
+                String reportItemUri = NewEntry.newReportItemEntry(NewItemActivity.this, reportItemDto, true);
 
                 reportItemId = reportItemUri.split("/")[1];
                 String reportReporetItemUri = NewEntry.newReportReportItemEntryWithoutMysqlIds(NewItemActivity.this, reportId, reportItemId);
@@ -181,13 +187,7 @@ public class NewItemActivity extends AppCompatActivity implements NavigationView
             }
         });
 
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(SYNC_DATA);
 
-        filter.addAction("android.net.wifi.WIFI_STATE_CHANGED");
-        filter.addAction("android.net.wifi.STATE_CHANGE");
-        filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
-        registerReceiver(sync, filter);
 
 
     }

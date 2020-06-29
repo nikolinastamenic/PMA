@@ -89,7 +89,7 @@ public class FinishedTasksActivity extends AppCompatActivity implements Navigati
 
                 taskIds.add(data.getString(0));
 
-                checkApartmentDate.add(data.getString(5).substring(0, 13));
+                checkApartmentDate.add(data.getString(5).substring(0, 16));
                 apartmentId = data.getString(6);
                 Cursor apartmentData = db.getApartmentById(apartmentId);
                 while (apartmentData.moveToNext()) {

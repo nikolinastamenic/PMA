@@ -91,7 +91,7 @@ public class TasksInProgressActivity extends AppCompatActivity implements Naviga
                 if (data.getInt(9) == 1 || data.getInt(9) == 2) {
 
                     taskIds.add(data.getString(0));
-                    checkApartmentDate.add(data.getString(5).substring(0, 13));
+                    checkApartmentDate.add(data.getString(5).substring(0, 16));
                     apartmentId = data.getString(6);
                     Cursor apartmentData = db.getApartmentById(apartmentId);
                     while (apartmentData.moveToNext()) {

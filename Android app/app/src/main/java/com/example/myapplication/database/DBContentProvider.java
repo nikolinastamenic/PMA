@@ -38,8 +38,9 @@ public class DBContentProvider extends ContentProvider {
     private static final int REPORT_ITEM = 2;
     private static final int REPORT_ITEM_ID = 3;
 
+
     private static final int REPORT_REPORT_ITEM = 88;
-    private static final int REPORT_REPORT_ITEM_ID = 3;
+    private static final int REPORT_REPORT_ITEM_ID = 66;
 
     private static final String AUTHORITY = "com.example.myapplication";
 
@@ -246,6 +247,12 @@ public class DBContentProvider extends ContentProvider {
                             selectionArgs);
                 }
                 break;
+            case REPORT:
+                rowsUpdated = sqlDB.update(SqlHelper.TABLE_REPORT,
+                        values,
+                        selection,
+                        selectionArgs);
+                break;
             case REPORT_ID:
                 String idReport = uri.getLastPathSegment();
                 if (TextUtils.isEmpty(selection)) {
@@ -262,6 +269,12 @@ public class DBContentProvider extends ContentProvider {
                             selectionArgs);
                 }
                 break;
+            case REPORT_ITEM:
+                rowsUpdated = sqlDB.update(SqlHelper.TABLE_REPORT_ITEM,
+                        values,
+                        selection,
+                        selectionArgs);
+                break;
             case REPORT_ITEM_ID:
                 String idReportItem = uri.getLastPathSegment();
                 if (TextUtils.isEmpty(selection)) {
@@ -273,6 +286,28 @@ public class DBContentProvider extends ContentProvider {
                     rowsUpdated = sqlDB.update(SqlHelper.TABLE_REPORT_ITEM,
                             values,
                             SqlHelper.COLUMN_REPORT_ITEM_ID + "=" + idReportItem
+                                    + " and "
+                                    + selection,
+                            selectionArgs);
+                }
+                break;
+            case REPORT_REPORT_ITEM:
+                rowsUpdated = sqlDB.update(SqlHelper.JOIN_TABLE,
+                        values,
+                        selection,
+                        selectionArgs);
+                break;
+            case REPORT_REPORT_ITEM_ID:
+                String idReportReportItem = uri.getLastPathSegment();
+                if (TextUtils.isEmpty(selection)) {
+                    rowsUpdated = sqlDB.update(SqlHelper.JOIN_TABLE,
+                            values,
+                            SqlHelper.COLUMN_REPORT_REPORT_ITEM_REPOR_ITEM_ID + "=" + idReportReportItem,
+                            null);
+                } else {
+                    rowsUpdated = sqlDB.update(SqlHelper.JOIN_TABLE,
+                            values,
+                            SqlHelper.COLUMN_REPORT_REPORT_ITEM_REPOR_ITEM_ID + "=" + idReportReportItem
                                     + " and "
                                     + selection,
                             selectionArgs);

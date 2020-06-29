@@ -1,5 +1,7 @@
 package com.example.myapplication.sync.restTask;
 
+import android.annotation.SuppressLint;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -14,6 +16,8 @@ import com.example.myapplication.DTO.ReportItemDto;
 import com.example.myapplication.DTO.UserAndTaskDto;
 import com.example.myapplication.DTO.UserDto;
 import com.example.myapplication.activities.MainActivity;
+import com.example.myapplication.activities.ReportActivity;
+import com.example.myapplication.database.DBContentProvider;
 import com.example.myapplication.database.NewEntry;
 import com.example.myapplication.database.SqlHelper;
 import com.example.myapplication.util.MiscUtil;
@@ -80,6 +84,7 @@ public class LoginTask extends AsyncTask<String, Void, ResponseEntity<UserAndTas
 
     }
 
+    @SuppressLint("WrongThread")
     protected void onPostExecute(ResponseEntity<UserAndTaskDto> responseEntity) {
         db = new SqlHelper(context);
 
@@ -151,14 +156,14 @@ public class LoginTask extends AsyncTask<String, Void, ResponseEntity<UserAndTas
 
 
                         if (taskDto.getReportDto() != null) {
-                            String reportUri = NewEntry.newReportEntry(context, taskDto.getReportDto());
+                            String reportUri = NewEntry.newReportEntry(context, taskDto.getReportDto(), "");
                             reportId = reportUri.split("/")[1];
 
                             if (!taskDto.getReportDto().getItemList().isEmpty()) {
 
                                 for (ReportItemDto reportItemDto : taskDto.getReportDto().getItemList()) {
 
-                                    String reportItemUri = NewEntry.newReportItemEntry(context, reportItemDto);
+                                    String reportItemUri = NewEntry.newReportItemEntry(context, reportItemDto, false);
                                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
                                     Bitmap photo = BitmapFactory.decodeByteArray(reportItemDto.getPicture().getPicture(), 0, reportItemDto.getPicture().getPicture().length);
@@ -176,8 +181,21 @@ public class LoginTask extends AsyncTask<String, Void, ResponseEntity<UserAndTas
                             }
                         }
 
+                        String taskId = "";
                         if (!(taskData.moveToFirst()) || taskData.getCount() == 0) {
                             String taskUri = NewEntry.newTaskEntry(context, taskDto, apartmentId, userId, reportId);
+                            taskId = taskUri.split("/")[1];
+
+                        }
+                        if (!taskId.equals("") && !reportId.equals("")) {
+
+                            ContentValues entryReport = new ContentValues();
+
+                            entryReport.put(SqlHelper.COLUMN_REPORT_TASK_ID, taskId);
+
+
+                            context.getContentResolver().update(DBContentProvider.CONTENT_URI_REPORT, entryReport, "id=" + reportId, null);
+
                         }
 
                         addressData.close();

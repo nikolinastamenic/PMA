@@ -416,4 +416,13 @@ public class SqlHelper extends SQLiteOpenHelper {
     }
 
 
+    public Cursor getReportItemBySynchronized(int isSynchronized) {
+
+        SQLiteDatabase sqlDB = this.getWritableDatabase();
+
+        Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_REPORT_ITEM + " WHERE is_synchronized " + "= " + isSynchronized, null);
+        return data;
+    }
+
+
 }
