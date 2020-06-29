@@ -61,6 +61,7 @@ public class ReportActivity extends AppCompatActivity implements NavigationView.
     List<ImageView> imageViews;
     String reportId;
     String activityName;
+    String userEmail;
 
 
     String taskId;
@@ -121,7 +122,7 @@ public class ReportActivity extends AppCompatActivity implements NavigationView.
         sync = new SyncReceiver();
 
 
-        String userEmail = userSession.getUserEmail();
+        userEmail = userSession.getUserEmail();
 
 
 
@@ -281,6 +282,14 @@ public class ReportActivity extends AppCompatActivity implements NavigationView.
         entryTask.put(SqlHelper.COLUMN_TASK_STATE, "FINISHED");
 
         ReportActivity.this.getContentResolver().update(DBContentProvider.CONTENT_URI_TASK, entryTask, "id=" + taskId, null);
+
+
+        Intent i = new Intent(this, SyncService.class);
+        i.putExtra("Email", "");
+        i.putExtra("activityName", "ReportActivity");
+        i.putExtra("finishTask", "true");
+
+        startService(i);
 
 
         Intent intent = new Intent(ReportActivity.this, TasksInProgressActivity.class);

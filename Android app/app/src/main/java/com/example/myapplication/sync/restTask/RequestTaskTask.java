@@ -3,11 +3,9 @@ package com.example.myapplication.sync.restTask;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.Intent;
+
 import android.database.Cursor;
 import android.os.AsyncTask;
-import android.os.Handler;
 
 import com.example.myapplication.DTO.ChangeTaskStateDto;
 import com.example.myapplication.activities.AllTasksActivity;
@@ -78,7 +76,7 @@ public class RequestTaskTask extends AsyncTask<String, Void, ResponseEntity<Chan
                     tasksIds.add(id);
                 }
 
-                changeTaskStateDto.setTaskIds(tasksIds);
+                changeTaskStateDto.setMysqlTaskIds(tasksIds);
 
                 HttpEntity entity = new HttpEntity(changeTaskStateDto, headers);
                 ResponseEntity<ChangeTaskStateDto> response = restTemplate.postForEntity(url, entity, ChangeTaskStateDto.class);
@@ -102,8 +100,8 @@ public class RequestTaskTask extends AsyncTask<String, Void, ResponseEntity<Chan
 
         if (changeTaskStateDto != null) {
 
-            if (!changeTaskStateDto.getTaskIds().isEmpty()) {
-                for (String mySqlTaskId : changeTaskStateDto.getTaskIds()) {
+            if (!changeTaskStateDto.getMysqlTaskIds().isEmpty()) {
+                for (String mySqlTaskId : changeTaskStateDto.getMysqlTaskIds()) {
 
                     ContentValues entryTask = new ContentValues();
 

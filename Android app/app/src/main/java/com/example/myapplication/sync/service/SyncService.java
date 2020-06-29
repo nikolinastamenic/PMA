@@ -7,6 +7,7 @@ import android.os.IBinder;
 import androidx.annotation.Nullable;
 
 import com.example.myapplication.activities.MainActivity;
+import com.example.myapplication.sync.restTask.FinishTaskTask;
 import com.example.myapplication.sync.restTask.LoginTask;
 import com.example.myapplication.sync.restTask.NewReportItemTask;
 import com.example.myapplication.sync.restTask.RequestTaskTask;
@@ -24,8 +25,16 @@ public class SyncService extends Service {
 
         Intent ints = new Intent(MainActivity.SYNC_DATA);
         int status = NetworkStateTools.getConnectivityStatus(getApplicationContext());
-        String email = intent.getStringExtra("Email");
+        String email = "";
+        if (intent.getStringExtra("Email") != null) {
+
+            email = intent.getStringExtra("Email");
+        }
         String activity = intent.getStringExtra("activityName");
+        String finish = "";
+        if (intent.getStringExtra("finishTask") != null) {
+            finish = intent.getStringExtra("finishTask");
+        }
 
         ints.putExtra(RESULT_CODE, status);
 
@@ -40,9 +49,13 @@ public class SyncService extends Service {
                 String mysqlId = intent.getStringExtra("MySqlId");
                 new RequestTaskTask(getApplicationContext()).execute(AppConfig.apiURI + "task/change/state", email, mysqlId);
 
-            } else if (!email.equals("") &&  (activity.equals("NewItemActivity") || activity.equals("ReportActivity") )) {
+            } else if (!email.equals("") && (activity.equals("NewItemActivity") || activity.equals("ReportActivity"))) {
 
                 new NewReportItemTask(getApplicationContext()).execute(AppConfig.apiURI + "report/item/new");
+
+            } else if (email.equals("") && finish.equals("true") && (activity.equals("ReportActivity") || activity.equals("FinishedTasksActivity") )) {
+
+                new FinishTaskTask(getApplicationContext()).execute(AppConfig.apiURI + "task/change/state");
 
             }
 
