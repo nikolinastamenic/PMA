@@ -88,134 +88,138 @@ public class LoginTask extends AsyncTask<String, Void, ResponseEntity<UserAndTas
     protected void onPostExecute(ResponseEntity<UserAndTaskDto> responseEntity) {
         db = new SqlHelper(context);
 
-        UserAndTaskDto userAndTaskDto = responseEntity.getBody();
+        if (responseEntity != null) {
+            UserAndTaskDto userAndTaskDto = responseEntity.getBody();
 
-        db.dropTaskTable();
-        db.dropReportTable();
-        db.dropUserTable();
-        db.dropReportTable();
-        db.dropAddressTable();
-        db.dropApartmentTable();
-        db.dropBuildingTable();
-
-
-        if (userAndTaskDto != null) {
-            session.createUserLoginSession(email, password);
-            Intent i = new Intent(context, MainActivity.class);
-            i.addFlags(FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(i);
-
-            String userEmail = userAndTaskDto.getUser().getEmail();
-            Cursor userData = db.getUserByEmail(userEmail);
-
-            userData.moveToFirst();
-
-            if (!(userData.moveToFirst()) || userData.getCount() == 0) {
-                String userUri = NewEntry.newUserEntry(context, userAndTaskDto.getUser());
-
-                if (!userAndTaskDto.getTasks().isEmpty()) {
-
-                    for (AllTaskDto taskDto : userAndTaskDto.getTasks()) {
-
-                        String userId = "";
-                        String reportId = "";
-                        String addressId = "";
-                        String buildingId = "";
-                        String apartmentId = "";
-
-                        int mySqlId = (int) taskDto.getId();
-
-                        userId = userUri.split("/")[1];
-
-                        Cursor addressData = db.getAddressByMySqlId(String.valueOf(taskDto.getApartmentDto().getBuildingDto().getAddress().getId()));
-                        Cursor buildingData = db.getBuildingByMySqlId(String.valueOf(taskDto.getApartmentDto().getBuildingDto().getId()));
-                        Cursor taskData = db.getTaskByMySqlId(String.valueOf(mySqlId));
-                        Cursor apartmentData = db.getApartmentByMySqlId(String.valueOf(taskDto.getApartmentDto().getId()));
-
-                        System.out.println(addressData.getCount() + " COUNT");
-                        if (!(addressData.moveToFirst()) || addressData.getCount() == 0) {
-                            addressId = (NewEntry.newAddressEntry(context, taskDto.getApartmentDto().getBuildingDto())).split("/")[1];
-                        } else {
-                            addressData.moveToFirst();
-                            addressId = Integer.toString(addressData.getInt(0));
-                        }
-
-                        if (!(buildingData.moveToFirst()) || buildingData.getCount() == 0) {
-                            buildingId = (NewEntry.newBuildingEntry(context, taskDto.getApartmentDto().getBuildingDto(), addressId)).split("/")[1];
-                        } else {
-                            buildingData.moveToFirst();
-                            buildingId = Integer.toString(buildingData.getInt(0));
-                        }
-
-                        if (!(apartmentData.moveToFirst()) || apartmentData.getCount() == 0) {
-                            apartmentId = (NewEntry.newApartmentEntry(context, taskDto.getApartmentDto(), buildingId)).split("/")[1];
-                        } else {
-                            apartmentData.moveToFirst();
-                            apartmentId = Integer.toString(apartmentData.getInt(0));
-                        }
+            db.dropTaskTable();
+            db.dropReportTable();
+            db.dropUserTable();
+            db.dropReportTable();
+            db.dropAddressTable();
+            db.dropApartmentTable();
+            db.dropBuildingTable();
 
 
-                        if (taskDto.getReportDto() != null) {
-                            String reportUri = NewEntry.newReportEntry(context, taskDto.getReportDto(), "");
-                            reportId = reportUri.split("/")[1];
+            if (userAndTaskDto != null) {
+                session.createUserLoginSession(email, password);
+                Intent i = new Intent(context, MainActivity.class);
+                i.addFlags(FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(i);
 
-                            if (!taskDto.getReportDto().getItemList().isEmpty()) {
+                String userEmail = userAndTaskDto.getUser().getEmail();
+                Cursor userData = db.getUserByEmail(userEmail);
 
-                                for (ReportItemDto reportItemDto : taskDto.getReportDto().getItemList()) {
+                userData.moveToFirst();
 
-                                    String reportItemUri = NewEntry.newReportItemEntry(context, reportItemDto, false);
-                                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                if (!(userData.moveToFirst()) || userData.getCount() == 0) {
+                    String userUri = NewEntry.newUserEntry(context, userAndTaskDto.getUser());
 
-                                    Bitmap photo = BitmapFactory.decodeByteArray(reportItemDto.getPicture().getPicture(), 0, reportItemDto.getPicture().getPicture().length);
+                    if (!userAndTaskDto.getTasks().isEmpty()) {
+
+                        for (AllTaskDto taskDto : userAndTaskDto.getTasks()) {
+
+                            String userId = "";
+                            String reportId = "";
+                            String addressId = "";
+                            String buildingId = "";
+                            String apartmentId = "";
+
+                            int mySqlId = (int) taskDto.getId();
+
+                            userId = userUri.split("/")[1];
+
+                            Cursor addressData = db.getAddressByMySqlId(String.valueOf(taskDto.getApartmentDto().getBuildingDto().getAddress().getId()));
+                            Cursor buildingData = db.getBuildingByMySqlId(String.valueOf(taskDto.getApartmentDto().getBuildingDto().getId()));
+                            Cursor taskData = db.getTaskByMySqlId(String.valueOf(mySqlId));
+                            Cursor apartmentData = db.getApartmentByMySqlId(String.valueOf(taskDto.getApartmentDto().getId()));
+
+                            System.out.println(addressData.getCount() + " COUNT");
+                            if (!(addressData.moveToFirst()) || addressData.getCount() == 0) {
+                                addressId = (NewEntry.newAddressEntry(context, taskDto.getApartmentDto().getBuildingDto())).split("/")[1];
+                            } else {
+                                addressData.moveToFirst();
+                                addressId = Integer.toString(addressData.getInt(0));
+                            }
+
+                            if (!(buildingData.moveToFirst()) || buildingData.getCount() == 0) {
+                                buildingId = (NewEntry.newBuildingEntry(context, taskDto.getApartmentDto().getBuildingDto(), addressId)).split("/")[1];
+                            } else {
+                                buildingData.moveToFirst();
+                                buildingId = Integer.toString(buildingData.getInt(0));
+                            }
+
+                            if (!(apartmentData.moveToFirst()) || apartmentData.getCount() == 0) {
+                                apartmentId = (NewEntry.newApartmentEntry(context, taskDto.getApartmentDto(), buildingId)).split("/")[1];
+                            } else {
+                                apartmentData.moveToFirst();
+                                apartmentId = Integer.toString(apartmentData.getInt(0));
+                            }
 
 
-                                    photo.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                                    String picName = reportItemDto.getPicture().getPictureName();
-                                    SavePictureUtil.writeToFile(stream.toByteArray(), picName, context, context.getFilesDir());
+                            if (taskDto.getReportDto() != null) {
+                                String reportUri = NewEntry.newReportEntry(context, taskDto.getReportDto(), "");
+                                reportId = reportUri.split("/")[1];
+
+                                if (!taskDto.getReportDto().getItemList().isEmpty()) {
+
+                                    for (ReportItemDto reportItemDto : taskDto.getReportDto().getItemList()) {
+
+                                        String reportItemUri = NewEntry.newReportItemEntry(context, reportItemDto, false);
+                                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+
+                                        Bitmap photo = BitmapFactory.decodeByteArray(reportItemDto.getPicture().getPicture(), 0, reportItemDto.getPicture().getPicture().length);
 
 
-                                    String reportItemId = reportItemUri.split("/")[1];
-                                    String reportReporetItemUri = NewEntry.newReportReportItemEntry(context, reportItemDto, taskDto.getReportDto(), reportId, reportItemId);
+                                        photo.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                                        String picName = reportItemDto.getPicture().getPictureName();
+                                        SavePictureUtil.writeToFile(stream.toByteArray(), picName, context, context.getFilesDir());
 
+
+                                        String reportItemId = reportItemUri.split("/")[1];
+                                        String reportReporetItemUri = NewEntry.newReportReportItemEntry(context, reportItemDto, taskDto.getReportDto(), reportId, reportItemId);
+
+                                    }
                                 }
                             }
+
+                            String taskId = "";
+                            if (!(taskData.moveToFirst()) || taskData.getCount() == 0) {
+                                String taskUri = NewEntry.newTaskEntry(context, taskDto, apartmentId, userId, reportId);
+                                taskId = taskUri.split("/")[1];
+
+                            }
+                            if (!taskId.equals("") && !reportId.equals("")) {
+
+                                ContentValues entryReport = new ContentValues();
+
+                                entryReport.put(SqlHelper.COLUMN_REPORT_TASK_ID, taskId);
+
+
+                                context.getContentResolver().update(DBContentProvider.CONTENT_URI_REPORT, entryReport, "id=" + reportId, null);
+
+                            }
+
+                            addressData.close();
+                            apartmentData.close();
+                            buildingData.close();
+                            taskData.close();
+
                         }
 
-                        String taskId = "";
-                        if (!(taskData.moveToFirst()) || taskData.getCount() == 0) {
-                            String taskUri = NewEntry.newTaskEntry(context, taskDto, apartmentId, userId, reportId);
-                            taskId = taskUri.split("/")[1];
-
-                        }
-                        if (!taskId.equals("") && !reportId.equals("")) {
-
-                            ContentValues entryReport = new ContentValues();
-
-                            entryReport.put(SqlHelper.COLUMN_REPORT_TASK_ID, taskId);
-
-
-                            context.getContentResolver().update(DBContentProvider.CONTENT_URI_REPORT, entryReport, "id=" + reportId, null);
-
-                        }
-
-                        addressData.close();
-                        apartmentData.close();
-                        buildingData.close();
-                        taskData.close();
 
                     }
 
-
                 }
 
+            } else {
+                Toast.makeText(context,
+                        "Email/Password is incorrect",
+                        Toast.LENGTH_LONG).show();
             }
 
+
         } else {
-            Toast.makeText(context,
-                    "Email/Password is incorrect",
-                    Toast.LENGTH_LONG).show();
+            System.out.println("Problem sa serverom");
         }
-
-
     }
 }
