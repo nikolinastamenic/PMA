@@ -378,9 +378,9 @@ public class SqlHelper extends SQLiteOpenHelper {
         return data;
     }
 
-    public Cursor setUserPicture (String mySqlId, String pictureName) {
+    public Cursor setUserPicture (String email, String pictureName) {
         SQLiteDatabase sqlDB = this.getWritableDatabase();
-        Cursor data = sqlDB.rawQuery("UPDATE " + TABLE_USER + " SET picture = '" + pictureName + "' WHERE mysql_id = " + mySqlId, null);
+        Cursor data = sqlDB.rawQuery("UPDATE " + TABLE_USER + " SET picture = '" + pictureName + "' WHERE email = '" + email + "'", null);
 
         return data;
     }

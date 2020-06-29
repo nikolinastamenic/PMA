@@ -49,10 +49,21 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto setUserProfilePicture(Long id, PictureDto picture) {
-        Optional<User> user = this.userRepository.findById(id);
+    public UserDto findUserDtoByEmail(String email) {
+        Optional<User> user = this.userRepository.getUserByEmail(email);
         if (!user.isPresent()) {
-            log.error("User with id: " + id + " doesn't exist!");
+            log.error("User with email: " + email + " doesn't exist!");
+            throw new NullPointerException("User doesn't exist");
+        }
+
+        return UserMapper.toUserDto(user.get());
+    }
+
+    @Override
+    public UserDto setUserProfilePicture(String email, PictureDto picture) {
+        Optional<User> user = this.userRepository.getUserByEmail(email);
+        if (!user.isPresent()) {
+            log.error("User with email: " + email + " doesn't exist!");
             throw new NullPointerException("User doesn't exist");
         }
 

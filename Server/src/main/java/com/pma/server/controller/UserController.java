@@ -26,9 +26,14 @@ public class UserController {
         return new ResponseEntity(this.userService.getUserById(id), HttpStatus.OK);
     }
 
-    @PostMapping(value = "/{id}/picture")
-    public ResponseEntity<UserDto> setUserProfilePicture(@PathVariable("id") Long id, @RequestBody PictureDto picture) {
-        return new ResponseEntity(this.userService.setUserProfilePicture(id, picture), HttpStatus.OK);
+    @GetMapping(value = "/email/{email}")
+    public ResponseEntity<UserDto> getUserByEmail(@PathVariable("email") String email) {
+        return new ResponseEntity(this.userService.findUserDtoByEmail(email), HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/{email}/picture")
+    public ResponseEntity<UserDto> setUserProfilePicture(@PathVariable("email") String email, @RequestBody PictureDto picture) {
+        return new ResponseEntity(this.userService.setUserProfilePicture(email, picture), HttpStatus.OK);
     }
 
     @PostMapping(value = "/login")
