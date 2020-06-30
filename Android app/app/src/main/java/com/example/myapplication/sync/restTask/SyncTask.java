@@ -97,6 +97,7 @@ public class SyncTask extends AsyncTask<String, Void, ResponseEntity<AllTaskDto[
                     addressId = Integer.toString(addressData.getInt(0));
                 }
 
+
                 if (!(buildingData.moveToFirst()) || buildingData.getCount() == 0) {
                     buildingId = (NewEntry.newBuildingEntry(context, taskDto.getApartmentDto().getBuildingDto(), addressId)).split("/")[1];
                 } else {
@@ -129,8 +130,6 @@ public class SyncTask extends AsyncTask<String, Void, ResponseEntity<AllTaskDto[
                 taskData.close();
 
             }
-
-
         }
     }
 }

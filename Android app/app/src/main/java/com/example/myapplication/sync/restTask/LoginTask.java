@@ -14,13 +14,10 @@ import com.example.myapplication.DTO.AllTaskDto;
 import com.example.myapplication.DTO.LoginDto;
 import com.example.myapplication.DTO.ReportItemDto;
 import com.example.myapplication.DTO.UserAndTaskDto;
-import com.example.myapplication.DTO.UserDto;
 import com.example.myapplication.activities.MainActivity;
-import com.example.myapplication.activities.ReportActivity;
 import com.example.myapplication.database.DBContentProvider;
 import com.example.myapplication.database.NewEntry;
 import com.example.myapplication.database.SqlHelper;
-import com.example.myapplication.util.MiscUtil;
 import com.example.myapplication.util.SavePictureUtil;
 import com.example.myapplication.util.UserSession;
 
@@ -211,6 +208,7 @@ public class LoginTask extends AsyncTask<String, Void, ResponseEntity<UserAndTas
                     }
 
                 }
+                userData.close();
 
             } else {
                 Toast.makeText(context,

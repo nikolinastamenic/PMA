@@ -76,6 +76,7 @@ public class NewReportItemTask extends AsyncTask<String, Void, ResponseEntity<Re
             if (joinTableData.moveToFirst()) {
                 reportId = joinTableData.getInt(0);
             }
+            joinTableData.close();
 
 
             ContentValues entryReport = new ContentValues();
@@ -90,9 +91,9 @@ public class NewReportItemTask extends AsyncTask<String, Void, ResponseEntity<Re
                 mySqlReportId = reportData.getInt(1);
                 taskId = reportData.getInt(3);
 
-
             }
-
+            String reportDate = reportData.getString(2);
+            reportData.close();
 
             Cursor taskData = db.getTaskById(String.valueOf(taskId));
 
@@ -101,6 +102,8 @@ public class NewReportItemTask extends AsyncTask<String, Void, ResponseEntity<Re
 
             }
 
+            taskData.close();
+
             String faultName = reportItemsData.getString(2);
             String description = reportItemsData.getString(3);
             String pictureName = reportItemsData.getString(4);
@@ -108,8 +111,6 @@ public class NewReportItemTask extends AsyncTask<String, Void, ResponseEntity<Re
                 mySqlReportItemId = reportItemsData.getInt(1);
             }
 
-
-            String reportDate = reportData.getString(2);
 
             NewReportItemItemDto newReportItemItemDto = new NewReportItemItemDto();
             PictureDto pictureDto = new PictureDto();
@@ -140,7 +141,9 @@ public class NewReportItemTask extends AsyncTask<String, Void, ResponseEntity<Re
         }
 
 
+
         if (reportItemsData.getCount() > 0) {
+            reportItemsData.close();
 
             try {
                 restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
@@ -159,7 +162,10 @@ public class NewReportItemTask extends AsyncTask<String, Void, ResponseEntity<Re
                 return null;
 
             }
+
         }
+        reportItemsData.close();
+
         return null;
 
 
