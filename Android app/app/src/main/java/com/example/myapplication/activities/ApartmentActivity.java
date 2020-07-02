@@ -1,24 +1,34 @@
 package com.example.myapplication.activities;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentActivity;
 
 import com.example.myapplication.R;
 import com.example.myapplication.database.SqlHelper;
+import com.example.myapplication.util.AppConfig;
 import com.example.myapplication.util.NavBarUtil;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -30,7 +40,11 @@ import com.google.android.material.navigation.NavigationView;
 
 import java.util.Date;
 
-public class ApartmentActivity extends  FragmentActivity implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
+import static com.example.myapplication.util.AppConfig.LOCATION_PERMISSION_REQUEST_CODE;
+
+public class ApartmentActivity extends FragmentActivity implements GoogleMap.OnMyLocationButtonClickListener,
+        GoogleMap.OnMyLocationClickListener,
+        NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, ActivityCompat.OnRequestPermissionsResultCallback {
 
     DrawerLayout drawerLayout;
     NavigationView navigationView;
@@ -41,15 +55,14 @@ public class ApartmentActivity extends  FragmentActivity implements NavigationVi
 
     String activityName;
     GoogleMap map;
+    private boolean permissionDenied = false;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
         setContentView(R.layout.apartment);
-
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -90,6 +103,43 @@ public class ApartmentActivity extends  FragmentActivity implements NavigationVi
         LatLng ns = new LatLng(45.259333, 19.831826);
         map.addMarker(new MarkerOptions().position(ns).title("Novi Sad"));
         map.moveCamera(CameraUpdateFactory.newLatLng(ns));
+
+        map.setOnMyLocationButtonClickListener(this);
+        map.setOnMyLocationClickListener(this);
+        enableMyLocation();
+    }
+
+
+    private void enableMyLocation() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            if (map != null) {
+                map.setMyLocationEnabled(true);
+            }
+        } else {
+            // Permission to access the location is missing. Show rationale and request permission
+            String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
+            requestPermissions(permissions, LOCATION_PERMISSION_REQUEST_CODE);
+
+
+        }
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode != LOCATION_PERMISSION_REQUEST_CODE) {
+            return;
+        }
+
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            // Enable the my location layer if the permission has been granted.
+            enableMyLocation();
+        } else {
+            // Permission was denied. Display an error message
+            // Display the missing permission error dialog when the fragments resume.
+            permissionDenied = true;
+        }
     }
 
     @Override
@@ -142,11 +192,8 @@ public class ApartmentActivity extends  FragmentActivity implements NavigationVi
 
                             apartmentAddress = addressData.getString(4) + " " + addressData.getString(5)
                                     + ", " + addressData.getString(3);
-
                         }
-
                     }
-
 
                 }
                 if (stateName.equals("IN_PROCESS")) {
@@ -199,4 +246,28 @@ public class ApartmentActivity extends  FragmentActivity implements NavigationVi
     }
 
 
+    @Override
+    public boolean onMyLocationButtonClick() {
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Location myLocation = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+
+            double latitude = myLocation.getLatitude();
+            double longitude = myLocation.getLongitude();
+            LatLng myLocationL = new LatLng(latitude, longitude);
+
+            map.clear();
+            map.addMarker(new MarkerOptions().position(myLocationL).title("My location"));
+            map.moveCamera(CameraUpdateFactory.newLatLng(myLocationL));
+            return true;
+        }
+
+
+        return false;
+    }
+
+    @Override
+    public void onMyLocationClick(@NonNull Location location) {
+        Toast.makeText(this, "Current location:\n" + location, Toast.LENGTH_LONG).show();
+    }
 }
