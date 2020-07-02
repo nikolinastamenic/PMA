@@ -2,12 +2,12 @@ INSERT INTO user (id, name,surname, email, password, phone_number, picture) VALU
 INSERT INTO user (id, name,surname, email, password, phone_number, picture) VALUES (2, 'Mika', 'Mikic', 'user1@yahoo.com','123', '0292929', 'profile_picture.jpg');
 INSERT INTO user (id, email, name, password, phone_number, picture, surname) values (3, 'user@example.com', 'Ana', 'mysecret', '0614427283', 'profile_picture.jpg', 'Mihic');
 
-INSERT INTO address (city, country, latitude, longitude, number, street) values ('Beograd', 'Srbija',44.8080941, 20.294172799999956, 3, 'Nemanjina');
-INSERT INTO address (city, country, latitude, longitude, number, street) values ('Novi Sad', 'Srbija',44.8080941, 20.294172799999956, 10, 'Dunavska');
-INSERT INTO address (city, country, latitude, longitude, number, street) values ('Novi Sad', 'Srbija',44.8080941, 20.294172799999956, 5, 'Cirpanova');
-INSERT INTO address (city, country, latitude, longitude, number, street) values ('Beograd', 'Srbija',44.8080941, 20.294172799999956, 17, 'Vojvode Stepe');
-INSERT INTO address (city, country, latitude, longitude, number, street) values ('Novi Sad', 'Srbija',44.8080941, 20.294172799999956, 3, 'Bulevar Oslobodjenja');
-INSERT INTO address (city, country, latitude, longitude, number, street) values ('Novi Sad', 'Srbija',44.8080941, 20.294172799999956, 3, 'Puskinova');
+INSERT INTO address (city, country, latitude, longitude, number, street) values ('Novi Sad', 'Srbija',45.254606, 19.829638, 31, 'Novosadskog Sajma');
+INSERT INTO address (city, country, latitude, longitude, number, street) values ('Novi Sad', 'Srbija',45.252786, 19.834369, 10, 'Ćirpanova');
+INSERT INTO address (city, country, latitude, longitude, number, street) values ('Novi Sad', 'Srbija',45.254848, 19.838038, 16, 'Gajeva');
+INSERT INTO address (city, country, latitude, longitude, number, street) values ('Novi Sad', 'Srbija',45.244266, 19.830978, 36, 'Miše Dimitrijevića');
+INSERT INTO address (city, country, latitude, longitude, number, street) values ('Novi Sad', 'Srbija',45.238608, 19.805466, 150, 'Ćirila i Metodija');
+INSERT INTO address (city, country, latitude, longitude, number, street) values ('Novi Sad', 'Srbija',45.245490, 19.797130, 40, 'Futoški put');
 
 INSERT INTO building (id, address_id) values (1,1);
 INSERT INTO building (id, address_id) values (2,2);
