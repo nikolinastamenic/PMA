@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         Menu menu =navigationView.getMenu();
 
-        if (!isUserLogedIn) {                   //TODO proveriti
+        if (!isUserLogedIn) {                   // proveriti
 
             userEmail = userSession.getUserEmail();
 

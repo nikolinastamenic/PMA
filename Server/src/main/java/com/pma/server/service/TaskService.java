@@ -10,7 +10,7 @@ import java.util.List;
 @Service
 public interface TaskService {
 
-    List<AllTaskDto> getAllTasks();
+    List<AllTaskDto> getTasksWithoutUser();
     List<AllTaskDto> getTasksInProcess(String username);
     List<AllTaskDto> getFinishedTasks(String username);
     ChangeTaskStateDto changeTaskState (ChangeTaskStateDto changeTaskStateDto);

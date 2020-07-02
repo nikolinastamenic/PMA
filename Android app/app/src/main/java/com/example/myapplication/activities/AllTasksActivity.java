@@ -110,6 +110,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
         listView = (ListView) findViewById(R.id.listViewAllTasks);
         db = new SqlHelper(this);
+//        Cursor data = AllTasksActivity.this.getContentResolver().query(DBContentProvider.CONTENT_URI_TASK, SqlHelper.ALLCOLUMNSTASK, null, null);
         Cursor data = db.getAllTasks();
         String apartmentId = "";
         String buildingId = "";
@@ -134,13 +135,17 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
                         while (addressData.moveToNext()) {
                             apartmentAddress.add(addressData.getString(3) + ", " + addressData.getString(4) + " " + addressData.getString(5));
                         }
+                        addressData.close();
                     }
+                    buildungData.close();
 
                 }
+                apartmentData.close();
 
                 myAdapter = new MyAdapter(this, apartmentTitle, apartmentAddress, checkApartmentDate);
                 listView.setAdapter(myAdapter);
             }
+            data.close();
         }
 
 
@@ -311,6 +316,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
                         while (userData.moveToNext()) {
                             userId = Integer.toString(userData.getInt(0));
                         }
+                        userData.close();
                         taskId = taskIds.get(position);
 
 
@@ -326,6 +332,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
                             context.getContentResolver().update(DBContentProvider.CONTENT_URI_TASK, entryTask, "id=" + taskId, null);
                         }
+                        taskData.close();
 
                         Intent i = new Intent(AllTasksActivity.this, SyncService.class);
                         i.putExtra("activityName", "AllTasksActivity");

@@ -44,5 +44,6 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.12'
     implementation "commons-io:commons-io:+"
     implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0'
+    implementation 'com.google.android.gms:play-services-maps:16.0.0'
 
 }

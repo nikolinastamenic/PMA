@@ -37,16 +37,37 @@ public class TaskServiceImpl implements TaskService {
 
 
     @Override
-    public List<AllTaskDto> getAllTasks() {
+    public List<AllTaskDto> getTasksWithoutUser() {
 
         List<AllTaskDto> dtos = new ArrayList<>();
 
-        for (Task task : taskRepository.findAll()) {
+        List<Task> urgentTrue = new ArrayList<>();
+        List<Task> urgentFalse = new ArrayList<>();
+        List<Task> allTasks = new ArrayList<>();
+
+
+        for (Task task : taskRepository.findAllByOrderByDeadlineAsc()) {
             if (task.getUser() == null) {
-                AllTaskDto dto = TaskMapper.toTaskDto(task);
-                dtos.add(dto);
+
+
+                if (task.isUrgent()) {
+                    urgentTrue.add(task);
+                } else {
+                    urgentFalse.add(task);
+                }
+
+
             }
         }
+
+        allTasks.addAll(urgentTrue);
+        allTasks.addAll(urgentFalse);
+
+        for(Task task:allTasks){
+            AllTaskDto dto = TaskMapper.toTaskDto(task);
+            dtos.add(dto);
+        }
+
         return dtos;
     }
 
@@ -104,8 +125,7 @@ public class TaskServiceImpl implements TaskService {
                         this.taskRepository.save(task);
                         ids.add(taskId);
                     }
-                }
-                else if (changeTaskStateDto.getState().equals("FINISHED")){
+                } else if (changeTaskStateDto.getState().equals("FINISHED")) {
                     task.setState(changeTaskStateDto.getState());
                     this.taskRepository.save(task);
                     ids.add(taskId);

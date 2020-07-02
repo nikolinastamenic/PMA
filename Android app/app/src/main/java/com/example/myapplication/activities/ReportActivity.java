@@ -177,6 +177,7 @@ public class ReportActivity extends AppCompatActivity implements NavigationView.
                         reportDate = reportData.getString(2);
                     }
                 }
+                reportData.close();
                 Cursor reportItemData = db.getReportItemsByReportId(reportId);
                 while (reportItemData.moveToNext()) {
                     Cursor reportItems = db.getReportItemById(reportItemData.getString(2));
@@ -197,9 +198,14 @@ public class ReportActivity extends AppCompatActivity implements NavigationView.
 
 
                     }
+                    reportItems.close();
+
+
                 }
+                reportItemData.close();
             }
         }
+        data.close();
 
         if (reportDate != "") {
             reportDateTextView.setText(reportDate.substring(0, 16));
@@ -284,8 +290,14 @@ public class ReportActivity extends AppCompatActivity implements NavigationView.
         ContentValues entryTask = new ContentValues();
 
         entryTask.put(SqlHelper.COLUMN_TASK_STATE, "FINISHED");
-
         ReportActivity.this.getContentResolver().update(DBContentProvider.CONTENT_URI_TASK, entryTask, "id=" + taskId, null);
+
+        ContentValues entryReport = new ContentValues();
+
+        Date date = new Date();
+        entryReport.put(SqlHelper.COLUMN_REPORT_DATE, date.toString());
+        ReportActivity.this.getContentResolver().update(DBContentProvider.CONTENT_URI_REPORT, entryReport, "id=" + reportId, null);
+
 
 
         Intent i = new Intent(this, SyncService.class);
