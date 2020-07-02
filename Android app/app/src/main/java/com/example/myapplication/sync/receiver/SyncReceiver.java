@@ -26,6 +26,8 @@ public class SyncReceiver extends BroadcastReceiver {
         }
         if(intent.getAction().equals(ProfileActivity.SYNC_DATA)) {
             this.setResultData("finished");
+            ProfileActivity profileActivity = (ProfileActivity)context;
+            profileActivity.showUserProfile();
         }
     }
 

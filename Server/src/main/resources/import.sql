@@ -1,6 +1,6 @@
 INSERT INTO user (id, name,surname, email, password, phone_number, picture) VALUES (1, 'Mika', 'Mikic', 'user@yahoo.com','123', '0292929', 'profile_picture.jpg');
 INSERT INTO user (id, name,surname, email, password, phone_number, picture) VALUES (2, 'Mika', 'Mikic', 'user1@yahoo.com','123', '0292929', 'profile_picture.jpg');
-INSERT INTO user (id, email, name, password, phone_number, picture, surname) values (3, 'user@example.com', 'Ana', 'mysecret', '0614427283', 'profile_picture.jpg', 'Mihic');
+INSERT INTO user (id, email, name, password, phone_number, picture, surname) values (3, 'user@mailinator.com', 'Ana', '123', '0614427283', 'profile_picture.jpg', 'Mihic');
 
 INSERT INTO address (city, country, latitude, longitude, number, street) values ('Novi Sad', 'Srbija',45.254606, 19.829638, 31, 'Novosadskog Sajma');
 INSERT INTO address (city, country, latitude, longitude, number, street) values ('Novi Sad', 'Srbija',45.252786, 19.834369, 10, 'Ćirpanova');

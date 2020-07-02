@@ -41,7 +41,7 @@
             android:layout_marginLeft="20dp"
             android:focusable="false"
             android:focusableInTouchMode="false"
-            android:text="Assign" />
+            android:text="@string/btn_assign" />
 
     </LinearLayout>
 

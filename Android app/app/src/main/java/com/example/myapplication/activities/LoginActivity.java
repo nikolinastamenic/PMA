@@ -110,4 +110,9 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
 
     }
 
+    public void forgotPassword(View view) {
+
+        Intent intent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
+        startActivity(intent);
+    }
 }

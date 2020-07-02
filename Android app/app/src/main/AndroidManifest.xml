@@ -12,7 +12,11 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
 
     <application
         android:networkSecurityConfig="@xml/network_security_config"
@@ -24,6 +28,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+        <activity android:name=".activities.ChangePasswordActivity"></activity>
+        <activity android:name=".activities.ForgotPasswordActivity" />
 
         <uses-library android:name="org.apache.http.legacy" android:required="false"/>
         <meta-data android:name="com.google.android.geo.API_KEY"
@@ -35,6 +41,7 @@
 
 
         <receiver android:name="com.example.myapplication.sync.receiver.SyncReceiver">
+        <receiver android:name=".sync.receiver.SyncReceiver">
             <intent-filter>
                 <action android:name="android.net.wifi.WIFI_STATE_CHANGED"/>
                 <action android:name="android.net.wifi.STATE_CHANGE"/>

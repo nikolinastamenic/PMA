@@ -87,13 +87,11 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
 
         Menu menu = navigationView.getMenu();
         MenuItem menuItem = menu.findItem(R.id.nav_log_in);
+        menuItem.setVisible(false);
 
         sync = new SyncReceiver();
         userSession = new UserSession(getApplicationContext());
 
-        menuItem.setVisible(false);
-
-//        getUserProfile("3");
         showUserProfile();
 
         profilePicture = findViewById(R.id.profile_picture);
@@ -150,10 +148,8 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         db = new SqlHelper(this);
         String email = userSession.getUserEmail();
         Cursor data = db.getUserByEmail(email);
-//        Cursor data = db.getUserByMySqlId("3");
         if (data.getCount() != 0) {
             data.moveToNext();
-//            File picture = SavePictureUtil.readFromFile(data.getString(7), getApplicationContext(), getFilesDir());
 
             TextView name1 = findViewById(R.id.profile_name_surname);
             ImageView profile_picture = findViewById(R.id.profile_picture);
@@ -196,7 +192,11 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         showUserProfile();
     }
 
-
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(sync);
+    }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
@@ -213,6 +213,11 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         final String uri = AppConfig.apiURI + "user/" + email + "/picture";
         updatedPicture = pictureDto;
         new RESTSetUserProfilePictureTask().execute(uri);
+    }
+
+    public void changePassword(View view) {
+        Intent intent = new Intent(this, ChangePasswordActivity.class);
+        startActivity(intent);
     }
 
     class RESTSetUserProfilePictureTask extends AsyncTask<String, Void, ResponseEntity<UserDto>> {

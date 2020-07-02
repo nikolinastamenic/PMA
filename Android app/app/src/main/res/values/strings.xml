@@ -56,6 +56,15 @@
     <string name="gallery_access_denied">Gallery permission denied</string>
     <string name="view_report">View report</string>
     <string name="turn_on_location">Please, turn on location on your device!</string>
+    <string name="request_new_password">Request new password</string>
+    <string name="forgot_pass_notice">Insert your email and new password will be sent to you</string>
+    <string name="change_password">Change password</string>
+    <string name="insert_password">Insert password</string>
+    <string name="repeat_password">Repeat password</string>
+    <string name="password_not_empty">Password can\'t be empty</string>
+    <string name="password_not_same">Passwords must be the same</string>
+    <string name="password_changed">Password is changed</string>
+
 
 
 </resources>
