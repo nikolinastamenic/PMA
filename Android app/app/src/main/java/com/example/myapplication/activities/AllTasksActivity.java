@@ -100,6 +100,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
         userSession = new UserSession(getApplicationContext());
 
 
+
     }
 
     public void listView() {
@@ -148,7 +149,6 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
             data.close();
         }
 
-
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -157,11 +157,10 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
                 Intent intent = new Intent(AllTasksActivity.this, ApartmentActivity.class);
                 intent.putExtra("taskId", taskId);
+                intent.putExtra("activityName", "AllTasksActivity");
                 startActivity(intent);
             }
         });
-
-
     }
 
 
@@ -181,6 +180,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
         registerReceiver(sync, filter);
 
         listView();
+
 
         Intent intent = new Intent(AllTasksActivity.this, SyncService.class);
         intent.putExtra("activityName", "AllTasksActivity");
@@ -246,10 +246,10 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
         List<String> date;
 
 
-        @Override
-        public boolean isEnabled(int position) {
-            return false;
-        }
+//        @Override
+//        public boolean isEnabled(int position) {
+//            return false;
+//        }
 
         MyAdapter(Context c, List<String> title, List<String> address, List<String> date) {
             super(c, android.R.layout.simple_list_item_1, R.id.apartmentTitleTextView, title);
@@ -279,7 +279,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
             if (taskWaitingList.get(position) == 0) {
 
-                isEnabled(position);
+//                isEnabled(position);
 
                 title1.setTextColor(getResources().getColor(R.color.silver));
                 description1.setTextColor(getResources().getColor(R.color.silver));
@@ -350,7 +350,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
 //                    listView.getChildAt(position).setEnabled(false);
 
-                        isEnabled(position);
+//                        isEnabled(position);
 
                         title1.setTextColor(getResources().getColor(R.color.silver));
                         description1.setTextColor(getResources().getColor(R.color.silver));
@@ -371,6 +371,8 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
             return item;
         }
+
+
     }
 
 

@@ -55,6 +55,7 @@
     <string name="gallery_access_allowed">Gallery permission granted</string>
     <string name="gallery_access_denied">Gallery permission denied</string>
     <string name="view_report">View report</string>
+    <string name="turn_on_location">Please, turn on location on your device!</string>
 
 
 </resources>

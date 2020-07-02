@@ -37,6 +37,7 @@ public class SyncService extends Service {
             finish = intent.getStringExtra("finishTask");
         }
 
+
         ints.putExtra(RESULT_CODE, status);
 
         //ima konekcije ka netu skini sta je potrebno i sinhronizuj bazu
@@ -55,7 +56,6 @@ public class SyncService extends Service {
                 new NewReportItemTask(getApplicationContext()).execute(AppConfig.apiURI + "report/item/new");
             } else if (email.equals("") && finish.equals("true") && (activity.equals("ReportActivity") || activity.equals("FinishedTasksActivity") )) {
                 new FinishTaskTask(getApplicationContext()).execute(AppConfig.apiURI + "task/change/state");
-
             }
 
         }

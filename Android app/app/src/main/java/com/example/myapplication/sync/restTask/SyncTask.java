@@ -40,6 +40,7 @@ public class SyncTask extends AsyncTask<String, Void, ResponseEntity<AllTaskDto[
     protected ResponseEntity<AllTaskDto[]> doInBackground(String... uri) {
 
 
+
         UserSession userSession = new UserSession(context);
         final String url = uri[0];
         String email = uri[1];

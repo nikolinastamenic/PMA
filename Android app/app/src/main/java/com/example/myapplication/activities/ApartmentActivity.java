@@ -8,6 +8,8 @@ import android.database.Cursor;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.opengl.Visibility;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -28,8 +31,10 @@ import androidx.fragment.app.FragmentActivity;
 
 import com.example.myapplication.R;
 import com.example.myapplication.database.SqlHelper;
+import com.example.myapplication.sync.service.SyncService;
 import com.example.myapplication.util.AppConfig;
 import com.example.myapplication.util.NavBarUtil;
+import com.example.myapplication.util.UserSession;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -52,10 +57,12 @@ public class ApartmentActivity extends FragmentActivity implements GoogleMap.OnM
     String taskId;
 
     Toolbar toolbar;
-
+    private UserSession userSession;
     String activityName;
     GoogleMap map;
     private boolean permissionDenied = false;
+    double taskAddressLongitude = 0.0;
+    double taskAddressLatitude = 0.0;
 
 
     @Override
@@ -66,6 +73,8 @@ public class ApartmentActivity extends FragmentActivity implements GoogleMap.OnM
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        userSession = new UserSession(getApplicationContext());
 
         Intent intent = getIntent();
         taskId = intent.getStringExtra("taskId");
@@ -93,60 +102,19 @@ public class ApartmentActivity extends FragmentActivity implements GoogleMap.OnM
         if (activityName.equals("FinishedTasksActivity")) {
             button.setText(R.string.view_report);
         }
-
-
-    }
-
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        map = googleMap;
-        LatLng ns = new LatLng(45.259333, 19.831826);
-        map.addMarker(new MarkerOptions().position(ns).title("Novi Sad"));
-        map.moveCamera(CameraUpdateFactory.newLatLng(ns));
-
-        map.setOnMyLocationButtonClickListener(this);
-        map.setOnMyLocationClickListener(this);
-        enableMyLocation();
-    }
-
-
-    private void enableMyLocation() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            if (map != null) {
-                map.setMyLocationEnabled(true);
-            }
-        } else {
-            // Permission to access the location is missing. Show rationale and request permission
-            String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
-            requestPermissions(permissions, LOCATION_PERMISSION_REQUEST_CODE);
-
-
-        }
-    }
-
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode != LOCATION_PERMISSION_REQUEST_CODE) {
-            return;
+        if (activityName.equals("AllTasksActivity")) {
+            button.setText("");
+            button.setEnabled(false);
         }
 
-        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            // Enable the my location layer if the permission has been granted.
-            enableMyLocation();
-        } else {
-            // Permission was denied. Display an error message
-            // Display the missing permission error dialog when the fragments resume.
-            permissionDenied = true;
-        }
+
     }
+
 
     @Override
     protected void onResume() {
         super.onResume();
         getTask(taskId);
-
     }
 
     public void getTask(String taskId) {
@@ -189,6 +157,9 @@ public class ApartmentActivity extends FragmentActivity implements GoogleMap.OnM
                         Cursor addressData = db.getAddressById(addressId);
 
                         while (addressData.moveToNext()) {
+
+                            taskAddressLatitude = addressData.getDouble(7);
+                            taskAddressLongitude = addressData.getDouble(6);
 
                             apartmentAddress = addressData.getString(4) + " " + addressData.getString(5)
                                     + ", " + addressData.getString(3);
@@ -246,21 +217,17 @@ public class ApartmentActivity extends FragmentActivity implements GoogleMap.OnM
     }
 
 
+    @RequiresApi(api = Build.VERSION_CODES.P)
     @Override
     public boolean onMyLocationButtonClick() {
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            Location myLocation = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
 
-            double latitude = myLocation.getLatitude();
-            double longitude = myLocation.getLongitude();
-            LatLng myLocationL = new LatLng(latitude, longitude);
+        assert locationManager != null;
+        if (!locationManager.isLocationEnabled()){
+            Toast.makeText(this, getString(R.string.turn_on_location), Toast.LENGTH_LONG).show();
 
-            map.clear();
-            map.addMarker(new MarkerOptions().position(myLocationL).title("My location"));
-            map.moveCamera(CameraUpdateFactory.newLatLng(myLocationL));
-            return true;
         }
+
 
 
         return false;
@@ -268,6 +235,51 @@ public class ApartmentActivity extends FragmentActivity implements GoogleMap.OnM
 
     @Override
     public void onMyLocationClick(@NonNull Location location) {
-        Toast.makeText(this, "Current location:\n" + location, Toast.LENGTH_LONG).show();
+//        Toast.makeText(this, "Current location:\n" + location, Toast.LENGTH_LONG).show();
     }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        map = googleMap;
+        LatLng ns = new LatLng(taskAddressLatitude, taskAddressLongitude);
+        map.addMarker(new MarkerOptions().position(ns).title("Novi Sad"));
+        map.moveCamera(CameraUpdateFactory.newLatLng(ns));
+
+        map.setOnMyLocationButtonClickListener(this);
+        map.setOnMyLocationClickListener(this);
+        enableMyLocation();
+    }
+
+
+    private void enableMyLocation() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            if (map != null) {
+                map.setMyLocationEnabled(true);
+            }
+        } else {
+            // Permission to access the location is missing. Show rationale and request permission
+            String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
+            requestPermissions(permissions, LOCATION_PERMISSION_REQUEST_CODE);
+
+
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode != LOCATION_PERMISSION_REQUEST_CODE) {
+            return;
+        }
+
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            // Enable the my location layer if the permission has been granted.
+            enableMyLocation();
+        } else {
+            // Permission was denied. Display an error message
+            // Display the missing permission error dialog when the fragments resume.
+            permissionDenied = true;
+        }
+    }
+
 }
