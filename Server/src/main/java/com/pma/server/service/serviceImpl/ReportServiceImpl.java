@@ -15,10 +15,20 @@ public class ReportServiceImpl implements ReportService {
     private ReportRepository reportRepository;
 
     @Override
-    public ReportDto findReportById(Long id) {
+    public ReportDto findReportDtoById(Long id) {
 
         Report report = this.reportRepository.findReportById(id);
         return ReportMapper.toReportDtoWithItemsWithPictures(report);
 
+    }
+
+    @Override
+    public Report findReportById(Long id) {
+        return this.reportRepository.findReportById(id);
+    }
+
+    @Override
+    public Report save(Report report) {
+        return this.reportRepository.save(report);
     }
 }

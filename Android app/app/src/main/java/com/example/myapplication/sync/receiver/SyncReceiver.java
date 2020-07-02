@@ -3,12 +3,10 @@ package com.example.myapplication.sync.receiver;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
 import android.widget.Toast;
 
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
 import com.example.myapplication.activities.MainActivity;
+import com.example.myapplication.activities.ProfileActivity;
 import com.example.myapplication.util.NetworkStateTools;
 
 public class SyncReceiver extends BroadcastReceiver {
@@ -26,9 +24,11 @@ public class SyncReceiver extends BroadcastReceiver {
                 Toast.makeText(context, "Povezani ste na internet", Toast.LENGTH_SHORT).show();
             }
         }
-
-
+        if(intent.getAction().equals(ProfileActivity.SYNC_DATA)) {
+            this.setResultData("finished");
+        }
     }
+
 
 
 }

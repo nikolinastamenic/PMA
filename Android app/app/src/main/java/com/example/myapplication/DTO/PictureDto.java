@@ -9,4 +9,6 @@ public class PictureDto {
 
     String pictureName;
     byte[] picture;
+
+    public PictureDto() {}
 }

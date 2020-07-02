@@ -44,6 +44,7 @@
             android:background="@color/colorForeground"
             android:layout_alignParentBottom="true"
             android:text="@string/report_finish"
+            android:onClick="onClickFinishReport"
             android:textColor="@color/colorTextField">
         </Button>
 

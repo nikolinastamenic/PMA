@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         Menu menu =navigationView.getMenu();
 
-        if (!isUserLogedIn) {                   //TODO proveriti
+        if (!isUserLogedIn) {                   // proveriti
 
             userEmail = userSession.getUserEmail();
 
@@ -96,6 +96,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public void onClickReport(View view) {
         Intent intent = new Intent(MainActivity.this, ReportActivity.class);
+        intent.putExtra("activityName", "MainActivity");
+
         startActivity(intent);
     }
 
@@ -122,10 +124,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     protected void onPause() {
-
+        unregisterReceiver(sync);
         super.onPause();
-        System.out.println("main activity ON PAUSE");
-
     }
 
 
@@ -139,6 +139,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         filter.addAction("android.net.wifi.WIFI_STATE_CHANGED");
         filter.addAction("android.net.wifi.STATE_CHANGE");
         registerReceiver(sync, filter);
+
         System.out.println("main activity ON RESUME");
 
 

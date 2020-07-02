@@ -378,9 +378,9 @@ public class SqlHelper extends SQLiteOpenHelper {
         return data;
     }
 
-    public Cursor setUserPicture (String mySqlId, String pictureName) {
+    public Cursor setUserPicture (String email, String pictureName) {
         SQLiteDatabase sqlDB = this.getWritableDatabase();
-        Cursor data = sqlDB.rawQuery("UPDATE " + TABLE_USER + " SET picture = '" + pictureName + "' WHERE mysql_id = " + mySqlId, null);
+        Cursor data = sqlDB.rawQuery("UPDATE " + TABLE_USER + " SET picture = '" + pictureName + "' WHERE email = '" + email + "'", null);
 
         return data;
     }
@@ -406,6 +406,21 @@ public class SqlHelper extends SQLiteOpenHelper {
         SQLiteDatabase sqlDB = this.getWritableDatabase();
 
         Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_REPORT_ITEM + " WHERE id " + "= " + id, null);
+        return data;
+    }
+
+    public Cursor getRRIByRIdAndRIId (String reportItemId) {
+        SQLiteDatabase sqlDB = this.getWritableDatabase();
+        Cursor data = sqlDB.rawQuery("SELECT * FROM " + JOIN_TABLE + " WHERE report_item_id " + "= " + reportItemId, null);
+        return data;
+    }
+
+
+    public Cursor getReportItemBySynchronized(int isSynchronized) {
+
+        SQLiteDatabase sqlDB = this.getWritableDatabase();
+
+        Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_REPORT_ITEM + " WHERE is_synchronized " + "= " + isSynchronized, null);
         return data;
     }
 

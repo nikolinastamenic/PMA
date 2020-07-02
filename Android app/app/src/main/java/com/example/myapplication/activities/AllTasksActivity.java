@@ -15,7 +15,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -111,6 +110,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
         listView = (ListView) findViewById(R.id.listViewAllTasks);
         db = new SqlHelper(this);
+//        Cursor data = AllTasksActivity.this.getContentResolver().query(DBContentProvider.CONTENT_URI_TASK, SqlHelper.ALLCOLUMNSTASK, null, null);
         Cursor data = db.getAllTasks();
         String apartmentId = "";
         String buildingId = "";
@@ -119,7 +119,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
         } else {
             while (data.moveToNext()) {
                 taskIds.add(data.getString(0));
-                checkApartmentDate.add(data.getString(5).substring(0, 13));
+                checkApartmentDate.add(data.getString(5).substring(0, 16));
                 taskWaitingList.add(data.getInt(9));
                 apartmentId = data.getString(6);
                 Cursor apartmentData = db.getApartmentById(apartmentId);
@@ -135,13 +135,17 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
                         while (addressData.moveToNext()) {
                             apartmentAddress.add(addressData.getString(3) + ", " + addressData.getString(4) + " " + addressData.getString(5));
                         }
+                        addressData.close();
                     }
+                    buildungData.close();
 
                 }
+                apartmentData.close();
 
                 myAdapter = new MyAdapter(this, apartmentTitle, apartmentAddress, checkApartmentDate);
                 listView.setAdapter(myAdapter);
             }
+            data.close();
         }
 
 
@@ -167,7 +171,6 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
         super.onResume();
 
-        System.out.println(" on resume usao..................");
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(SYNC_DATA);
@@ -189,8 +192,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
     @Override
     protected void onPause() {
-        System.out.println(" on pause usao..................");
-
+        unregisterReceiver(sync);
         super.onPause();
     }
 
@@ -203,14 +205,14 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
     @Override
     protected void onStart() {
-        System.out.println(" on start usao..................");
-
+        if (myAdapter != null) {
+            myAdapter.clear();
+        }
         super.onStart();
     }
 
     @Override
     protected void onStop() {
-        System.out.println(" on stop usao..................");
 
         super.onStop();
     }
@@ -314,9 +316,9 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
                         while (userData.moveToNext()) {
                             userId = Integer.toString(userData.getInt(0));
                         }
+                        userData.close();
                         taskId = taskIds.get(position);
 
-                        System.out.println(taskId + " JIODHSNFUOIHSDOIUFHSOUISHDOIFHSIOHDFSOIHDSIOHFIOS TAAAAAAAAAAAAAAASLOD");
 
                         waiting.setVisibility(View.VISIBLE);
                         Cursor taskData = db.getTaskById(taskId);
@@ -324,13 +326,13 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
                             String mysqlId = taskData.getString(1);
                             taskMysqlId = mysqlId;
 
-                            System.out.println(taskMysqlId + " AAAAAAAAAAAAAAAAAAAAAAAAAAASJIOFUHAUOSHFOUAHOIL");
 
                             entryTask.put(SqlHelper.COLUMN_TASK_USER_ID, userId);
                             entryTask.put(SqlHelper.COLUMN_TASK_IS_SYNCHRONIZED, 0);
 
                             context.getContentResolver().update(DBContentProvider.CONTENT_URI_TASK, entryTask, "id=" + taskId, null);
                         }
+                        taskData.close();
 
                         Intent i = new Intent(AllTasksActivity.this, SyncService.class);
                         i.putExtra("activityName", "AllTasksActivity");

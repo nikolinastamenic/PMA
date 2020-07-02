@@ -3,10 +3,9 @@ package com.example.myapplication.sync.restTask;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
+
 import android.database.Cursor;
 import android.os.AsyncTask;
-import android.os.Handler;
 
 import com.example.myapplication.DTO.ChangeTaskStateDto;
 import com.example.myapplication.activities.AllTasksActivity;
@@ -54,6 +53,8 @@ public class RequestTaskTask extends AsyncTask<String, Void, ResponseEntity<Chan
         userData.moveToFirst();
         userId = Integer.toString(userData.getInt(0));
 
+        userData.close();
+
 
         try {
             //        String email = userSession.getUserEmail();
@@ -76,8 +77,9 @@ public class RequestTaskTask extends AsyncTask<String, Void, ResponseEntity<Chan
                     String id = Integer.toString(requestedData.getInt(1));
                     tasksIds.add(id);
                 }
+                requestedData.close();
 
-                changeTaskStateDto.setTaskIds(tasksIds);
+                changeTaskStateDto.setMysqlTaskIds(tasksIds);
 
                 HttpEntity entity = new HttpEntity(changeTaskStateDto, headers);
                 ResponseEntity<ChangeTaskStateDto> response = restTemplate.postForEntity(url, entity, ChangeTaskStateDto.class);
@@ -101,8 +103,8 @@ public class RequestTaskTask extends AsyncTask<String, Void, ResponseEntity<Chan
 
         if (changeTaskStateDto != null) {
 
-            if (!changeTaskStateDto.getTaskIds().isEmpty()) {
-                for (String mySqlTaskId : changeTaskStateDto.getTaskIds()) {
+            if (!changeTaskStateDto.getMysqlTaskIds().isEmpty()) {
+                for (String mySqlTaskId : changeTaskStateDto.getMysqlTaskIds()) {
 
                     ContentValues entryTask = new ContentValues();
 
@@ -117,6 +119,7 @@ public class RequestTaskTask extends AsyncTask<String, Void, ResponseEntity<Chan
                         context.getContentResolver().update(DBContentProvider.CONTENT_URI_TASK, entryTask, "id=" + id, null);
 
                     }
+                    taskData.close();
                 }
 
                 intent.putExtra("success", "true");
@@ -136,6 +139,7 @@ public class RequestTaskTask extends AsyncTask<String, Void, ResponseEntity<Chan
                     context.sendBroadcast(intent);
 
                 }
+                forDelete.close();
 
             }
 

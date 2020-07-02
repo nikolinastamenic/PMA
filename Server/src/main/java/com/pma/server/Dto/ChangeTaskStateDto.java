@@ -10,12 +10,12 @@ public class ChangeTaskStateDto {
 
     private String email;
 
-    private List<String> taskIds;
+    private List<String> mysqlTaskIds;
 
     private String state;
 
     public ChangeTaskStateDto() {
-        taskIds = new ArrayList<>();
+        mysqlTaskIds = new ArrayList<>();
     }
 
 

@@ -2,6 +2,7 @@ package com.pma.server.model;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -19,7 +20,9 @@ public class Report implements Serializable {
     @Column
     private Date date;
     
-    public Report() {}
+    public Report() {
+        itemList = new ArrayList<>();
+    }
 
     public Long getId() {
         return id;

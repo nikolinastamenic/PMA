@@ -11,14 +11,14 @@ import java.io.IOException;
 
 public class ReportItemMapper {
 
-    public static ReportItemDto toReportItemDto(ReportItem reportItem){
-
-        ReportItemDto reportItemDto = new ReportItemDto();
-        reportItemDto.setId(reportItem.getId());
-        reportItemDto.setFaultName(reportItem.getFaultName());
-        reportItemDto.setDetails(reportItem.getDetails());
-
-        reportItemDto.setPicture(reportItem.getPicture());
+//    public static ReportItemDto toReportItemDto(ReportItem reportItem){
+//
+//        ReportItemDto reportItemDto = new ReportItemDto();
+//        reportItemDto.setId(reportItem.getId());
+//        reportItemDto.setFaultName(reportItem.getFaultName());
+//        reportItemDto.setDetails(reportItem.getDetails());
+//
+////        reportItemDto.setPicture(reportItem.getPicture());
 //        PictureDto pictureDto = new PictureDto();
 //
 //        if(reportItem.getPicture() != null) {
@@ -26,10 +26,10 @@ public class ReportItemMapper {
 //
 //        }
 //        reportItemDto.setPicture(pictureDto);
-
-        return reportItemDto;
-
-    }
+//
+//        return reportItemDto;
+//
+//    }
 
     public static ReportItemDto toReportItemDtoWithPictures(ReportItem reportItem) {
 
@@ -45,14 +45,14 @@ public class ReportItemMapper {
             String filePath = new File("").getAbsolutePath();
             filePath = filePath.concat("/pictures/");
             File in = new File(filePath + pictureDto.getPictureName());
-//            try {
-//                pictureDto.setPicture(IOUtils.toByteArray(new FileInputStream(in)));
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-    //        reportItemDto.setPicture(pictureDto);
+            try {
+                pictureDto.setPicture(IOUtils.toByteArray(new FileInputStream(in)));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            reportItemDto.setPicture(pictureDto);
 
-            reportItemDto.setPicture(reportItem.getPicture());
+//            reportItemDto.setPicture(reportItem.getPicture());
         }
         return reportItemDto;
     }

@@ -42,8 +42,9 @@ public class TasksInProgressActivity extends AppCompatActivity implements Naviga
     List<String> apartmentTitle;
     List<String> apartmentAddress;
     List<String> checkApartmentDate;
-    SqlHelper db;
+    //    SqlHelper db;
     List<String> taskIds;
+    MyAdapter myAdapter;
 
 
     @Override
@@ -71,7 +72,6 @@ public class TasksInProgressActivity extends AppCompatActivity implements Naviga
         MenuItem menuItem = menu.findItem(R.id.nav_log_in);
 
         menuItem.setVisible(false);
-        listView();
 
 
     }
@@ -79,7 +79,7 @@ public class TasksInProgressActivity extends AppCompatActivity implements Naviga
     public void listView() {
 
         listView = (ListView) findViewById(R.id.listViewTasksInProcess);
-        db = new SqlHelper(this);
+        SqlHelper db = new SqlHelper(this);
         Cursor data = db.getTasksInProcess();
         String apartmentId = "";
         String apartmentNumber = "";
@@ -92,7 +92,7 @@ public class TasksInProgressActivity extends AppCompatActivity implements Naviga
                 if (data.getInt(9) == 1 || data.getInt(9) == 2) {
 
                     taskIds.add(data.getString(0));
-                    checkApartmentDate.add(data.getString(5).substring(0, 13));
+                    checkApartmentDate.add(data.getString(5).substring(0, 16));
                     apartmentId = data.getString(6);
                     Cursor apartmentData = db.getApartmentById(apartmentId);
                     while (apartmentData.moveToNext()) {
@@ -106,15 +106,20 @@ public class TasksInProgressActivity extends AppCompatActivity implements Naviga
                             while (addressData.moveToNext()) {
                                 apartmentAddress.add(addressData.getString(3) + ", " + addressData.getString(4) + " " + addressData.getString(5));
                             }
+                            addressData.close();
                         }
+                        buildungData.close();
 
                     }
-
-                    TasksInProgressActivity.MyAdapter myAdapter = new TasksInProgressActivity.MyAdapter(this, apartmentTitle, apartmentAddress, checkApartmentDate);
+                    apartmentData.close();
+                    myAdapter = new TasksInProgressActivity.MyAdapter(this, apartmentTitle, apartmentAddress, checkApartmentDate);
                     listView.setAdapter(myAdapter);
 
                 }
+
             }
+            data.close();
+
         }
 
 
@@ -126,6 +131,8 @@ public class TasksInProgressActivity extends AppCompatActivity implements Naviga
 
                 Intent intent = new Intent(TasksInProgressActivity.this, ApartmentActivity.class);
                 intent.putExtra("taskId", taskId);
+                intent.putExtra("activityName", "TasksInProgressActivity");
+
                 startActivity(intent);
             }
         });
@@ -141,12 +148,22 @@ public class TasksInProgressActivity extends AppCompatActivity implements Naviga
 
     @Override
     protected void onStart() {
+        if (myAdapter != null) {
+            myAdapter.clear();
+        }
         super.onStart();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        listView();
     }
 
     @Override

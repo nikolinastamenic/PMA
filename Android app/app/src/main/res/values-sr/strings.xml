@@ -53,5 +53,11 @@
     <string name="state">Stanje: </string>
     <string name="address">Adresa: </string>
     <string name="waiting">Čeka se </string>
+    <string name="gallery_access_allowed">Pristup galeriji je dozvoljen</string>
+    <string name="gallery_access_denied">Pristup galeriji je zabranjen</string>
+    <string name="view_report">Pregled izveštaja</string>
+
+
+
 
 </resources>

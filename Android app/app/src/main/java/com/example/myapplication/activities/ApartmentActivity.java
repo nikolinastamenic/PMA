@@ -1,76 +1,157 @@
 package com.example.myapplication.activities;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentActivity;
 
 import com.example.myapplication.R;
 import com.example.myapplication.database.SqlHelper;
+import com.example.myapplication.util.AppConfig;
 import com.example.myapplication.util.NavBarUtil;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.Date;
 
-public class ApartmentActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+import static com.example.myapplication.util.AppConfig.LOCATION_PERMISSION_REQUEST_CODE;
+
+public class ApartmentActivity extends FragmentActivity implements GoogleMap.OnMyLocationButtonClickListener,
+        GoogleMap.OnMyLocationClickListener,
+        NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, ActivityCompat.OnRequestPermissionsResultCallback {
 
     DrawerLayout drawerLayout;
     NavigationView navigationView;
-    SqlHelper db;
 
-    private String typeOfApartment;
-
-    private String state;
-
-    private boolean urgent;
-
-    private Date deadline;
     String taskId;
 
     Toolbar toolbar;
 
+    String activityName;
+    GoogleMap map;
+    private boolean permissionDenied = false;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.apartment);
+
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
 
         Intent intent = getIntent();
         taskId = intent.getStringExtra("taskId");
+        activityName = intent.getStringExtra("activityName");
 
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
         toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle("Quickinspect");
+
 
         navigationView.bringToFront();
-        setSupportActionBar(toolbar);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.app_name, R.string.all_tasks);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
         navigationView.setNavigationItemSelectedListener(this);
-        Menu menu =navigationView.getMenu();
+        Menu menu = navigationView.getMenu();
         MenuItem menuItem = menu.findItem(R.id.nav_log_in);
 
         menuItem.setVisible(false);
 
+        Button button = findViewById(R.id.assignMeButton);
 
+        if (activityName.equals("FinishedTasksActivity")) {
+            button.setText(R.string.view_report);
+        }
+
+
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        map = googleMap;
+        LatLng ns = new LatLng(45.259333, 19.831826);
+        map.addMarker(new MarkerOptions().position(ns).title("Novi Sad"));
+        map.moveCamera(CameraUpdateFactory.newLatLng(ns));
+
+        map.setOnMyLocationButtonClickListener(this);
+        map.setOnMyLocationClickListener(this);
+        enableMyLocation();
+    }
+
+
+    private void enableMyLocation() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            if (map != null) {
+                map.setMyLocationEnabled(true);
+            }
+        } else {
+            // Permission to access the location is missing. Show rationale and request permission
+            String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
+            requestPermissions(permissions, LOCATION_PERMISSION_REQUEST_CODE);
+
+
+        }
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode != LOCATION_PERMISSION_REQUEST_CODE) {
+            return;
+        }
+
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            // Enable the my location layer if the permission has been granted.
+            enableMyLocation();
+        } else {
+            // Permission was denied. Display an error message
+            // Display the missing permission error dialog when the fragments resume.
+            permissionDenied = true;
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         getTask(taskId);
 
     }
 
-    public void getTask(String taskId){
+    public void getTask(String taskId) {
 
-        db = new SqlHelper(this);
+        SqlHelper db = new SqlHelper(this);
         Cursor data = db.getTaskById(taskId);
 
 
@@ -95,34 +176,31 @@ public class ApartmentActivity extends AppCompatActivity implements NavigationVi
 
                 Cursor dataApartment = db.getApartmentById(apartmentId);
 
-                while (dataApartment.moveToNext()){
+                while (dataApartment.moveToNext()) {
 
                     apartmentNumber = dataApartment.getString(2);
                     buildingId = dataApartment.getString(3);
 
                     Cursor buildingData = db.getBuildingById(buildingId);
 
-                    while (buildingData.moveToNext()){
+                    while (buildingData.moveToNext()) {
 
                         addressId = buildingData.getString(2);
                         Cursor addressData = db.getAddressById(addressId);
 
-                        while (addressData.moveToNext()){
+                        while (addressData.moveToNext()) {
 
                             apartmentAddress = addressData.getString(4) + " " + addressData.getString(5)
                                     + ", " + addressData.getString(3);
-
                         }
-
                     }
 
-
                 }
-                if(stateName.equals("IN_PROCESS")) {
+                if (stateName.equals("IN_PROCESS")) {
                     state.setText("In process");
-                } else if (stateName.equals("FINISHED")){
+                } else if (stateName.equals("FINISHED")) {
                     state.setText("Finished");
-                } else if (stateName.equals("NEW")){
+                } else if (stateName.equals("NEW")) {
                     state.setText("New");
                 }
 
@@ -133,7 +211,6 @@ public class ApartmentActivity extends AppCompatActivity implements NavigationVi
             }
 
         }
-
 
     }
 
@@ -162,11 +239,35 @@ public class ApartmentActivity extends AppCompatActivity implements NavigationVi
 
         Intent intent = new Intent(ApartmentActivity.this, ReportActivity.class);
         intent.putExtra("taskId", taskId);
+        intent.putExtra("activityName", activityName);
+
 
         startActivity(intent);
     }
 
 
+    @Override
+    public boolean onMyLocationButtonClick() {
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Location myLocation = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+
+            double latitude = myLocation.getLatitude();
+            double longitude = myLocation.getLongitude();
+            LatLng myLocationL = new LatLng(latitude, longitude);
+
+            map.clear();
+            map.addMarker(new MarkerOptions().position(myLocationL).title("My location"));
+            map.moveCamera(CameraUpdateFactory.newLatLng(myLocationL));
+            return true;
+        }
 
 
+        return false;
+    }
+
+    @Override
+    public void onMyLocationClick(@NonNull Location location) {
+        Toast.makeText(this, "Current location:\n" + location, Toast.LENGTH_LONG).show();
+    }
 }
