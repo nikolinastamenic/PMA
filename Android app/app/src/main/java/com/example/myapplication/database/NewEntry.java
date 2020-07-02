@@ -82,7 +82,7 @@ public class NewEntry {
 //        entryUser.put(SqlHelper.COLUMN_USER_PASSWORD, userDto.getPassword());
         entryUser.put(SqlHelper.COLUMN_USER_NAME, userDto.getName());
         entryUser.put(SqlHelper.COLUMN_USER_SURNAME, userDto.getSurname());
-
+        entryUser.put(SqlHelper.COLUMN_USER_PICTURE, userDto.getPictureName());
 
         Uri userUri = context.getContentResolver().insert(DBContentProvider.CONTENT_URI_USER, entryUser);
 
