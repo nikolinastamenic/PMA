@@ -14,4 +14,5 @@ public interface UserService {
     UserAndTaskDto loginUser (LoginDto loginDto);
     void forgotPassword(String email);
     void newUserPassword(ChangePasswordDto userDto);
+    UserDto editUser(String email, UserDto userDto);
 }

@@ -65,6 +65,7 @@
     <string name="password_not_empty">Lozinka ne može biti prazna</string>
     <string name="password_not_same">Lozinke moraju biti jednake</string>
     <string name="password_changed">Lozinka je promenjena</string>
+    <string name="save">Sačuvaj</string>
 
 
 

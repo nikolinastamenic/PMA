@@ -62,4 +62,14 @@ public class UserController {
         }
     }
 
+    @PostMapping(value = "/email/{email}/update")
+    public ResponseEntity<?> editUser(@PathVariable("email") String email, @RequestBody UserDto user) {
+        try {
+            return new ResponseEntity(this.userService.editUser(email, user), HttpStatus.OK);
+        }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
 }

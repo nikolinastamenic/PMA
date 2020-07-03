@@ -64,6 +64,7 @@
     <string name="password_not_empty">Password can\'t be empty</string>
     <string name="password_not_same">Passwords must be the same</string>
     <string name="password_changed">Password is changed</string>
+    <string name="save">Save</string>
 
 
 

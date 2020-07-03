@@ -12,12 +12,14 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -151,19 +153,19 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         if (data.getCount() != 0) {
             data.moveToNext();
 
-            TextView name1 = findViewById(R.id.profile_name_surname);
+            EditText name1 = findViewById(R.id.profile_name_surname);
             ImageView profile_picture = findViewById(R.id.profile_picture);
-            TextView phone_number = findViewById(R.id.profile_phone_number);
+            EditText phone_number = findViewById(R.id.profile_phone_number);
             TextView emailField = findViewById(R.id.profile_email);
 
-            name1.setText(data.getString(2) + " " + data.getString(3));
-            ContextWrapper contextWrapper = new ContextWrapper(getApplicationContext());
+            name1.setText(data.getString(2));
             phone_number.setText(data.getString(4));
             emailField.setText(data.getString(5));
+
+            ContextWrapper contextWrapper = new ContextWrapper(getApplicationContext());
             File directory = contextWrapper.getDir(getFilesDir().getName(), Context.MODE_PRIVATE);
             File file = new File(directory, data.getString(7));
             Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
-
             profile_picture.setImageBitmap(bitmap);
 
         }
@@ -222,6 +224,14 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         startActivity(intent);
     }
 
+    public void save(View view) {
+        EditText name1 = findViewById(R.id.profile_name_surname);
+        EditText phone_number = findViewById(R.id.profile_phone_number);
+
+        new RESTUpdateUserDataTask().execute(
+                AppConfig.apiURI + "user/email/" + userSession.getUserEmail() + "/update", name1.getText().toString(), phone_number.getText().toString());
+    }
+
     class RESTSetUserProfilePictureTask extends AsyncTask<String, Void, ResponseEntity<UserDto>> {
 
         @Override
@@ -267,6 +277,59 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
             ProfileActivity.this.getContentResolver().update(DBContentProvider.CONTENT_URI_USER, entryUser, "id=" + userDto.getId(), null);
             db.close();
             showUserProfile();
+
+        }
+    }
+
+    class RESTUpdateUserDataTask extends AsyncTask<String, Void, ResponseEntity<UserDto>> {
+
+        @Override
+        protected ResponseEntity<UserDto> doInBackground(String... uri) {
+            final String url = uri[0];
+            final String userName = uri[1];
+            final String phone = uri[2];
+            UserDto userDto = new UserDto();
+            userDto.setName(userName);
+            userDto.setPhoneNumber(phone);
+
+            RestTemplate restTemplate = new RestTemplate();
+            try {
+                restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.APPLICATION_JSON);
+                headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+                HttpEntity entity = new HttpEntity(userDto, headers);
+
+                ResponseEntity<UserDto> response = restTemplate.postForEntity(url, entity, UserDto.class);
+
+                return response;
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+                return null;
+            }
+
+        }
+
+        protected void onPostExecute(ResponseEntity<UserDto> responseEntity) {
+
+            if (responseEntity != null) {
+                UserDto userDto = responseEntity.getBody();
+
+//                SqlHelper dbHelper = new SqlHelper(ProfileActivity.this);
+//                dbHelper.setUserData(userSession.getUserEmail(), userDto.getName(), userDto.getPhoneNumber());
+
+                ContentValues entryUser = new ContentValues();
+
+                entryUser.put(SqlHelper.COLUMN_USER_MYSQLID, userDto.getId());
+                entryUser.put(SqlHelper.COLUMN_USER_NAME, userDto.getName());
+                entryUser.put(SqlHelper.COLUMN_USER_SURNAME, userDto.getSurname());
+                entryUser.put(SqlHelper.COLUMN_USER_PHONE_NUMBER, userDto.getPhoneNumber());
+                entryUser.put(SqlHelper.COLUMN_USER_EMAIL, userDto.getEmail());
+                entryUser.put(SqlHelper.COLUMN_USER_PICTURE, userDto.getPictureName());
+                ProfileActivity.this.getContentResolver().update(DBContentProvider.CONTENT_URI_USER, entryUser, "email='" + userDto.getEmail() + "'", null);
+                db.close();
+            }
 
         }
     }

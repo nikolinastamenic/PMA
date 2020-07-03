@@ -147,6 +147,22 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user.get());
     }
 
+    @Override
+    public UserDto editUser(String email, UserDto userDto) {
+        Optional<User> user = this.userRepository.getUserByEmail(email);
+        if (!user.isPresent()) {
+            log.error("User with email: " + userDto.getEmail() + " doesn't exist!");
+            throw new NullPointerException("User doesn't exist");
+        }
+
+        user.get().setName(userDto.getName());
+        user.get().setPhoneNumber(userDto.getPhoneNumber());
+
+        User userSaved = userRepository.save(user.get());
+
+        return UserMapper.toUserDto(userSaved);
+    }
+
     @Async
     public void sendEmail(String email, String newPass) {
         SimpleMailMessage message = new SimpleMailMessage();
