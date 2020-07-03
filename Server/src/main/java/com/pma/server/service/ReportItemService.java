@@ -11,7 +11,7 @@ import java.util.List;
 public interface ReportItemService {
 
     ReportItem findReportItemById(Long id);
-    ReportMysqlIdsDto newReportItem(NewReportItemDto newReportItemDtos);
+    ReportMysqlIdsDto newOrUpdateReportItems(NewReportItemDto newReportItemDtos);
 
 
 }
