@@ -36,6 +36,7 @@ import com.example.myapplication.R;
 import com.example.myapplication.util.AppConfig;
 import com.example.myapplication.util.NavBarUtil;
 import com.example.myapplication.util.SavePictureUtil;
+import com.example.myapplication.util.UserSession;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.Locale;
@@ -144,6 +145,8 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         Locale.setDefault(myLocale);
         res.updateConfiguration(conf, dm);
         Intent refresh = new Intent(this, MainActivity.class);
+        UserSession userSession = new UserSession(getApplicationContext());
+        userSession.setLanguage(lang);
         finish();
         startActivity(refresh);
     }

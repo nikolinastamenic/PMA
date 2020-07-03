@@ -36,6 +36,9 @@ public class UserSession {
     // password
     public static final String KEY_PASSWORD = "Password";
 
+    // language
+    public static final String KEY_LANGUAGE = "Language";
+
     // Constructor
     public UserSession(Context context){
         this._context = context;
@@ -138,5 +141,16 @@ public class UserSession {
     // Check for login
     public boolean isUserLoggedIn(){
         return pref.getBoolean(IS_USER_LOGIN, false);
+    }
+
+    public void setLanguage(String language) {
+        editor.putString(KEY_LANGUAGE,  language);
+
+        // commit changes
+        editor.commit();
+    }
+
+    public String getLanguage() {
+        return pref.getString(KEY_LANGUAGE, "en-rGB");
     }
 }

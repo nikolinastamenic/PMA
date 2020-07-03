@@ -69,8 +69,6 @@ public class UserTask extends AsyncTask<String, Void, ResponseEntity<UserDto>> {
             Uri userUri = context.getContentResolver().insert(DBContentProvider.CONTENT_URI_USER, entryUser);
             db.close();
 
-        } else {
-            System.out.println("promeniti ip adresu");
         }
 
     }

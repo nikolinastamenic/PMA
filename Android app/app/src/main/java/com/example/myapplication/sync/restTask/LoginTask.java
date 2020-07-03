@@ -89,13 +89,13 @@ public class LoginTask extends AsyncTask<String, Void, ResponseEntity<UserAndTas
         if (responseEntity != null) {
             UserAndTaskDto userAndTaskDto = responseEntity.getBody();
 
-//            db.dropTaskTable();
-//            db.dropReportTable();
-//            db.dropUserTable();
-//            db.dropReportTable();
-//            db.dropAddressTable();
-//            db.dropApartmentTable();
-//            db.dropBuildingTable();
+            db.dropTaskTable();
+            db.dropReportTable();
+            db.dropUserTable();
+            db.dropReportTable();
+            db.dropAddressTable();
+            db.dropApartmentTable();
+            db.dropBuildingTable();
 
 
             if (userAndTaskDto != null) {
@@ -220,8 +220,6 @@ public class LoginTask extends AsyncTask<String, Void, ResponseEntity<UserAndTas
             }
 
 
-        } else {
-            System.out.println("Problem sa serverom");
         }
     }
 }

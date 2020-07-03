@@ -9,6 +9,9 @@ public class AppConfig {
     public static final int IMAGE_PICK_CODE = 1000;
     public static final int GALLERY_PERMISSION_CODE = 1001;
     public static final int REQUEST_CHECK_SETTINGS = 2;
+    public static boolean IS_APP_TRANSLATED_UNAUTHORIZED = false;
+    public static boolean IS_APP_TRANSLATED_AUTHORIZED = false;
+
 
 
 
