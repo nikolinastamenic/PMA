@@ -40,7 +40,6 @@
             android:value="@integer/google_play_services_version" />
 
 
-        <receiver android:name="com.example.myapplication.sync.receiver.SyncReceiver">
         <receiver android:name=".sync.receiver.SyncReceiver">
             <intent-filter>
                 <action android:name="android.net.wifi.WIFI_STATE_CHANGED"/>

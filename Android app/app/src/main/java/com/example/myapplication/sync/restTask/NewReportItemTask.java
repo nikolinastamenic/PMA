@@ -26,7 +26,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -38,7 +37,6 @@ public class NewReportItemTask extends AsyncTask<String, Void, ResponseEntity<Re
 
     private Context context;
     private SqlHelper db;
-    String taskId;
 
 
     public NewReportItemTask(Context applicationContext) {
@@ -123,11 +121,11 @@ public class NewReportItemTask extends AsyncTask<String, Void, ResponseEntity<Re
             newReportItemItemDto.setFaultName(faultName);
             newReportItemItemDto.setDetails(description);
 
-            File file = SavePictureUtil.readFromFile(pictureName, context, context.getFilesDir());
             try {
+                File file = SavePictureUtil.readFromFile(pictureName, context, context.getFilesDir());
                 pictureDto.setPicture(IOUtils.toByteArray(new FileInputStream(file)));
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+
             }
 
 

@@ -70,7 +70,7 @@ public class UserTask extends AsyncTask<String, Void, ResponseEntity<UserDto>> {
             db.close();
 
         } else {
-            System.out.println("deinstaliraj aplikaciju");
+            System.out.println("promeniti ip adresu");
         }
 
     }

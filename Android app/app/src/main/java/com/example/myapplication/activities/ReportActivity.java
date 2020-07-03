@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -62,6 +63,7 @@ public class ReportActivity extends AppCompatActivity implements NavigationView.
     String reportId;
     String activityName;
     String userEmail;
+    List<String> itemIds;
 
 
     String taskId;
@@ -70,6 +72,7 @@ public class ReportActivity extends AppCompatActivity implements NavigationView.
     public static String SYNC_DATA = "SYNC_DATA";
     UserSession userSession;
     MyAdapter adapter;
+    boolean readonly;
 
 
     @Override
@@ -81,6 +84,8 @@ public class ReportActivity extends AppCompatActivity implements NavigationView.
         itemTitle = new ArrayList<>();
         itemDescription = new ArrayList<>();
         images = new ArrayList<>();
+        itemIds = new ArrayList<>();
+        readonly = false;
 
         Intent intent = getIntent();
         taskId = intent.getStringExtra("taskId");
@@ -112,7 +117,7 @@ public class ReportActivity extends AppCompatActivity implements NavigationView.
         if (activityName.equals("FinishedTasksActivity")) {
             newItemButton.setVisibility(View.GONE);
             finishReportButton.setVisibility(View.GONE);
-
+            readonly = true;
 
         }
 
@@ -129,13 +134,6 @@ public class ReportActivity extends AppCompatActivity implements NavigationView.
         i.putExtra("activityName", "ReportActivity");
         startService(i);
 
-
-//        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//
-//            }
-//        });
     }
 
     private void listView() {
@@ -183,6 +181,8 @@ public class ReportActivity extends AppCompatActivity implements NavigationView.
                     Cursor reportItems = db.getReportItemById(reportItemData.getString(2));
                     while (reportItems.moveToNext()) {
 
+                        itemIds.add(reportItems.getString(0));
+
                         itemTitle.add(reportItems.getString(2));
                         itemDescription.add(reportItems.getString(3));
 
@@ -229,6 +229,24 @@ public class ReportActivity extends AppCompatActivity implements NavigationView.
         filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
         registerReceiver(sync, filter);
         listView();
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                Intent intent = new Intent(ReportActivity.this, NewItemActivity.class);
+                intent.putExtra("reportItemIdForUpdate", itemIds.get(position));
+                intent.putExtra("reportId", reportId);
+                intent.putExtra("taskId", taskId);
+                if(readonly == true){
+                    intent.putExtra("readonly", "true");
+                } else {
+                    intent.putExtra("readonly", "false");
+                }
+                startActivity(intent);
+
+            }
+        });
     }
 
     @Override
@@ -262,8 +280,10 @@ public class ReportActivity extends AppCompatActivity implements NavigationView.
             View item = layoutInflater.inflate(R.layout.item, parent, false);
             ImageView images1 = item.findViewById(R.id.image);
 
-            Bitmap image = images.get(position);
-            images1.setImageBitmap(image);
+            if(images.size() > 0){
+                Bitmap image = images.get(position);
+                images1.setImageBitmap(image);
+            }
 
             TextView title1 = item.findViewById(R.id.reportItemTitle);
             TextView description1 = item.findViewById(R.id.reportItemDescription);
@@ -280,7 +300,8 @@ public class ReportActivity extends AppCompatActivity implements NavigationView.
         Intent intent = new Intent(ReportActivity.this, NewItemActivity.class);
         intent.putExtra("reportId", reportId);
         intent.putExtra("taskId", taskId);
-
+        intent.putExtra("reportItemIdForUpdate", "");
+        intent.putExtra("readonly", "false");
 
         startActivity(intent);
     }

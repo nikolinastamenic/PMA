@@ -158,12 +158,14 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
 
             name1.setText(data.getString(2) + " " + data.getString(3));
             ContextWrapper contextWrapper = new ContextWrapper(getApplicationContext());
+            phone_number.setText(data.getString(4));
+            emailField.setText(data.getString(5));
             File directory = contextWrapper.getDir(getFilesDir().getName(), Context.MODE_PRIVATE);
             File file = new File(directory, data.getString(7));
             Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+
             profile_picture.setImageBitmap(bitmap);
-            phone_number.setText(data.getString(4));
-            emailField.setText(data.getString(5));
+
         }
 
     }
