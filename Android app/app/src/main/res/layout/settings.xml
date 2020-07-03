@@ -119,55 +119,54 @@
 
             </RelativeLayout>
 
-            <RelativeLayout
-                android:id="@+id/mediaAndStorage"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/language"
-                android:layout_margin="5dp"
+<!--            <RelativeLayout-->
+<!--                android:id="@+id/mediaAndStorage"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_below="@id/language"-->
+<!--                android:layout_margin="5dp"-->
 
-                >
+<!--                >-->
 
-                <ImageView
-                    android:id="@+id/imageMediaAndStorage"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:src="@drawable/gallery1"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginTop="10dp"/>
+<!--                <ImageView-->
+<!--                    android:id="@+id/imageMediaAndStorage"-->
+<!--                    android:layout_width="40dp"-->
+<!--                    android:layout_height="40dp"-->
+<!--                    android:src="@drawable/gallery1"-->
+<!--                    android:layout_marginLeft="5dp"-->
+<!--                    android:layout_marginTop="10dp"/>-->
 
-                <TextView
-                    android:id="@+id/labelMediaAndStorage"
-                    android:textColor="#000"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="65dp"
-                    android:layout_marginTop="10dp"
-                    android:text="@string/settings_media_storage"
-                    android:textSize="20dp"
-                    tools:ignore="NotSibling" />
+<!--                <TextView-->
+<!--                    android:id="@+id/labelTheme"-->
+<!--                    android:textColor="#000"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginLeft="65dp"-->
+<!--                    android:layout_marginTop="10dp"-->
+<!--                    android:text="@string/theme"-->
+<!--                    android:textSize="20dp"-->
+<!--                    tools:ignore="NotSibling" />-->
 
-                <Switch
-                    android:id="@+id/switchMS"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="345dp"
-                    android:layout_marginTop="15dp"
-                    android:thumbTint="@color/colorPrimaryDark"
-                    android:trackTint="@color/cardview_dark_background"
-                    />
+<!--                <Switch-->
+<!--                    android:id="@+id/switchTheme"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginLeft="345dp"-->
+<!--                    android:layout_marginTop="15dp"-->
+<!--                    android:thumbTint="@color/colorPrimaryDark"-->
+<!--                    android:trackTint="@color/cardview_dark_background" />-->
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/labelMediaAndStorage"
-                    android:textSize="12sp"
-                    android:layout_marginTop="3dp"
-                    android:text="@string/madia_and_storage_description"
-                    android:layout_alignLeft="@id/labelMediaAndStorage"
-                    />
+<!--                <TextView-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_below="@id/labelTheme"-->
+<!--                    android:textSize="12sp"-->
+<!--                    android:layout_marginTop="3dp"-->
+<!--                    android:text="@string/madia_and_storage_description"-->
+<!--                    android:layout_alignLeft="@id/labelTheme"-->
+<!--                    />-->
 
-            </RelativeLayout>
+<!--            </RelativeLayout>-->
 
 
 

@@ -26,7 +26,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         intent.putExtra("activityName", "ForgotPasswordActivity");
         startService(intent);
 
-        Toast.makeText(getApplicationContext(), "Email has been sent", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), R.string.email_sent, Toast.LENGTH_SHORT).show();
 
         Intent loginIntent = new Intent(ForgotPasswordActivity.this, LoginActivity.class);
         startActivity(loginIntent);

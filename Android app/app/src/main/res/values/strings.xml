@@ -65,7 +65,14 @@
     <string name="password_not_same">Passwords must be the same</string>
     <string name="password_changed">Password is changed</string>
     <string name="save">Save</string>
-
+    <string name="no_internet_connection">There is no internet connection</string>
+    <string name="task_is_already_assigned">Task you have requested has already been assigned</string>
+    <string name="email_sent">Email is sent</string>
+    <string name="you_are_connected_to_internet">You are connected to internet</string>
+    <string name="email_password_incorrect">Email/Password is incorrect</string>
+    <string name="user_data_updated">User data is updated</string>
+    <string name="apartment_number">Apartment number: </string>
+    <string name="theme">Dark theme</string>
 
 
 </resources>

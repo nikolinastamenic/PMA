@@ -14,6 +14,7 @@ import com.example.myapplication.DTO.AllTaskDto;
 import com.example.myapplication.DTO.LoginDto;
 import com.example.myapplication.DTO.ReportItemDto;
 import com.example.myapplication.DTO.UserAndTaskDto;
+import com.example.myapplication.R;
 import com.example.myapplication.activities.MainActivity;
 import com.example.myapplication.database.DBContentProvider;
 import com.example.myapplication.database.NewEntry;
@@ -88,13 +89,13 @@ public class LoginTask extends AsyncTask<String, Void, ResponseEntity<UserAndTas
         if (responseEntity != null) {
             UserAndTaskDto userAndTaskDto = responseEntity.getBody();
 
-            db.dropTaskTable();
-            db.dropReportTable();
-            db.dropUserTable();
-            db.dropReportTable();
-            db.dropAddressTable();
-            db.dropApartmentTable();
-            db.dropBuildingTable();
+//            db.dropTaskTable();
+//            db.dropReportTable();
+//            db.dropUserTable();
+//            db.dropReportTable();
+//            db.dropAddressTable();
+//            db.dropApartmentTable();
+//            db.dropBuildingTable();
 
 
             if (userAndTaskDto != null) {
@@ -214,7 +215,7 @@ public class LoginTask extends AsyncTask<String, Void, ResponseEntity<UserAndTas
 
             } else {
                 Toast.makeText(context,
-                        "Email/Password is incorrect",
+                        R.string.email_password_incorrect,
                         Toast.LENGTH_LONG).show();
             }
 

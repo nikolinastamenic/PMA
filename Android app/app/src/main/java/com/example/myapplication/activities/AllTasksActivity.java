@@ -401,7 +401,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
                 public void run() {
 
                     if (intent.getStringExtra("connectivity") != null && intent.getStringExtra("connectivity").equals("false")) {
-                        Toast.makeText(context, "Nema konekcije sa internetom", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, R.string.no_internet_connection, Toast.LENGTH_SHORT).show();
                         if (null != myReceiver) {
                             unregisterReceiver(myReceiver);
                             myReceiver = null;
@@ -411,7 +411,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
                         if (intent.getStringExtra("success").equals("false")) {
 
-                            Toast.makeText(context, "Task koji ste zatrazili je zauzet!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, R.string.task_is_already_assigned, Toast.LENGTH_SHORT).show();
                             if (null != myReceiver) {
                                 unregisterReceiver(myReceiver);
                                 myReceiver = null;

@@ -42,6 +42,7 @@ import com.example.myapplication.sync.service.SyncService;
 import com.example.myapplication.util.AppConfig;
 import com.example.myapplication.util.MiscUtil;
 import com.example.myapplication.util.NavBarUtil;
+import com.example.myapplication.util.NetworkStateTools;
 import com.example.myapplication.util.SavePictureUtil;
 import com.example.myapplication.util.UserSession;
 import com.google.android.material.navigation.NavigationView;
@@ -227,9 +228,14 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
     public void save(View view) {
         EditText name1 = findViewById(R.id.profile_name_surname);
         EditText phone_number = findViewById(R.id.profile_phone_number);
-
-        new RESTUpdateUserDataTask().execute(
-                AppConfig.apiURI + "user/email/" + userSession.getUserEmail() + "/update", name1.getText().toString(), phone_number.getText().toString());
+        int status = NetworkStateTools.getConnectivityStatus(getApplicationContext());
+        if (status == NetworkStateTools.TYPE_WIFI || status == NetworkStateTools.TYPE_MOBILE) {
+            Toast.makeText(getApplicationContext(), R.string.user_data_updated, Toast.LENGTH_LONG).show();
+            new RESTUpdateUserDataTask().execute(
+                    AppConfig.apiURI + "user/email/" + userSession.getUserEmail() + "/update", name1.getText().toString(), phone_number.getText().toString());
+        } else {
+            Toast.makeText(getApplicationContext(), R.string.no_internet_connection, Toast.LENGTH_LONG).show();
+        }
     }
 
     class RESTSetUserProfilePictureTask extends AsyncTask<String, Void, ResponseEntity<UserDto>> {

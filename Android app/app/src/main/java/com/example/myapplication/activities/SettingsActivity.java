@@ -1,12 +1,14 @@
 package com.example.myapplication.activities;
 
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Menu;
@@ -15,11 +17,15 @@ import android.view.View;
 
 import android.widget.RadioButton;
 import android.widget.Spinner;
+import android.widget.Switch;
+import android.widget.Toast;
 
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
@@ -27,6 +33,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.myapplication.R;
 
+import com.example.myapplication.util.AppConfig;
 import com.example.myapplication.util.NavBarUtil;
 import com.example.myapplication.util.SavePictureUtil;
 import com.google.android.material.navigation.NavigationView;
@@ -70,8 +77,6 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
 
         serbianRadio = (RadioButton) findViewById(R.id.radioBtn1);
         englishRadio = (RadioButton) findViewById(R.id.radioBtn2);
-
-
 
 
     }
@@ -142,4 +147,5 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         finish();
         startActivity(refresh);
     }
+
 }
