@@ -2,6 +2,9 @@ package com.example.myapplication.database;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.ContextWrapper;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 
 import com.example.myapplication.DTO.AllTaskDto;
@@ -10,6 +13,9 @@ import com.example.myapplication.DTO.BuildingDto;
 import com.example.myapplication.DTO.ReportDto;
 import com.example.myapplication.DTO.ReportItemDto;
 import com.example.myapplication.DTO.UserDto;
+import com.example.myapplication.util.SavePictureUtil;
+
+import java.io.File;
 
 
 public class NewEntry {
@@ -81,17 +87,19 @@ public class NewEntry {
         entryUser.put(SqlHelper.COLUMN_USER_EMAIL, userDto.getEmail());
 //        entryUser.put(SqlHelper.COLUMN_USER_PASSWORD, userDto.getPassword());
         entryUser.put(SqlHelper.COLUMN_USER_NAME, userDto.getName());
+        entryUser.put(SqlHelper.COLUMN_USER_PHONE_NUMBER, userDto.getPhoneNumber());
         entryUser.put(SqlHelper.COLUMN_USER_SURNAME, userDto.getSurname());
         if (userDto.getPictureName() != null) {
             entryUser.put(SqlHelper.COLUMN_USER_PICTURE, userDto.getPictureName());
-
         }
-
 
         Uri userUri = context.getContentResolver().insert(DBContentProvider.CONTENT_URI_USER, entryUser);
 
-        return userUri.toString();
+        if(userDto.getPicture() != null){
+            SavePictureUtil.writeToFile(userDto.getPicture(), userDto.getPictureName(), context, context.getFilesDir());
+        }
 
+        return userUri.toString();
 
     }
 
@@ -119,7 +127,11 @@ public class NewEntry {
         entryReportItem.put(SqlHelper.COLUMN_REPORT_ITEM_MYSQLID, reportItemDto.getId());
         entryReportItem.put(SqlHelper.COLUMN_REPORT_ITEM_FAULT_NAME, reportItemDto.getFaultName());
         entryReportItem.put(SqlHelper.COLUMN_REPORT_ITEM_DETAILS, reportItemDto.getDetails());
-        entryReportItem.put(SqlHelper.COLUMN_REPORT_ITEM_FAULT_PICTURE, reportItemDto.getPicture().getPictureName());
+        if(reportItemDto.getPicture() != null) {
+            if(reportItemDto.getPicture().getPictureName() != null) {
+                entryReportItem.put(SqlHelper.COLUMN_REPORT_ITEM_FAULT_PICTURE, reportItemDto.getPicture().getPictureName());
+            }
+        }
         if(isNew) {
             entryReportItem.put(SqlHelper.COLUMN_REPORT_ITEM_IS_SYNCHRONIZED, 0);
 

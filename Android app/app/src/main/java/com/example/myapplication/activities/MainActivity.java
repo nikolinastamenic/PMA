@@ -11,7 +11,10 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,9 +22,12 @@ import android.view.View;
 import com.example.myapplication.R;
 import com.example.myapplication.sync.receiver.SyncReceiver;
 import com.example.myapplication.sync.service.SyncService;
+import com.example.myapplication.util.AppConfig;
 import com.example.myapplication.util.NavBarUtil;
 import com.example.myapplication.util.UserSession;
 import com.google.android.material.navigation.NavigationView;
+
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -68,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         Menu menu =navigationView.getMenu();
 
-        if (!isUserLogedIn) {                   //TODO proveriti
+        if (!isUserLogedIn) {                   // proveriti
 
             userEmail = userSession.getUserEmail();
 
@@ -143,6 +149,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         System.out.println("main activity ON RESUME");
 
 
+        if (!AppConfig.IS_APP_TRANSLATED_AUTHORIZED) {
+            setLocale();
+        }
+
     }
 
     @Override
@@ -176,5 +186,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
+    public void setLocale() {
+        String lang = userSession.getLanguage() == null ? "en-rGB" : userSession.getLanguage();
+
+        Locale myLocale = new Locale(lang);
+        Resources res = getResources();
+        DisplayMetrics dm = res.getDisplayMetrics();
+        Configuration conf = res.getConfiguration();
+        conf.setLocale(myLocale);
+
+        Locale.setDefault(myLocale);
+        res.updateConfiguration(conf, dm);
+        Intent refresh = new Intent(this, MainActivity.class);
+        finish();
+        AppConfig.IS_APP_TRANSLATED_AUTHORIZED = true;
+        startActivity(refresh);
+    }
 
 }

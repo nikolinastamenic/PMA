@@ -107,15 +107,19 @@ public class TasksInProgressActivity extends AppCompatActivity implements Naviga
                             while (addressData.moveToNext()) {
                                 apartmentAddress.add(addressData.getString(3) + ", " + addressData.getString(4) + " " + addressData.getString(5));
                             }
+                            addressData.close();
                         }
+                        buildungData.close();
 
                     }
+                    apartmentData.close();
                     myAdapter = new TasksInProgressActivity.MyAdapter(this, apartmentTitle, apartmentAddress, checkApartmentDate);
                     listView.setAdapter(myAdapter);
 
                 }
 
             }
+            data.close();
 
         }
 

@@ -56,6 +56,24 @@
     <string name="gallery_access_allowed">Pristup galeriji je dozvoljen</string>
     <string name="gallery_access_denied">Pristup galeriji je zabranjen</string>
     <string name="view_report">Pregled izveštaja</string>
+    <string name="turn_on_location">Molimo Vas da uključite lokaciju na Vašem uređaju!</string>
+    <string name="request_new_password">Zatraži novu lozinku</string>
+    <string name="forgot_pass_notice">Unesite svoju email adresu i nova lozinka će vam biti poslata</string>
+    <string name="change_password">Promena lozinke</string>
+    <string name="insert_password">Unesite lozinku</string>
+    <string name="repeat_password">Ponovite lozinku</string>
+    <string name="password_not_empty">Lozinka ne može biti prazna</string>
+    <string name="password_not_same">Lozinke moraju biti jednake</string>
+    <string name="password_changed">Lozinka je promenjena</string>
+    <string name="save">Sačuvaj</string>
+    <string name="no_internet_connection">Internet konekcija nije dostupna</string>
+    <string name="task_is_already_assigned">Pregled je vec zauzet</string>
+    <string name="email_sent">Email je poslat</string>
+    <string name="you_are_connected_to_internet">Povezani ste na internet</string>
+    <string name="email_password_incorrect">Email/Lozinka nisu ispravni</string>
+    <string name="user_data_updated">Uspešno ste izmenili svoje podatke</string>
+    <string name="apartment_number">Broj stana: </string>
+    <string name="theme">Tamna tema</string>
 
 
 

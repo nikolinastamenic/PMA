@@ -32,7 +32,7 @@
         <GridLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="7dp"
             android:layout_marginTop="80dp"
             android:layout_weight="8"
             android:alignmentMode="alignMargins"
@@ -51,15 +51,13 @@
                     android:layout_height="35dp"
                     android:paddingEnd="10dp"
                     android:textSize="20sp"
-                    android:textStyle="bold"
-                    />
+                    android:textStyle="bold" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="55dp"
-                android:layout_columnWeight="1"
-                >
+                android:layout_columnWeight="1">
 
                 <TextView
                     android:layout_width="75dp"
@@ -98,27 +96,33 @@
                     tools:ignore="MissingConstraints" />
 
             </LinearLayout>
-            <LinearLayout
-                android:layout_width="400dp"
-                android:layout_height="300dp"
-                android:layout_columnWeight="1">
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/mapa">
 
-                </ImageView>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="430dp"
+                android:layout_columnWeight="1"
+                android:layout_marginStart="1dp">
+
+
+                <fragment
+                    android:id="@+id/map"
+                    android:name="com.google.android.gms.maps.SupportMapFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="410dp"
+                    android:layout_marginEnd="8dp">
+
+                </fragment>
             </LinearLayout>
         </GridLayout>
+
         <Button
             android:id="@+id/assignMeButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorForeground"
             android:layout_alignParentBottom="true"
+            android:background="@color/colorForeground"
+            android:onClick="onClickReport"
             android:text="@string/create_report"
-            android:textColor="@color/colorTextField"
-            android:onClick="onClickReport">
-        </Button>
+            android:textColor="@color/colorTextField"></Button>
     </RelativeLayout>
 </androidx.drawerlayout.widget.DrawerLayout>

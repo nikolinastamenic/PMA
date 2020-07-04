@@ -1,51 +1,46 @@
 package com.example.myapplication.activities;
 
-import android.content.ContentValues;
-import android.content.Context;
+
+import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
-import android.os.AsyncTask;
+
+import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.Toast;
 
+
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
-import com.example.myapplication.DTO.UserDto;
 import com.example.myapplication.R;
-import com.example.myapplication.database.DBContentProvider;
-import com.example.myapplication.database.SqlHelper;
+
 import com.example.myapplication.util.AppConfig;
 import com.example.myapplication.util.NavBarUtil;
 import com.example.myapplication.util.SavePictureUtil;
+import com.example.myapplication.util.UserSession;
 import com.google.android.material.navigation.NavigationView;
 
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.web.client.RestTemplate;
-
-import java.util.Arrays;
 import java.util.Locale;
+
 
 public class SettingsActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -84,6 +79,14 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         serbianRadio = (RadioButton) findViewById(R.id.radioBtn1);
         englishRadio = (RadioButton) findViewById(R.id.radioBtn2);
 
+
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
         String currentLang = Locale.getDefault().getLanguage();
         System.out.println(currentLang);
         Resources res = getResources();
@@ -106,6 +109,7 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
                 setLocale("en-rGB");
             }
         });
+
 
     }
 
@@ -141,7 +145,10 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         Locale.setDefault(myLocale);
         res.updateConfiguration(conf, dm);
         Intent refresh = new Intent(this, MainActivity.class);
+        UserSession userSession = new UserSession(getApplicationContext());
+        userSession.setLanguage(lang);
         finish();
         startActivity(refresh);
     }
+
 }

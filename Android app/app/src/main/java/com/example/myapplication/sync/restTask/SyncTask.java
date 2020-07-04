@@ -43,6 +43,7 @@ public class SyncTask extends AsyncTask<String, Void, ResponseEntity<AllTaskDto[
     protected ResponseEntity<AllTaskDto[]> doInBackground(String... uri) {
 
 
+
         UserSession userSession = new UserSession(context);
         final String url = uri[0];
         String email = uri[1];
@@ -100,6 +101,7 @@ public class SyncTask extends AsyncTask<String, Void, ResponseEntity<AllTaskDto[
                     addressData.moveToFirst();
                     addressId = Integer.toString(addressData.getInt(0));
                 }
+
 
                 if (!(buildingData.moveToFirst()) || buildingData.getCount() == 0) {
                     buildingId = (NewEntry.newBuildingEntry(context, taskDto.getApartmentDto().getBuildingDto(), addressId)).split("/")[1];

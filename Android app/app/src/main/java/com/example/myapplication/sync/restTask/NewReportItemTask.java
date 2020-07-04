@@ -27,7 +27,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -80,6 +79,7 @@ public class NewReportItemTask extends AsyncTask<String, Void, ResponseEntity<Re
             if (joinTableData.moveToFirst()) {
                 reportId = joinTableData.getInt(0);
             }
+            joinTableData.close();
 
 
             ContentValues entryReport = new ContentValues();
@@ -94,9 +94,9 @@ public class NewReportItemTask extends AsyncTask<String, Void, ResponseEntity<Re
                 mySqlReportId = reportData.getInt(1);
                 taskId = reportData.getInt(3);
 
-
             }
-
+            String reportDate = reportData.getString(2);
+            reportData.close();
 
             Cursor taskData = db.getTaskById(String.valueOf(taskId), sqlDB);
 
@@ -105,6 +105,8 @@ public class NewReportItemTask extends AsyncTask<String, Void, ResponseEntity<Re
 
             }
 
+            taskData.close();
+
             String faultName = reportItemsData.getString(2);
             String description = reportItemsData.getString(3);
             String pictureName = reportItemsData.getString(4);
@@ -112,8 +114,6 @@ public class NewReportItemTask extends AsyncTask<String, Void, ResponseEntity<Re
                 mySqlReportItemId = reportItemsData.getInt(1);
             }
 
-
-            String reportDate = reportData.getString(2);
 
             NewReportItemItemDto newReportItemItemDto = new NewReportItemItemDto();
             PictureDto pictureDto = new PictureDto();
@@ -126,11 +126,11 @@ public class NewReportItemTask extends AsyncTask<String, Void, ResponseEntity<Re
             newReportItemItemDto.setFaultName(faultName);
             newReportItemItemDto.setDetails(description);
 
-            File file = SavePictureUtil.readFromFile(pictureName, context, context.getFilesDir());
             try {
+                File file = SavePictureUtil.readFromFile(pictureName, context, context.getFilesDir());
                 pictureDto.setPicture(IOUtils.toByteArray(new FileInputStream(file)));
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+
             }
 
 
@@ -144,7 +144,10 @@ public class NewReportItemTask extends AsyncTask<String, Void, ResponseEntity<Re
         }
 
         sqlDB.close();
+
+
         if (reportItemsData.getCount() > 0) {
+            reportItemsData.close();
 
             try {
                 restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
@@ -163,7 +166,10 @@ public class NewReportItemTask extends AsyncTask<String, Void, ResponseEntity<Re
                 return null;
 
             }
+
         }
+        reportItemsData.close();
+
         return null;
 
 

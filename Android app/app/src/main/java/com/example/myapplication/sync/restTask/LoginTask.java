@@ -15,13 +15,11 @@ import com.example.myapplication.DTO.AllTaskDto;
 import com.example.myapplication.DTO.LoginDto;
 import com.example.myapplication.DTO.ReportItemDto;
 import com.example.myapplication.DTO.UserAndTaskDto;
-import com.example.myapplication.DTO.UserDto;
+import com.example.myapplication.R;
 import com.example.myapplication.activities.MainActivity;
-import com.example.myapplication.activities.ReportActivity;
 import com.example.myapplication.database.DBContentProvider;
 import com.example.myapplication.database.NewEntry;
 import com.example.myapplication.database.SqlHelper;
-import com.example.myapplication.util.MiscUtil;
 import com.example.myapplication.util.SavePictureUtil;
 import com.example.myapplication.util.UserSession;
 
@@ -117,6 +115,7 @@ public class LoginTask extends AsyncTask<String, Void, ResponseEntity<UserAndTas
                 userData.moveToFirst();
 
                 if (!(userData.moveToFirst()) || userData.getCount() == 0) {
+
                     String userUri = NewEntry.newUserEntry(context, userAndTaskDto.getUser());
 
                     if (!userAndTaskDto.getTasks().isEmpty()) {
@@ -172,13 +171,15 @@ public class LoginTask extends AsyncTask<String, Void, ResponseEntity<UserAndTas
                                         String reportItemUri = NewEntry.newReportItemEntry(context, reportItemDto, false);
                                         ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
-                                        if (reportItemDto.getPicture().getPicture() != null) {
-                                            Bitmap photo = BitmapFactory.decodeByteArray(reportItemDto.getPicture().getPicture(), 0, reportItemDto.getPicture().getPicture().length);
+                                        if(reportItemDto.getPicture() != null) {
+                                            if (reportItemDto.getPicture().getPicture() != null) {
+                                                Bitmap photo = BitmapFactory.decodeByteArray(reportItemDto.getPicture().getPicture(), 0, reportItemDto.getPicture().getPicture().length);
 
 
-                                            photo.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                                            String picName = reportItemDto.getPicture().getPictureName();
-                                            SavePictureUtil.writeToFile(stream.toByteArray(), picName, context, context.getFilesDir());
+                                                photo.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                                                String picName = reportItemDto.getPicture().getPictureName();
+                                                SavePictureUtil.writeToFile(stream.toByteArray(), picName, context, context.getFilesDir());
+                                            }
                                         }
 
                                         String reportItemId = reportItemUri.split("/")[1];
@@ -217,18 +218,16 @@ public class LoginTask extends AsyncTask<String, Void, ResponseEntity<UserAndTas
                     sqlDB.close();
 
                 }
+                userData.close();
 
             } else {
                 sqlDB.close();
                 Toast.makeText(context,
-                        "Email/Password is incorrect",
+                        R.string.email_password_incorrect,
                         Toast.LENGTH_LONG).show();
             }
 
 
-        } else {
-            sqlDB.close();
-            System.out.println("Problem sa serverom");
         }
     }
 }

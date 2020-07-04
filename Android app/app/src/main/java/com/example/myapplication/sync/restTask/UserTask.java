@@ -49,24 +49,27 @@ public class UserTask extends AsyncTask<String, Void, ResponseEntity<UserDto>> {
 
     protected void onPostExecute(ResponseEntity<UserDto> responseEntity) {
 
-        UserDto userDto = responseEntity.getBody();
+        if(responseEntity != null) {
+            UserDto userDto = responseEntity.getBody();
 
-        SqlHelper dbHelper = new SqlHelper(context);
-        dbHelper.dropUserTable();
+            SqlHelper dbHelper = new SqlHelper(context);
+            dbHelper.dropUserTable();
 
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
+            SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-        ContentValues entryUser = new ContentValues();
+            ContentValues entryUser = new ContentValues();
 
-        entryUser.put(SqlHelper.COLUMN_USER_MYSQLID, userDto.getId());
-        entryUser.put(SqlHelper.COLUMN_USER_NAME, userDto.getName());
-        entryUser.put(SqlHelper.COLUMN_USER_SURNAME, userDto.getSurname());
-        entryUser.put(SqlHelper.COLUMN_USER_PHONE_NUMBER, userDto.getPhoneNumber());
-        entryUser.put(SqlHelper.COLUMN_USER_EMAIL, userDto.getEmail());
-        entryUser.put(SqlHelper.COLUMN_USER_PICTURE, userDto.getPictureName());
-        SavePictureUtil.writeToFile(userDto.getPicture(), userDto.getPictureName(), context, context.getFilesDir());
-        Uri userUri = context.getContentResolver().insert(DBContentProvider.CONTENT_URI_USER, entryUser);
-        db.close();
+            entryUser.put(SqlHelper.COLUMN_USER_MYSQLID, userDto.getId());
+            entryUser.put(SqlHelper.COLUMN_USER_NAME, userDto.getName());
+            entryUser.put(SqlHelper.COLUMN_USER_SURNAME, userDto.getSurname());
+            entryUser.put(SqlHelper.COLUMN_USER_PHONE_NUMBER, userDto.getPhoneNumber());
+            entryUser.put(SqlHelper.COLUMN_USER_EMAIL, userDto.getEmail());
+            entryUser.put(SqlHelper.COLUMN_USER_PICTURE, userDto.getPictureName());
+            SavePictureUtil.writeToFile(userDto.getPicture(), userDto.getPictureName(), context, context.getFilesDir());
+            Uri userUri = context.getContentResolver().insert(DBContentProvider.CONTENT_URI_USER, entryUser);
+            db.close();
+
+        }
 
     }
 }

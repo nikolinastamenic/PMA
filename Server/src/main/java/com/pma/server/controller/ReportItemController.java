@@ -1,6 +1,7 @@
 package com.pma.server.controller;
 
 import com.pma.server.Dto.NewReportItemDto;
+import com.pma.server.Dto.NewReportItemItemDto;
 import com.pma.server.Dto.ReportMysqlIdsDto;
 import com.pma.server.service.ReportItemService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,7 @@ public class ReportItemController {
     @PostMapping(value = "/new")
     public ResponseEntity<ReportMysqlIdsDto> newReportItem(@RequestBody NewReportItemDto newReportItemDto) {
 
-        ReportMysqlIdsDto reportDtos = this.reportItemService.newReportItem(newReportItemDto);
+        ReportMysqlIdsDto reportDtos = this.reportItemService.newOrUpdateReportItems(newReportItemDto);
 
         return new ResponseEntity<>(reportDtos, HttpStatus.OK);
     }

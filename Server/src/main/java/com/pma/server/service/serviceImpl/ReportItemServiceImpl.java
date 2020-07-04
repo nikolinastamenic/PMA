@@ -42,72 +42,112 @@ public class ReportItemServiceImpl implements ReportItemService {
         return this.reportItemRepository.findReportItemById(id);
     }
 
+
     @Override
-    public ReportMysqlIdsDto newReportItem(NewReportItemDto newReportItemDtos) {
+    public ReportMysqlIdsDto newOrUpdateReportItems(NewReportItemDto newReportItemDtos) {
 
         ReportMysqlIdsDto reportMysqlIdsDto = new ReportMysqlIdsDto();
         List<ReportMysqlIdsItemDto> list = new ArrayList<>();
-
-
         for (NewReportItemItemDto newReportItemItemDto : newReportItemDtos.getNewReportItemItemDtoList()) {
+            if (newReportItemItemDto.getMySqlReportItemId() == 0) {
+                ReportMysqlIdsItemDto reportItemItemDto = newReportItems(newReportItemItemDto);
+                list.add(reportItemItemDto);
+            } else {
+                ReportMysqlIdsItemDto reportItemItemDto = updateReportItems(newReportItemItemDto);
+                list.add(reportItemItemDto);
+            }
+        }
+        reportMysqlIdsDto.setReportMysqlIdsItemDtos(list);
 
+        return reportMysqlIdsDto;
+    }
 
-            Task task = taskService.getTaskById(new Long(newReportItemItemDto.getMySqlTaskId()));
-            ReportMysqlIdsItemDto reportMysqlIdsItemDto = new ReportMysqlIdsItemDto();
+    public ReportMysqlIdsItemDto updateReportItems(NewReportItemItemDto updateReportItemItemDto) {
 
-            ReportItem reportItem = new ReportItem(newReportItemItemDto.getFaultName(), newReportItemItemDto.getDetails(), newReportItemItemDto.getPicture().getPictureName());
-            this.reportItemRepository.save(reportItem);
+        ReportItem reportItem = this.reportItemRepository.findReportItemById((long) updateReportItemItemDto.getMySqlReportItemId());
 
-            try (FileOutputStream stream = new FileOutputStream(new File("").getAbsolutePath() + "/pictures/" + newReportItemItemDto.getPicture().getPictureName())) {
-                stream.write(newReportItemItemDto.getPicture().getPicture());
+        reportItem.setFaultName(updateReportItemItemDto.getFaultName());
+        reportItem.setDetails(updateReportItemItemDto.getDetails());
+        reportItem.setPicture(updateReportItemItemDto.getPicture().getPictureName());
+
+        this.reportItemRepository.save(reportItem);
+
+        if(updateReportItemItemDto.getPicture() != null) {
+            try (FileOutputStream stream = new FileOutputStream(new File("").getAbsolutePath() + "/pictures/" + updateReportItemItemDto.getPicture().getPictureName())) {
+                stream.write(updateReportItemItemDto.getPicture().getPicture());
 
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
-            Long reportId;
-            if (task.getReport() == null) {
+        }
 
-                Report report = new Report();
-                DateFormat dateFormat = new SimpleDateFormat(
-                        "EEE MMM dd HH:mm:ss zzz yyyy");
-                try {
-                    Date date = dateFormat.parse(newReportItemItemDto.getReportCreatedDate());
-                    report.setDate(date);
+        ReportMysqlIdsItemDto reportMysqlIdsItemDto = new ReportMysqlIdsItemDto();
+        reportMysqlIdsItemDto.setReportItemMysqlId((long) updateReportItemItemDto.getMySqlReportItemId());
+        reportMysqlIdsItemDto.setReportId(updateReportItemItemDto.getReportId());
+        reportMysqlIdsItemDto.setReportItemId(updateReportItemItemDto.getReportItemId());
+        reportMysqlIdsItemDto.setReportMysqlId((long) updateReportItemItemDto.getMySqlReportId());
 
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                System.out.println(dateFormat.format(new Date()));
+        return reportMysqlIdsItemDto;
+
+    }
+
+    public ReportMysqlIdsItemDto newReportItems(NewReportItemItemDto newReportItemItemDto) {
+
+        ReportMysqlIdsDto reportMysqlIdsDto = new ReportMysqlIdsDto();
+        List<ReportMysqlIdsItemDto> list = new ArrayList<>();
 
 
-                List<ReportItem> reportItems = new ArrayList<>();
-                reportItems.add(reportItem);
-                report.setItemList(reportItems);
+        Task task = taskService.getTaskById(new Long(newReportItemItemDto.getMySqlTaskId()));
+        ReportMysqlIdsItemDto reportMysqlIdsItemDto = new ReportMysqlIdsItemDto();
 
-                reportId = this.reportService.save(report).getId();
-                reportMysqlIdsItemDto.setReportMysqlId(reportId);
-                task.setReport(report);
-                this.taskService.save(task);
-            } else {
-                Report report = this.reportService.findReportById(task.getReport().getId());
-                report.getItemList().add(reportItem);
-                reportId = this.reportService.save(report).getId();
-                reportMysqlIdsItemDto.setReportMysqlId(reportId);
+        ReportItem reportItem = new ReportItem(newReportItemItemDto.getFaultName(), newReportItemItemDto.getDetails(), newReportItemItemDto.getPicture().getPictureName());
+        this.reportItemRepository.save(reportItem);
 
+        try (FileOutputStream stream = new FileOutputStream(new File("").getAbsolutePath() + "/pictures/" + newReportItemItemDto.getPicture().getPictureName())) {
+            stream.write(newReportItemItemDto.getPicture().getPicture());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Long reportId;
+        if (task.getReport() == null) {
+
+            Report report = new Report();
+            DateFormat dateFormat = new SimpleDateFormat(
+                    "EEE MMM dd HH:mm:ss zzz yyyy");
+            try {
+                Date date = dateFormat.parse(newReportItemItemDto.getReportCreatedDate());
+                report.setDate(date);
+
+            } catch (ParseException e) {
+                e.printStackTrace();
             }
+            System.out.println(dateFormat.format(new Date()));
 
-            reportMysqlIdsItemDto.setReportItemMysqlId(reportItem.getId());
-            reportMysqlIdsItemDto.setReportId(newReportItemItemDto.getReportId());
-            reportMysqlIdsItemDto.setReportItemId(newReportItemItemDto.getReportItemId());
 
-            list.add(reportMysqlIdsItemDto);
+            List<ReportItem> reportItems = new ArrayList<>();
+            reportItems.add(reportItem);
+            report.setItemList(reportItems);
 
-            reportMysqlIdsDto.setReportMysqlIdsItemDtos(list);
-
+            reportId = this.reportService.save(report).getId();
+            reportMysqlIdsItemDto.setReportMysqlId(reportId);
+            task.setReport(report);
+            this.taskService.save(task);
+        } else {
+            Report report = this.reportService.findReportById(task.getReport().getId());
+            report.getItemList().add(reportItem);
+            reportId = this.reportService.save(report).getId();
+            reportMysqlIdsItemDto.setReportMysqlId(reportId);
 
         }
-        return reportMysqlIdsDto;
+
+        reportMysqlIdsItemDto.setReportItemMysqlId(reportItem.getId());
+        reportMysqlIdsItemDto.setReportId(newReportItemItemDto.getReportId());
+        reportMysqlIdsItemDto.setReportItemId(newReportItemItemDto.getReportItemId());
+
+        return reportMysqlIdsItemDto;
     }
 
 

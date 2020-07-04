@@ -2,13 +2,16 @@ package com.pma.server.service.serviceImpl;
 
 import com.pma.server.Dto.*;
 import com.pma.server.mappers.UserMapper;
-import com.pma.server.model.Task;
 import com.pma.server.model.User;
 import com.pma.server.repository.UserRepository;
 import com.pma.server.service.TaskService;
 import com.pma.server.service.UserService;
+import com.pma.server.service.UtilService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -22,12 +25,18 @@ import java.util.Optional;
 @Service
 public class UserServiceImpl implements UserService {
 
-    private UserRepository userRepository;
-    private TaskService taskService;
+    private final UserRepository userRepository;
+    private final TaskService taskService;
+    private final JavaMailSender mailSender;
 
-    public UserServiceImpl(UserRepository userRepository, TaskService taskService) {
+    @Value("${spring.mail.username}")
+    private String sender;
+
+
+    public UserServiceImpl(UserRepository userRepository, TaskService taskService, JavaMailSender mailSender) {
         this.userRepository = userRepository;
         this.taskService = taskService;
+        this.mailSender = mailSender;
     }
 
     @Override
@@ -108,5 +117,62 @@ public class UserServiceImpl implements UserService {
             return null;
         }
 
+    }
+
+
+    @Override
+    public void forgotPassword(String email) {
+
+        String newPass = UtilService.generateRandom(7);
+        Optional<User> user = userRepository.getUserByEmail(email);
+        if (!user.isPresent()) {
+            log.error("User with email: " + email + " doesn't exist!");
+            throw new NullPointerException("User doesn't exist");
+        }
+
+        user.get().setPassword(newPass);
+        userRepository.save(user.get());
+        sendEmail(email, newPass);
+    }
+
+    @Override
+    public void newUserPassword(ChangePasswordDto userDto) {
+        Optional<User> user = this.userRepository.getUserByEmail(userDto.getEmail());
+        if (!user.isPresent()) {
+            log.error("User with email: " + userDto.getEmail() + " doesn't exist!");
+            throw new NullPointerException("User doesn't exist");
+        }
+
+        user.get().setPassword(userDto.getPassword());
+        userRepository.save(user.get());
+    }
+
+    @Override
+    public UserDto editUser(String email, UserDto userDto) {
+        Optional<User> user = this.userRepository.getUserByEmail(email);
+        if (!user.isPresent()) {
+            log.error("User with email: " + userDto.getEmail() + " doesn't exist!");
+            throw new NullPointerException("User doesn't exist");
+        }
+
+        user.get().setName(userDto.getName());
+        user.get().setPhoneNumber(userDto.getPhoneNumber());
+
+        User userSaved = userRepository.save(user.get());
+
+        return UserMapper.toUserDto(userSaved);
+    }
+
+    @Async
+    public void sendEmail(String email, String newPass) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        String messageText =
+                "Your new password is: %s\n\n\n" +
+                "QuickInspect application";
+        message.setFrom(sender);
+        message.setTo(email);
+        message.setSubject("QuickInspect - Request for changing password ");
+        message.setText(String.format(messageText, newPass));
+        mailSender.send(message);
     }
 }

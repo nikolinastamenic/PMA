@@ -58,6 +58,8 @@ public class RequestTaskTask extends AsyncTask<String, Void, ResponseEntity<Chan
         userData.moveToFirst();
         userId = Integer.toString(userData.getInt(0));
 
+        userData.close();
+
 
         try {
             //        String email = userSession.getUserEmail();
@@ -80,6 +82,7 @@ public class RequestTaskTask extends AsyncTask<String, Void, ResponseEntity<Chan
                     String id = Integer.toString(requestedData.getInt(1));
                     tasksIds.add(id);
                 }
+                requestedData.close();
 
                 changeTaskStateDto.setMysqlTaskIds(tasksIds);
 
@@ -121,6 +124,7 @@ public class RequestTaskTask extends AsyncTask<String, Void, ResponseEntity<Chan
                         context.getContentResolver().update(DBContentProvider.CONTENT_URI_TASK, entryTask, "id=" + id, null);
 
                     }
+                    taskData.close();
                 }
 
                 intent.putExtra("success", "true");
@@ -141,6 +145,7 @@ public class RequestTaskTask extends AsyncTask<String, Void, ResponseEntity<Chan
                     context.sendBroadcast(intent);
 
                 }
+                forDelete.close();
 
             }
 

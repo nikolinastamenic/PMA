@@ -38,7 +38,7 @@ public class FinishTaskTask extends AsyncTask<String, Void, ResponseEntity<Chang
     @Override
     protected ResponseEntity<ChangeTaskStateDto> doInBackground(String... params) {
 
-       userSession = new UserSession(context);
+        userSession = new UserSession(context);
 
         db = new SqlHelper(context);
         sqlDB = db.getWritableDatabase();
@@ -55,6 +55,7 @@ public class FinishTaskTask extends AsyncTask<String, Void, ResponseEntity<Chang
             int mysqlId = taskData.getInt(1);
             mySqlIdsList.add(String.valueOf(mysqlId));
         }
+        taskData.close();
 
         changeTaskStateDto.setMysqlTaskIds(mySqlIdsList);
         changeTaskStateDto.setEmail(email);
@@ -93,11 +94,6 @@ public class FinishTaskTask extends AsyncTask<String, Void, ResponseEntity<Chang
         if (responseEntity != null) {
             ChangeTaskStateDto changeTaskStateDto = responseEntity.getBody();
 
-
-            if (changeTaskStateDto != null) {
-                Toast.makeText(context, "Sinhronizacija uspesna", Toast.LENGTH_LONG).show();
-
-            }
 
         }
 

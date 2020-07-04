@@ -368,6 +368,13 @@ public class SqlHelper extends SQLiteOpenHelper {
         return data;
     }
 
+    public Cursor setUserData (String email, String name, String phone) {
+        SQLiteDatabase sqlDB = this.getWritableDatabase();
+        Cursor data = sqlDB.rawQuery("UPDATE " + TABLE_USER + " SET name = '" + name + "', phoneNumber = '" + phone + "' WHERE email = '" + email + "'", null);
+
+        return data;
+    }
+
     public Cursor getReportItemsByReportId(String id, SQLiteDatabase sqlDB){
         Cursor data = sqlDB.rawQuery("SELECT * FROM " + JOIN_TABLE + " WHERE report_id" + "= " + id,null);
 

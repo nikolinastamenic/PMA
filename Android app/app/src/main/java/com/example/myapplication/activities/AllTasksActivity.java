@@ -76,6 +76,8 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
         super.onCreate(savedInstanceState);
         setContentView(R.layout.all_tasks);
 
+        System.out.println(" on create usao..................");
+
 
         taskIds = new ArrayList<>();
         taskWaitingList = new ArrayList<>();
@@ -98,6 +100,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
         sync = new SyncReceiver();
         userSession = new UserSession(getApplicationContext());
+
 
 
     }
@@ -134,13 +137,17 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
                         while (addressData.moveToNext()) {
                             apartmentAddress.add(addressData.getString(3) + ", " + addressData.getString(4) + " " + addressData.getString(5));
                         }
+                        addressData.close();
                     }
+                    buildungData.close();
 
                 }
+                apartmentData.close();
 
                 myAdapter = new MyAdapter(this, apartmentTitle, apartmentAddress, checkApartmentDate);
                 listView.setAdapter(myAdapter);
             }
+            data.close();
         }
 
 
@@ -152,6 +159,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
                 Intent intent = new Intent(AllTasksActivity.this, ApartmentActivity.class);
                 intent.putExtra("taskId", taskId);
+                intent.putExtra("activityName", "AllTasksActivity");
                 startActivity(intent);
             }
         });
@@ -243,10 +251,10 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
         List<String> date;
 
 
-        @Override
-        public boolean isEnabled(int position) {
-            return false;
-        }
+//        @Override
+//        public boolean isEnabled(int position) {
+//            return false;
+//        }
 
         MyAdapter(Context c, List<String> title, List<String> address, List<String> date) {
             super(c, android.R.layout.simple_list_item_1, R.id.apartmentTitleTextView, title);
@@ -276,7 +284,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
             if (taskWaitingList.get(position) == 0) {
 
-                isEnabled(position);
+//                isEnabled(position);
 
                 title1.setTextColor(getResources().getColor(R.color.silver));
                 description1.setTextColor(getResources().getColor(R.color.silver));
@@ -313,6 +321,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
                         while (userData.moveToNext()) {
                             userId = Integer.toString(userData.getInt(0));
                         }
+                        userData.close();
                         taskId = taskIds.get(position);
 
 
@@ -328,6 +337,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
                             context.getContentResolver().update(DBContentProvider.CONTENT_URI_TASK, entryTask, "id=" + taskId, null);
                         }
+                        taskData.close();
 
                         Intent i = new Intent(AllTasksActivity.this, SyncService.class);
                         i.putExtra("activityName", "AllTasksActivity");
@@ -345,7 +355,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
 //                    listView.getChildAt(position).setEnabled(false);
 
-                        isEnabled(position);
+//                        isEnabled(position);
 
                         title1.setTextColor(getResources().getColor(R.color.silver));
                         description1.setTextColor(getResources().getColor(R.color.silver));
@@ -366,6 +376,8 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
             return item;
         }
+
+
     }
 
 
@@ -394,7 +406,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
                 public void run() {
 
                     if (intent.getStringExtra("connectivity") != null && intent.getStringExtra("connectivity").equals("false")) {
-                        Toast.makeText(context, "Nema konekcije sa internetom", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, R.string.no_internet_connection, Toast.LENGTH_SHORT).show();
                         if (null != myReceiver) {
                             unregisterReceiver(myReceiver);
                             myReceiver = null;
@@ -404,7 +416,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
                         if (intent.getStringExtra("success").equals("false")) {
 
-                            Toast.makeText(context, "Task koji ste zatrazili je zauzet!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, R.string.task_is_already_assigned, Toast.LENGTH_SHORT).show();
                             if (null != myReceiver) {
                                 unregisterReceiver(myReceiver);
                                 myReceiver = null;

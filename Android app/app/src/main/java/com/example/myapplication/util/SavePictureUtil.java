@@ -31,5 +31,13 @@ public class SavePictureUtil {
         File directory = contextWrapper.getDir(filesDir.getName(), Context.MODE_PRIVATE);
         File file =  new File(directory, fileName);
         return file;
+
+        //        try {
+        //            File file =  new File(directory, fileName);
+        //            return file;
+        //        } catch (Exception e){
+        //            return null;
+        //        }
+
     }
 }

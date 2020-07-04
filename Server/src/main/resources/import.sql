@@ -1,13 +1,13 @@
-INSERT INTO user (id, name,surname, email, password, phone_number, picture) VALUES (1, 'Mika', 'Mikic', 'user@yahoo.com','123', '0292929', 'profile_picture.jpg');
-INSERT INTO user (id, name,surname, email, password, phone_number, picture) VALUES (2, 'Mika', 'Mikic', 'user1@yahoo.com','123', '0292929', 'profile_picture.jpg');
-INSERT INTO user (id, email, name, password, phone_number, picture, surname) values (3, 'user@example.com', 'Ana', 'mysecret', '0614427283', 'profile_picture.jpg', 'Mihic');
+INSERT INTO user (id, name,surname, email, password, phone_number, picture) VALUES (1, 'Mika Mikic', '', 'user@yahoo.com','123', '0292929', 'profile_picture.jpg');
+INSERT INTO user (id, name,surname, email, password, phone_number, picture) VALUES (2, 'Mika Peric', '', 'user1@yahoo.com','123', '0292929', 'profile_picture.jpg');
+INSERT INTO user (id, email, name, password, phone_number, picture, surname) values (3, 'user@mailinator.com', 'Ana Mihic', '123', '0614427283', 'profile_picture.jpg', '');
 
-INSERT INTO address (city, country, latitude, longitude, number, street) values ('Beograd', 'Srbija',44.8080941, 20.294172799999956, 3, 'Nemanjina');
-INSERT INTO address (city, country, latitude, longitude, number, street) values ('Novi Sad', 'Srbija',44.8080941, 20.294172799999956, 10, 'Dunavska');
-INSERT INTO address (city, country, latitude, longitude, number, street) values ('Novi Sad', 'Srbija',44.8080941, 20.294172799999956, 5, 'Cirpanova');
-INSERT INTO address (city, country, latitude, longitude, number, street) values ('Beograd', 'Srbija',44.8080941, 20.294172799999956, 17, 'Vojvode Stepe');
-INSERT INTO address (city, country, latitude, longitude, number, street) values ('Novi Sad', 'Srbija',44.8080941, 20.294172799999956, 3, 'Bulevar Oslobodjenja');
-INSERT INTO address (city, country, latitude, longitude, number, street) values ('Novi Sad', 'Srbija',44.8080941, 20.294172799999956, 3, 'Puskinova');
+INSERT INTO address (city, country, latitude, longitude, number, street) values ('Novi Sad', 'Srbija',45.254606, 19.829638, 31, 'Novosadskog Sajma');
+INSERT INTO address (city, country, latitude, longitude, number, street) values ('Novi Sad', 'Srbija',45.252786, 19.834369, 10, 'Ćirpanova');
+INSERT INTO address (city, country, latitude, longitude, number, street) values ('Novi Sad', 'Srbija',45.254848, 19.838038, 16, 'Gajeva');
+INSERT INTO address (city, country, latitude, longitude, number, street) values ('Novi Sad', 'Srbija',45.244266, 19.830978, 36, 'Miše Dimitrijevića');
+INSERT INTO address (city, country, latitude, longitude, number, street) values ('Novi Sad', 'Srbija',45.238608, 19.805466, 150, 'Ćirila i Metodija');
+INSERT INTO address (city, country, latitude, longitude, number, street) values ('Novi Sad', 'Srbija',45.245490, 19.797130, 40, 'Futoški put');
 
 INSERT INTO building (id, address_id) values (1,1);
 INSERT INTO building (id, address_id) values (2,2);
@@ -36,16 +36,16 @@ INSERT INTO report (id, date) values (1, '2020-09-10 14:45');
 INSERT INTO report_item_list (report_id, item_list_id) values (1,1);
 INSERT INTO report_item_list (report_id, item_list_id) values (1,2);
 
-INSERT INTO task (deadline, state, type_of_apartment, urgent, apartment_id) values ('2020-09-10 14:45', 'NEW', 'NEW', true, 1);
-INSERT INTO task (deadline, state, type_of_apartment, urgent, apartment_id) values ('2020-10-10 14:45', 'NEW', 'NEW', true, 2);
-INSERT INTO task (deadline, state, type_of_apartment, urgent, apartment_id) values ('2020-10-10 14:45', 'NEW', 'NEW', true, 7);
-INSERT INTO task (deadline, state, type_of_apartment, urgent, apartment_id) values ('2020-10-10 14:45', 'NEW', 'NEW', true, 8);
-INSERT INTO task (deadline, state, type_of_apartment, urgent, apartment_id) values ('2020-10-10 14:45', 'NEW', 'NEW', true, 9);
-INSERT INTO task (deadline, state, type_of_apartment, urgent, apartment_id) values ('2020-10-10 14:45', 'NEW', 'NEW', true, 10);
-INSERT INTO task (deadline, state, type_of_apartment, urgent, apartment_id) values ('2020-10-10 14:45', 'NEW', 'NEW', true, 11);
-INSERT INTO task (deadline, state, type_of_apartment, urgent, apartment_id) values ('2020-10-10 14:45', 'NEW', 'NEW', true, 12);
+INSERT INTO task (deadline, state, type_of_apartment, urgent, apartment_id) values ('2020-09-10 14:45', 'NEW', 'NEW', false, 1);
+INSERT INTO task (deadline, state, type_of_apartment, urgent, apartment_id) values ('2020-09-11 14:45', 'NEW', 'NEW', true, 2);
+INSERT INTO task (deadline, state, type_of_apartment, urgent, apartment_id) values ('2020-07-06 14:45', 'NEW', 'NEW', false, 7);
+INSERT INTO task (deadline, state, type_of_apartment, urgent, apartment_id) values ('2020-07-22 14:45', 'NEW', 'NEW', true, 8);
+INSERT INTO task (deadline, state, type_of_apartment, urgent, apartment_id) values ('2020-07-27 14:45', 'NEW', 'NEW', false, 9);
+INSERT INTO task (deadline, state, type_of_apartment, urgent, apartment_id) values ('2020-08-01 14:45', 'NEW', 'NEW', true, 10);
+INSERT INTO task (deadline, state, type_of_apartment, urgent, apartment_id) values ('2020-08-11 14:45', 'NEW', 'NEW', true, 11);
+INSERT INTO task (deadline, state, type_of_apartment, urgent, apartment_id) values ('2020-08-14 14:45', 'NEW', 'NEW', false, 12);
 
-INSERT INTO task (deadline, state, type_of_apartment, urgent, apartment_id, user_id) values ('2020-09-10 14:45', 'IN_PROCESS', 'NEW', true, 3,1);
-INSERT INTO task (deadline, state, type_of_apartment, urgent, apartment_id, user_id) values ('2020-08-10 14:45', 'IN_PROCESS', 'NEW', true, 4,1);
-INSERT INTO task (deadline, state, type_of_apartment, urgent, apartment_id, user_id, report_id) values ('2020-03-10 14:45', 'FINISHED', 'NEW', true, 5,1,1);
-INSERT INTO task (deadline, state, type_of_apartment, urgent, apartment_id, user_id) values ('2020-03-10 14:45', 'IN_PROCESS', 'NEW', true, 6,2);
+INSERT INTO task (deadline, state, type_of_apartment, urgent, apartment_id, user_id) values ('2020-10-02 14:45', 'IN_PROCESS', 'NEW', false, 3,1);
+INSERT INTO task (deadline, state, type_of_apartment, urgent, apartment_id, user_id) values ('2020-10-05 14:45', 'IN_PROCESS', 'NEW', true, 4,1);
+INSERT INTO task (deadline, state, type_of_apartment, urgent, apartment_id, user_id, report_id) values ('2020-06-10 14:45', 'FINISHED', 'NEW', true, 5,1,1);
+INSERT INTO task (deadline, state, type_of_apartment, urgent, apartment_id, user_id) values ('2020-10-10 14:45', 'IN_PROCESS', 'NEW', true, 6,2);
