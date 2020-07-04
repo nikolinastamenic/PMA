@@ -94,13 +94,13 @@ public class LoginTask extends AsyncTask<String, Void, ResponseEntity<UserAndTas
         if (responseEntity != null) {
             UserAndTaskDto userAndTaskDto = responseEntity.getBody();
 
-            /*db.dropTaskTable(sqlDB);
+            db.dropTaskTable(sqlDB);
             db.dropReportTable(sqlDB);
             db.dropUserTable();
             db.dropReportTable(sqlDB);
             db.dropAddressTable(sqlDB);
             db.dropApartmentTable(sqlDB);
-            db.dropBuildingTable(sqlDB); */
+            db.dropBuildingTable(sqlDB);
 
 
             if (userAndTaskDto != null) {

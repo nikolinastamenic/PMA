@@ -83,6 +83,7 @@ public class FinishedTasksActivity extends AppCompatActivity implements Navigati
 
         sync = new SyncReceiver();
 
+        userSession = new UserSession(getApplicationContext());
 
         Intent i = new Intent(this, SyncService.class);
         i.putExtra("Email", "");
@@ -96,8 +97,14 @@ public class FinishedTasksActivity extends AppCompatActivity implements Navigati
 
     public void listView() {
 
+        Cursor userData = db.getUserByEmail(userSession.getUserEmail());
+        String userId = "";
+        if(userData.moveToFirst()){
+            userId = userData.getString(0);
+        }
+
         listView = (ListView) findViewById(R.id.listViewFinishedTasks);
-        Cursor data = db.getFinishedTasks(sqlDB);
+        Cursor data = db.getFinishedTasks(sqlDB, userId);
         String apartmentId = "";
         String apartmentNumber = "";
         String buildingId = "";

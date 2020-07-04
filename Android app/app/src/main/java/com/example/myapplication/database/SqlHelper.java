@@ -315,14 +315,14 @@ public class SqlHelper extends SQLiteOpenHelper {
         return data;
     }
 
-    public Cursor getTasksInProcess(SQLiteDatabase sqlDB) {
+    public Cursor getTasksInProcess(SQLiteDatabase sqlDB, String userId) {
         Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_TASK + " WHERE state = 'IN_PROCESS' ", null);
 
         return data;
 
     }
 
-    public Cursor getFinishedTasks(SQLiteDatabase sqlDB) {
+    public Cursor getFinishedTasks(SQLiteDatabase sqlDB, String userId) {
 
         Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_TASK + " WHERE state = 'FINISHED' ", null);
 

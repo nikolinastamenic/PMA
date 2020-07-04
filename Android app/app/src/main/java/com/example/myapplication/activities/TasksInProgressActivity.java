@@ -28,6 +28,7 @@ import com.example.myapplication.R;
 
 import com.example.myapplication.database.SqlHelper;
 import com.example.myapplication.util.NavBarUtil;
+import com.example.myapplication.util.UserSession;
 import com.google.android.material.navigation.NavigationView;
 
 
@@ -47,6 +48,7 @@ public class TasksInProgressActivity extends AppCompatActivity implements Naviga
     MyAdapter myAdapter;
     SqlHelper db;
     SQLiteDatabase sqlDB;
+    UserSession userSession;
 
 
     @Override
@@ -73,15 +75,24 @@ public class TasksInProgressActivity extends AppCompatActivity implements Naviga
         Menu menu = navigationView.getMenu();
         MenuItem menuItem = menu.findItem(R.id.nav_log_in);
 
+
         menuItem.setVisible(false);
+
+        userSession = new UserSession(getApplicationContext());
 
 
     }
 
     public void listView() {
 
+        Cursor userData = db.getUserByEmail(userSession.getUserEmail());
+        String userId = "";
+        if(userData.moveToFirst()){
+            userId = userData.getString(0);
+        }
+
         listView = (ListView) findViewById(R.id.listViewTasksInProcess);
-        Cursor data = db.getTasksInProcess(sqlDB);
+        Cursor data = db.getTasksInProcess(sqlDB, userId);
         String apartmentId = "";
         String apartmentNumber = "";
         String buildingId = "";

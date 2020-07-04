@@ -49,8 +49,14 @@ public class FinishTaskTask extends AsyncTask<String, Void, ResponseEntity<Chang
 
         ChangeTaskStateDto changeTaskStateDto = new ChangeTaskStateDto();
 
+        Cursor userData = db.getUserByEmail(userSession.getUserEmail());
+        String userId = "";
+        if(userData.moveToFirst()){
+            userId = userData.getString(0);
+        }
+
         List<String> mySqlIdsList = new ArrayList<>();
-        Cursor taskData = db.getFinishedTasks(sqlDB);
+        Cursor taskData = db.getFinishedTasks(sqlDB, userId);
         while (taskData.moveToNext()) {
             int mysqlId = taskData.getInt(1);
             mySqlIdsList.add(String.valueOf(mysqlId));
