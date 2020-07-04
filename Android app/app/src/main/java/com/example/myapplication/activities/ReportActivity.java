@@ -287,8 +287,12 @@ public class ReportActivity extends AppCompatActivity implements NavigationView.
             ImageView images1 = item.findViewById(R.id.image);
 
             if(images.size() > 0){
-                Bitmap image = images.get(position);
-                images1.setImageBitmap(image);
+                try {
+                    Bitmap image = images.get(position);
+                    images1.setImageBitmap(image);
+                } catch (Exception e) {
+
+                }
             }
 
             TextView title1 = item.findViewById(R.id.reportItemTitle);
