@@ -6,6 +6,7 @@ import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
@@ -15,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -62,14 +64,16 @@ public class ReportActivity extends AppCompatActivity implements NavigationView.
     String reportId;
     String activityName;
     String userEmail;
-
-
     String taskId;
 
     private SyncReceiver sync;
     public static String SYNC_DATA = "SYNC_DATA";
     UserSession userSession;
     MyAdapter adapter;
+    List<String> itemIds;
+    SQLiteDatabase sqlDB;
+    SqlHelper db;
+
 
 
     @Override
@@ -77,7 +81,7 @@ public class ReportActivity extends AppCompatActivity implements NavigationView.
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.report);
-
+        itemIds = new ArrayList<>();
         itemTitle = new ArrayList<>();
         itemDescription = new ArrayList<>();
         images = new ArrayList<>();
@@ -130,20 +134,26 @@ public class ReportActivity extends AppCompatActivity implements NavigationView.
         startService(i);
 
 
-//        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//
-//            }
-//        });
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                Intent intentEdit = new Intent(ReportActivity.this, NewItemActivity.class);
+                intentEdit.putExtra("reportItemIdForUpdate", itemIds.get(position));
+                intentEdit.putExtra("reportId", reportId);
+                intentEdit.putExtra("taskId", taskId);
+
+                startActivity(intentEdit);
+
+            }
+        });
     }
 
     private void listView() {
 
         TextView reportDateTextView = findViewById(R.id.textViewReportDate);
         listView = (ListView) findViewById(R.id.listViewReport);
-        SqlHelper db = new SqlHelper(this);
-        Cursor data = db.getTaskById(taskId);
+        Cursor data = db.getTaskById(taskId, sqlDB);
         reportId = "";
 
         while (data.moveToNext()) {
@@ -167,7 +177,7 @@ public class ReportActivity extends AppCompatActivity implements NavigationView.
 
             }
             if (!reportId.equals("")) {
-                Cursor reportData = db.getReportById(reportId);
+                Cursor reportData = db.getReportById(reportId, sqlDB);
                 while (reportData.moveToNext()) {
                     if (reportData.getString(1) != null) {
                         reportIdMySQL = reportData.getString(1);
@@ -177,11 +187,12 @@ public class ReportActivity extends AppCompatActivity implements NavigationView.
                         reportDate = reportData.getString(2);
                     }
                 }
-                Cursor reportItemData = db.getReportItemsByReportId(reportId);
+                Cursor reportItemData = db.getReportItemsByReportId(reportId,sqlDB);
                 while (reportItemData.moveToNext()) {
-                    Cursor reportItems = db.getReportItemById(reportItemData.getString(2));
+                    Cursor reportItems = db.getReportItemById(reportItemData.getString(2), sqlDB);
                     while (reportItems.moveToNext()) {
 
+                        itemIds.add(reportItems.getString(0));
                         itemTitle.add(reportItems.getString(2));
                         itemDescription.add(reportItems.getString(3));
 
@@ -215,6 +226,9 @@ public class ReportActivity extends AppCompatActivity implements NavigationView.
     @Override
     protected void onResume() {
         super.onResume();
+        db = new SqlHelper(this);
+
+        sqlDB = db.getWritableDatabase();
         IntentFilter filter = new IntentFilter();
         filter.addAction(SYNC_DATA);
 
@@ -223,6 +237,7 @@ public class ReportActivity extends AppCompatActivity implements NavigationView.
         filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
         registerReceiver(sync, filter);
         listView();
+        sqlDB.close();
     }
 
     @Override
@@ -274,6 +289,7 @@ public class ReportActivity extends AppCompatActivity implements NavigationView.
         Intent intent = new Intent(ReportActivity.this, NewItemActivity.class);
         intent.putExtra("reportId", reportId);
         intent.putExtra("taskId", taskId);
+        intent.putExtra("reportItemIdForUpdate" , "");
 
 
         startActivity(intent);

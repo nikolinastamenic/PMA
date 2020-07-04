@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -50,6 +51,8 @@ public class FinishedTasksActivity extends AppCompatActivity implements Navigati
     public static String SYNC_DATA = "SYNC_DATA";
     UserSession userSession;
     MyAdapter myAdapter;
+    SqlHelper db;
+    SQLiteDatabase sqlDB;
 
 
     @Override
@@ -94,8 +97,7 @@ public class FinishedTasksActivity extends AppCompatActivity implements Navigati
     public void listView() {
 
         listView = (ListView) findViewById(R.id.listViewFinishedTasks);
-        SqlHelper db = new SqlHelper(this);
-        Cursor data = db.getFinishedTasks();
+        Cursor data = db.getFinishedTasks(sqlDB);
         String apartmentId = "";
         String apartmentNumber = "";
         String buildingId = "";
@@ -108,15 +110,15 @@ public class FinishedTasksActivity extends AppCompatActivity implements Navigati
 
                 checkApartmentDate.add(data.getString(5).substring(0, 16));
                 apartmentId = data.getString(6);
-                Cursor apartmentData = db.getApartmentById(apartmentId);
+                Cursor apartmentData = db.getApartmentById(apartmentId, sqlDB);
                 while (apartmentData.moveToNext()) {
                     apartmentTitle.add("Apartment number: " + apartmentData.getString(2));
 
                     buildingId = apartmentData.getString(3);
-                    Cursor buildungData = db.getBuildingById(buildingId);
+                    Cursor buildungData = db.getBuildingById(buildingId, sqlDB);
                     while (buildungData.moveToNext()) {
                         String addressId = buildungData.getString(2);
-                        Cursor addressData = db.getAddressById(addressId);
+                        Cursor addressData = db.getAddressById(addressId, sqlDB);
                         while (addressData.moveToNext()) {
                             apartmentAddress.add(addressData.getString(4) + " " + addressData.getString(5)
                                     + ", " + addressData.getString(3));
@@ -171,6 +173,9 @@ public class FinishedTasksActivity extends AppCompatActivity implements Navigati
     @Override
     protected void onResume() {
         super.onResume();
+        db = new SqlHelper(this);
+
+        sqlDB = db.getWritableDatabase();
         IntentFilter filter = new IntentFilter();
         filter.addAction(SYNC_DATA);
 
@@ -180,6 +185,7 @@ public class FinishedTasksActivity extends AppCompatActivity implements Navigati
         registerReceiver(sync, filter);
 
         listView();
+        sqlDB.close();
     }
 
     @Override

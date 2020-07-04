@@ -1,18 +1,13 @@
 package com.example.myapplication.sync.restTask;
 
 import android.annotation.SuppressLint;
-import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.myapplication.DTO.ChangeTaskStateDto;
-import com.example.myapplication.R;
-import com.example.myapplication.activities.AllTasksActivity;
-import com.example.myapplication.database.DBContentProvider;
 import com.example.myapplication.database.SqlHelper;
 import com.example.myapplication.util.UserSession;
 
@@ -33,6 +28,7 @@ public class FinishTaskTask extends AsyncTask<String, Void, ResponseEntity<Chang
     private Context context;
     private String email;
     private SqlHelper db;
+    SQLiteDatabase sqlDB;
     private UserSession userSession;
 
     public FinishTaskTask(Context applicationContext) {
@@ -45,6 +41,8 @@ public class FinishTaskTask extends AsyncTask<String, Void, ResponseEntity<Chang
        userSession = new UserSession(context);
 
         db = new SqlHelper(context);
+        sqlDB = db.getWritableDatabase();
+
 
         final String url = params[0];
         email = userSession.getUserEmail();
@@ -52,7 +50,7 @@ public class FinishTaskTask extends AsyncTask<String, Void, ResponseEntity<Chang
         ChangeTaskStateDto changeTaskStateDto = new ChangeTaskStateDto();
 
         List<String> mySqlIdsList = new ArrayList<>();
-        Cursor taskData = db.getFinishedTasks();
+        Cursor taskData = db.getFinishedTasks(sqlDB);
         while (taskData.moveToNext()) {
             int mysqlId = taskData.getInt(1);
             mySqlIdsList.add(String.valueOf(mysqlId));
@@ -76,12 +74,14 @@ public class FinishTaskTask extends AsyncTask<String, Void, ResponseEntity<Chang
 
                 HttpEntity entity = new HttpEntity(changeTaskStateDto, headers);
                 ResponseEntity<ChangeTaskStateDto> response = restTemplate.postForEntity(url, entity, ChangeTaskStateDto.class);
-
+                sqlDB.close();
                 return response;
             }
+            sqlDB.close();
             return null;
         } catch (Exception e) {
             System.out.println(e.getMessage());
+            sqlDB.close();
             return null;
         }
 

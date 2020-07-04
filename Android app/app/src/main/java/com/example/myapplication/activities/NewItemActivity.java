@@ -2,13 +2,19 @@ package com.example.myapplication.activities;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.Layout;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,6 +35,7 @@ import com.example.myapplication.DTO.PictureDto;
 import com.example.myapplication.DTO.ReportItemDto;
 import com.example.myapplication.R;
 import com.example.myapplication.database.NewEntry;
+import com.example.myapplication.database.SqlHelper;
 import com.example.myapplication.sync.receiver.SyncReceiver;
 import com.example.myapplication.sync.service.SyncService;
 import com.example.myapplication.util.AppConfig;
@@ -39,6 +46,7 @@ import com.example.myapplication.util.UserSession;
 import com.google.android.material.navigation.NavigationView;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 
 import lombok.SneakyThrows;
 
@@ -61,18 +69,20 @@ public class NewItemActivity extends AppCompatActivity implements NavigationView
     public static String SYNC_DATA = "SYNC_DATA";
     String reportItemId;
     UserSession userSession;
+    private String reportItemIdForUpdate;
+    SqlHelper db;
+    SQLiteDatabase sqlDB;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.new_item);
 
         Intent intent = getIntent();
         reportId = intent.getStringExtra("reportId");
         taskId = intent.getStringExtra("taskId");
-
-
-        setContentView(R.layout.new_item);
+        reportItemIdForUpdate = intent.getStringExtra("reportItemIdForUpdate");
 
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
@@ -107,6 +117,9 @@ public class NewItemActivity extends AppCompatActivity implements NavigationView
     @Override
     protected void onResume() {
         super.onResume();
+        db = new SqlHelper(this);
+
+        sqlDB = db.getWritableDatabase();
         IntentFilter filter = new IntentFilter();
         filter.addAction(SYNC_DATA);
 
@@ -114,6 +127,10 @@ public class NewItemActivity extends AppCompatActivity implements NavigationView
         filter.addAction("android.net.wifi.STATE_CHANGE");
         filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
         registerReceiver(sync, filter);
+
+        if (!reportItemIdForUpdate.equals("")) {
+            getReportItemForUpdate(reportItemIdForUpdate);
+        }
         cameraButton.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
@@ -166,15 +183,13 @@ public class NewItemActivity extends AppCompatActivity implements NavigationView
                 String reportReporetItemUri = NewEntry.newReportReportItemEntryWithoutMysqlIds(NewItemActivity.this, reportId, reportItemId);
 
 
-
                 Intent i = new Intent(NewItemActivity.this, SyncService.class);
                 i.putExtra("activityName", "NewItemActivity");
-                i.putExtra("TaskId", taskId );
+                i.putExtra("TaskId", taskId);
                 i.putExtra("ReportItemId", reportItemId);
                 i.putExtra("Email", userSession.getUserEmail());
 
                 startService(i);
-
 
 
                 Intent intent = new Intent(NewItemActivity.this, ReportActivity.class);
@@ -187,8 +202,7 @@ public class NewItemActivity extends AppCompatActivity implements NavigationView
             }
         });
 
-
-
+        sqlDB.close();
 
     }
 
@@ -226,18 +240,18 @@ public class NewItemActivity extends AppCompatActivity implements NavigationView
     @SneakyThrows
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        //TODO cuvanje u bazi i slanje na back kada se kreira ceo report item
         super.onActivityResult(requestCode, resultCode, data);
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         if (requestCode == AppConfig.CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
             Bitmap photo = (Bitmap) data.getExtras().get("data");
-            reportItemImage.setImageBitmap(photo);
 
+            reportItemImage.setImageBitmap(photo);
+            reportItemImage.refreshDrawableState();
+            reportItemImage.postInvalidate();
 
             photo.compress(Bitmap.CompressFormat.PNG, 100, stream);
             picName = "reportItemPicture-" + MiscUtil.generateRandom(7) + ".png";
             SavePictureUtil.writeToFile(stream.toByteArray(), picName, getApplicationContext(), getFilesDir());
-            //TODO treba da se sacuva i u galeriju ako je dozvoljeno
 
 
         }
@@ -247,6 +261,9 @@ public class NewItemActivity extends AppCompatActivity implements NavigationView
 
             if (photo != null) {
                 reportItemImage.setImageBitmap(photo);
+                reportItemImage.refreshDrawableState();
+                reportItemImage.postInvalidate();
+
                 photo.compress(Bitmap.CompressFormat.PNG, 100, stream);
                 picName = "reportItemPicture-" + MiscUtil.generateRandom(7) + ".png";
                 SavePictureUtil.writeToFile(stream.toByteArray(), picName, getApplicationContext(), getFilesDir());
@@ -255,6 +272,31 @@ public class NewItemActivity extends AppCompatActivity implements NavigationView
         }
     }
 
+
+    public void getReportItemForUpdate(String id) {
+
+        Cursor reportItemData = db.getReportItemById(id, sqlDB);
+        if (reportItemData.moveToFirst()) {
+
+            faultNameET.setText(reportItemData.getString(2));
+            faultDescriptionET.setText(reportItemData.getString(3));
+
+            ContextWrapper contextWrapper = new ContextWrapper(getApplicationContext());
+            File directory = contextWrapper.getDir(getFilesDir().getName(), Context.MODE_PRIVATE);
+            if (reportItemData.getString(4) != null) {
+                File file = new File(directory, reportItemData.getString(4));
+                Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+
+                reportItemImage.setImageBitmap(bitmap);
+
+            }
+
+
+        } else {
+
+        }
+
+    }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {

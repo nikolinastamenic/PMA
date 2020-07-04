@@ -211,26 +211,22 @@ public class SqlHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public void dropBuildingTable(){
-        SQLiteDatabase sqlDB = this.getWritableDatabase();
+    public void dropBuildingTable(SQLiteDatabase sqlDB){
         sqlDB.execSQL("DROP TABLE IF EXISTS " + TABLE_BUILDING);
         sqlDB.execSQL(TABLE_BUILDING_CREATE);
     }
 
-    public void dropApartmentTable(){
-        SQLiteDatabase sqlDB = this.getWritableDatabase();
+    public void dropApartmentTable(SQLiteDatabase sqlDB){
         sqlDB.execSQL("DROP TABLE IF EXISTS " + TABLE_APARTMENT);
         sqlDB.execSQL(TABLE_APARTMENT_CREATE);
     }
 
-    public void dropAddressTable(){
-        SQLiteDatabase sqlDB = this.getWritableDatabase();
+    public void dropAddressTable(SQLiteDatabase sqlDB){
         sqlDB.execSQL("DROP TABLE IF EXISTS " + TABLE_ADDRESS);
         sqlDB.execSQL(TABLE_ADDRESS_CREATE);
     }
 
-    public void dropTaskTable(){
-        SQLiteDatabase sqlDB = this.getWritableDatabase();
+    public void dropTaskTable(SQLiteDatabase sqlDB){
         sqlDB.execSQL("DROP TABLE IF EXISTS " + TABLE_TASK);
         sqlDB.execSQL("DROP TABLE IF EXISTS " + TABLE_REPORT);
         sqlDB.execSQL("DROP TABLE IF EXISTS " + TABLE_REPORT_ITEM);
@@ -250,8 +246,7 @@ public class SqlHelper extends SQLiteOpenHelper {
 
     }
 
-    public void dropReportTable(){
-        SQLiteDatabase sqlDB = this.getWritableDatabase();
+    public void dropReportTable(SQLiteDatabase sqlDB){
         sqlDB.execSQL("DROP TABLE IF EXISTS " + TABLE_REPORT);
         sqlDB.execSQL("DROP TABLE IF EXISTS " + TABLE_REPORT_ITEM);
         sqlDB.execSQL("DROP TABLE IF EXISTS " + JOIN_TABLE);
@@ -264,87 +259,77 @@ public class SqlHelper extends SQLiteOpenHelper {
 
     public void dropUserTable(){
         SQLiteDatabase sqlDB = this.getWritableDatabase();
+
         sqlDB.execSQL("DROP TABLE IF EXISTS " + TABLE_USER);
         sqlDB.execSQL(TABLE_USER_CREATE);
 
     }
 
-    public Cursor getAllTasks() {
-        SQLiteDatabase sqlDB = this.getWritableDatabase();
+    public Cursor getAllTasks(SQLiteDatabase sqlDB) {
         Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_TASK + " WHERE state = 'NEW' ", null);
 
         return data;
 
     }
 
-    public Cursor getTaskById (String id) {
-        SQLiteDatabase sqlDB = this.getWritableDatabase();
+    public Cursor getTaskById (String id, SQLiteDatabase sqlDB) {
         Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_TASK + " WHERE id " + "= " + id, null);
 
         return data;
     }
 
-    public Cursor getApartmentByMySqlId (String id) {
-        SQLiteDatabase sqlDB = this.getWritableDatabase();
+    public Cursor getApartmentByMySqlId (String id, SQLiteDatabase sqlDB) {
         Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_APARTMENT + " WHERE mysql_id " + "= " + id, null);
 
         return data;
     }
 
-    public Cursor getApartmentById (String id) {
-        SQLiteDatabase sqlDB = this.getWritableDatabase();
+    public Cursor getApartmentById (String id, SQLiteDatabase sqlDB) {
         Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_APARTMENT + " WHERE id " + "= " + id, null);
 
         return data;
     }
 
 
-    public Cursor getBuildingById (String id) {
-        SQLiteDatabase sqlDB = this.getWritableDatabase();
+    public Cursor getBuildingById (String id, SQLiteDatabase sqlDB) {
         Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_BUILDING + " WHERE id " + "= " + id, null);
 
         return data;
     }
 
-    public Cursor getBuildingByMySqlId (String id) {
-        SQLiteDatabase sqlDB = this.getWritableDatabase();
+    public Cursor getBuildingByMySqlId (String id, SQLiteDatabase sqlDB) {
         Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_BUILDING + " WHERE mysql_id " + "= " + id, null);
 
         return data;
     }
 
-    public Cursor getAddressById (String id) {
-        SQLiteDatabase sqlDB = this.getWritableDatabase();
+    public Cursor getAddressById (String id, SQLiteDatabase sqlDB) {
         Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_ADDRESS + " WHERE id " + "= " + id, null);
 
         return data;
     }
 
-    public Cursor getAddressByMySqlId (String id) {
-        SQLiteDatabase sqlDB = this.getWritableDatabase();
+    public Cursor getAddressByMySqlId (String id, SQLiteDatabase sqlDB) {
         Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_ADDRESS + " WHERE mysql_id " + "= " + id, null);
 
         return data;
     }
 
-    public Cursor getTasksInProcess() {
-        SQLiteDatabase sqlDB = this.getWritableDatabase();
+    public Cursor getTasksInProcess(SQLiteDatabase sqlDB) {
         Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_TASK + " WHERE state = 'IN_PROCESS' ", null);
 
         return data;
 
     }
 
-    public Cursor getFinishedTasks() {
-        SQLiteDatabase sqlDB = this.getWritableDatabase();
+    public Cursor getFinishedTasks(SQLiteDatabase sqlDB) {
 
         Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_TASK + " WHERE state = 'FINISHED' ", null);
 
         return data;
     }
 
-    public Cursor getUserById (String id) {
-        SQLiteDatabase sqlDB = this.getWritableDatabase();
+    public Cursor getUserById (String id, SQLiteDatabase sqlDB) {
         Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_USER + " WHERE id " + "= " + id, null);
 
         return data;
@@ -357,68 +342,52 @@ public class SqlHelper extends SQLiteOpenHelper {
         return data;
     }
 
-    public Cursor getUserByMySqlId (String id) {
-        SQLiteDatabase sqlDB = this.getWritableDatabase();
+    public Cursor getUserByMySqlId (String id, SQLiteDatabase sqlDB) {
         Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_USER + " WHERE mysql_id " + "= " + id, null);
 
         return data;
     }
 
-    public Cursor getTaskByMySqlId (String id) {
-        SQLiteDatabase sqlDB = this.getWritableDatabase();
+    public Cursor getTaskByMySqlId (String id, SQLiteDatabase sqlDB) {
         Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_TASK + " WHERE mysql_id " + "= " + id, null);
-
-        return data;
-    }
-
-    public Cursor getTasksBySynchronizedAndUserId (int isSynchronized, String id) {
-        SQLiteDatabase sqlDB = this.getWritableDatabase();
-        Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_TASK + " WHERE user_id" + "= " + id + " and is_synchronized" + "= " + isSynchronized, null);
 
         return data;
     }
 
     public Cursor setUserPicture (String email, String pictureName) {
         SQLiteDatabase sqlDB = this.getWritableDatabase();
+
         Cursor data = sqlDB.rawQuery("UPDATE " + TABLE_USER + " SET picture = '" + pictureName + "' WHERE email = '" + email + "'", null);
 
         return data;
     }
 
-    public Cursor getReportById (String id) {
-
-        SQLiteDatabase sqlDB = this.getWritableDatabase();
+    public Cursor getReportById (String id, SQLiteDatabase sqlDB) {
 
         Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_REPORT + " WHERE id " + "= " + id, null);
         return data;
     }
 
-    public Cursor getReportItemsByReportId(String id){
-        SQLiteDatabase sqlDB = this.getWritableDatabase();
-
+    public Cursor getReportItemsByReportId(String id, SQLiteDatabase sqlDB){
         Cursor data = sqlDB.rawQuery("SELECT * FROM " + JOIN_TABLE + " WHERE report_id" + "= " + id,null);
 
         return data;
     }
 
-    public Cursor getReportItemById (String id) {
+    public Cursor getReportItemById (String id, SQLiteDatabase sqlDB) {
 
-        SQLiteDatabase sqlDB = this.getWritableDatabase();
 
         Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_REPORT_ITEM + " WHERE id " + "= " + id, null);
         return data;
     }
 
-    public Cursor getRRIByRIdAndRIId (String reportItemId) {
-        SQLiteDatabase sqlDB = this.getWritableDatabase();
+    public Cursor getRRIByRIdAndRIId (String reportItemId, SQLiteDatabase sqlDB) {
         Cursor data = sqlDB.rawQuery("SELECT * FROM " + JOIN_TABLE + " WHERE report_item_id " + "= " + reportItemId, null);
         return data;
     }
 
 
-    public Cursor getReportItemBySynchronized(int isSynchronized) {
-
-        SQLiteDatabase sqlDB = this.getWritableDatabase();
+    public Cursor getReportItemBySynchronized(int isSynchronized, SQLiteDatabase sqlDB) {
 
         Cursor data = sqlDB.rawQuery("SELECT * FROM " + TABLE_REPORT_ITEM + " WHERE is_synchronized " + "= " + isSynchronized, null);
         return data;

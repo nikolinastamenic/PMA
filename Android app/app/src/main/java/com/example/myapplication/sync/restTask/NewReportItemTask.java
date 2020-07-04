@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 
 import com.example.myapplication.DTO.NewReportItemDto;
@@ -39,6 +40,8 @@ public class NewReportItemTask extends AsyncTask<String, Void, ResponseEntity<Re
     private Context context;
     private SqlHelper db;
     String taskId;
+    SQLiteDatabase sqlDB;
+
 
 
     public NewReportItemTask(Context applicationContext) {
@@ -54,12 +57,13 @@ public class NewReportItemTask extends AsyncTask<String, Void, ResponseEntity<Re
         List<NewReportItemItemDto> newReportItemItemDtos = new ArrayList<>();
 
         db = new SqlHelper(context);
+        sqlDB = db.getWritableDatabase();
 
         final String url = params[0];
 
         RestTemplate restTemplate = new RestTemplate();
 
-        Cursor reportItemsData = db.getReportItemBySynchronized(0);
+        Cursor reportItemsData = db.getReportItemBySynchronized(0, sqlDB);
 
         while (reportItemsData.moveToNext()) {
 
@@ -72,7 +76,7 @@ public class NewReportItemTask extends AsyncTask<String, Void, ResponseEntity<Re
 
             reportItemId = reportItemsData.getInt(0);
 
-            Cursor joinTableData = db.getRRIByRIdAndRIId(String.valueOf(reportItemId));
+            Cursor joinTableData = db.getRRIByRIdAndRIId(String.valueOf(reportItemId), sqlDB);
             if (joinTableData.moveToFirst()) {
                 reportId = joinTableData.getInt(0);
             }
@@ -85,7 +89,7 @@ public class NewReportItemTask extends AsyncTask<String, Void, ResponseEntity<Re
             context.getContentResolver().update(DBContentProvider.CONTENT_URI_REPORT, entryReport, "id=" + reportId, null);
 
 
-            Cursor reportData = db.getReportById(String.valueOf(reportId));
+            Cursor reportData = db.getReportById(String.valueOf(reportId), sqlDB);
             if (reportData.moveToFirst()) {
                 mySqlReportId = reportData.getInt(1);
                 taskId = reportData.getInt(3);
@@ -94,7 +98,7 @@ public class NewReportItemTask extends AsyncTask<String, Void, ResponseEntity<Re
             }
 
 
-            Cursor taskData = db.getTaskById(String.valueOf(taskId));
+            Cursor taskData = db.getTaskById(String.valueOf(taskId), sqlDB);
 
             if (taskData.moveToFirst()) {
                 taskMySqlId = taskData.getInt(1);
@@ -139,7 +143,7 @@ public class NewReportItemTask extends AsyncTask<String, Void, ResponseEntity<Re
 
         }
 
-
+        sqlDB.close();
         if (reportItemsData.getCount() > 0) {
 
             try {

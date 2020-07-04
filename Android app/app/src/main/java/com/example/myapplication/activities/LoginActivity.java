@@ -22,22 +22,11 @@ import com.example.myapplication.DTO.LoginDto;
 import com.example.myapplication.DTO.UserDto;
 import com.example.myapplication.R;
 
-import com.example.myapplication.database.NewEntry;
-import com.example.myapplication.database.SqlHelper;
 import com.example.myapplication.sync.service.SyncService;
-import com.example.myapplication.util.AppConfig;
 import com.example.myapplication.util.NavBarUtil;
 import com.example.myapplication.util.UserSession;
 import com.google.android.material.navigation.NavigationView;
 
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.web.client.RestTemplate;
-
-import java.util.Arrays;
 
 public class LoginActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 

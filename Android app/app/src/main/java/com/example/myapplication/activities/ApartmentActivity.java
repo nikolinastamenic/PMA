@@ -2,6 +2,7 @@ package com.example.myapplication.activities;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,20 +28,15 @@ public class ApartmentActivity extends AppCompatActivity implements NavigationVi
 
     DrawerLayout drawerLayout;
     NavigationView navigationView;
-//    SqlHelper db;
-
     private String typeOfApartment;
-
     private String state;
-
     private boolean urgent;
-
     private Date deadline;
     String taskId;
-
     Toolbar toolbar;
-
     String activityName;
+    SqlHelper db;
+    SQLiteDatabase sqlDB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,14 +75,19 @@ public class ApartmentActivity extends AppCompatActivity implements NavigationVi
     @Override
     protected void onResume() {
         super.onResume();
+        db = new SqlHelper(this);
+
+        sqlDB = db.getWritableDatabase();
         getTask(taskId);
+
+        sqlDB.close();
+
 
     }
 
     public void getTask(String taskId) {
 
-        SqlHelper db = new SqlHelper(this);
-        Cursor data = db.getTaskById(taskId);
+        Cursor data = db.getTaskById(taskId, sqlDB);
 
 
         String apartmentId = "";
@@ -108,19 +109,19 @@ public class ApartmentActivity extends AppCompatActivity implements NavigationVi
                 stateName = data.getString(3);
                 apartmentId = data.getString(6);
 
-                Cursor dataApartment = db.getApartmentById(apartmentId);
+                Cursor dataApartment = db.getApartmentById(apartmentId, sqlDB);
 
                 while (dataApartment.moveToNext()) {
 
                     apartmentNumber = dataApartment.getString(2);
                     buildingId = dataApartment.getString(3);
 
-                    Cursor buildingData = db.getBuildingById(buildingId);
+                    Cursor buildingData = db.getBuildingById(buildingId, sqlDB);
 
                     while (buildingData.moveToNext()) {
 
                         addressId = buildingData.getString(2);
-                        Cursor addressData = db.getAddressById(addressId);
+                        Cursor addressData = db.getAddressById(addressId, sqlDB);
 
                         while (addressData.moveToNext()) {
 

@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 
 import com.example.myapplication.DTO.AllTaskDto;
@@ -31,6 +32,8 @@ public class SyncTask extends AsyncTask<String, Void, ResponseEntity<AllTaskDto[
 
 
     public static String RESULT_CODE = "RESULT_CODE";
+    SqlHelper db;
+    SQLiteDatabase sqlDB;
 
     public SyncTask(Context context) {
         this.context = context;
@@ -72,8 +75,9 @@ public class SyncTask extends AsyncTask<String, Void, ResponseEntity<AllTaskDto[
         if (responseEntity != null) {
             AllTaskDto[] taskDtos = responseEntity.getBody();
 
-            SqlHelper db = new SqlHelper(context);
+            db = new SqlHelper(context);
 
+            sqlDB = db.getWritableDatabase();
 
             for (AllTaskDto taskDto : taskDtos) {
 
@@ -85,10 +89,10 @@ public class SyncTask extends AsyncTask<String, Void, ResponseEntity<AllTaskDto[
 
                 int mySqlId = (int) taskDto.getId();
 
-                Cursor addressData = db.getAddressByMySqlId(String.valueOf(taskDto.getApartmentDto().getBuildingDto().getAddress().getId()));
-                Cursor buildingData = db.getBuildingByMySqlId(String.valueOf(taskDto.getApartmentDto().getBuildingDto().getId()));
-                Cursor taskData = db.getTaskByMySqlId(String.valueOf(mySqlId));
-                Cursor apartmentData = db.getApartmentByMySqlId(String.valueOf(taskDto.getApartmentDto().getId()));
+                Cursor addressData = db.getAddressByMySqlId(String.valueOf(taskDto.getApartmentDto().getBuildingDto().getAddress().getId()), sqlDB);
+                Cursor buildingData = db.getBuildingByMySqlId(String.valueOf(taskDto.getApartmentDto().getBuildingDto().getId()), sqlDB);
+                Cursor taskData = db.getTaskByMySqlId(String.valueOf(mySqlId), sqlDB);
+                Cursor apartmentData = db.getApartmentByMySqlId(String.valueOf(taskDto.getApartmentDto().getId()), sqlDB);
 
                 if (!(addressData.moveToFirst()) || addressData.getCount() == 0) {
                     addressId = (NewEntry.newAddressEntry(context, taskDto.getApartmentDto().getBuildingDto())).split("/")[1];
@@ -130,7 +134,7 @@ public class SyncTask extends AsyncTask<String, Void, ResponseEntity<AllTaskDto[
 
             }
 
-
+            sqlDB.close();
         }
     }
 }

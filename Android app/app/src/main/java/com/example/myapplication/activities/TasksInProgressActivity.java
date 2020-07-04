@@ -3,6 +3,7 @@ package com.example.myapplication.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -42,9 +43,10 @@ public class TasksInProgressActivity extends AppCompatActivity implements Naviga
     List<String> apartmentTitle;
     List<String> apartmentAddress;
     List<String> checkApartmentDate;
-    //    SqlHelper db;
     List<String> taskIds;
     MyAdapter myAdapter;
+    SqlHelper db;
+    SQLiteDatabase sqlDB;
 
 
     @Override
@@ -79,8 +81,7 @@ public class TasksInProgressActivity extends AppCompatActivity implements Naviga
     public void listView() {
 
         listView = (ListView) findViewById(R.id.listViewTasksInProcess);
-        SqlHelper db = new SqlHelper(this);
-        Cursor data = db.getTasksInProcess();
+        Cursor data = db.getTasksInProcess(sqlDB);
         String apartmentId = "";
         String apartmentNumber = "";
         String buildingId = "";
@@ -94,15 +95,15 @@ public class TasksInProgressActivity extends AppCompatActivity implements Naviga
                     taskIds.add(data.getString(0));
                     checkApartmentDate.add(data.getString(5).substring(0, 16));
                     apartmentId = data.getString(6);
-                    Cursor apartmentData = db.getApartmentById(apartmentId);
+                    Cursor apartmentData = db.getApartmentById(apartmentId, sqlDB);
                     while (apartmentData.moveToNext()) {
                         apartmentTitle.add("Apartment number: " + apartmentData.getString(2));
 
                         buildingId = apartmentData.getString(3);
-                        Cursor buildungData = db.getBuildingById(buildingId);
+                        Cursor buildungData = db.getBuildingById(buildingId, sqlDB);
                         while (buildungData.moveToNext()) {
                             String addressId = buildungData.getString(2);
-                            Cursor addressData = db.getAddressById(addressId);
+                            Cursor addressData = db.getAddressById(addressId, sqlDB);
                             while (addressData.moveToNext()) {
                                 apartmentAddress.add(addressData.getString(3) + ", " + addressData.getString(4) + " " + addressData.getString(5));
                             }
@@ -152,14 +153,17 @@ public class TasksInProgressActivity extends AppCompatActivity implements Naviga
 
     @Override
     protected void onStop() {
+        sqlDB.close();
         super.onStop();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
+        db = new SqlHelper(this);
+        sqlDB = db.getWritableDatabase();
         listView();
+
     }
 
     @Override

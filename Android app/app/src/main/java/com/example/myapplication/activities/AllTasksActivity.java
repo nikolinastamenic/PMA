@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -66,6 +67,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
     UserSession userSession;
     public MyAdapter myAdapter;
     private MyReceiver myReceiver;
+    SQLiteDatabase sqlDB;
 
 
     @Override
@@ -73,8 +75,6 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.all_tasks);
-
-        System.out.println(" on create usao..................");
 
 
         taskIds = new ArrayList<>();
@@ -109,8 +109,8 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
         checkApartmentDate = new ArrayList<>();
 
         listView = (ListView) findViewById(R.id.listViewAllTasks);
-        db = new SqlHelper(this);
-        Cursor data = db.getAllTasks();
+
+        Cursor data = db.getAllTasks(sqlDB);
         String apartmentId = "";
         String buildingId = "";
         if (data.getCount() == 0) {
@@ -121,16 +121,16 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
                 checkApartmentDate.add(data.getString(5).substring(0, 16));
                 taskWaitingList.add(data.getInt(9));
                 apartmentId = data.getString(6);
-                Cursor apartmentData = db.getApartmentById(apartmentId);
+                Cursor apartmentData = db.getApartmentById(apartmentId, sqlDB);
 
                 while (apartmentData.moveToNext()) {
                     apartmentTitle.add("Apartment number: " + apartmentData.getString(2));
 
                     buildingId = apartmentData.getString(3);
-                    Cursor buildungData = db.getBuildingById(buildingId);
+                    Cursor buildungData = db.getBuildingById(buildingId, sqlDB);
                     while (buildungData.moveToNext()) {
                         String addressId = buildungData.getString(2);
-                        Cursor addressData = db.getAddressById(addressId);
+                        Cursor addressData = db.getAddressById(addressId, sqlDB);
                         while (addressData.moveToNext()) {
                             apartmentAddress.add(addressData.getString(3) + ", " + addressData.getString(4) + " " + addressData.getString(5));
                         }
@@ -166,6 +166,9 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
         super.onResume();
 
+        db = new SqlHelper(this);
+
+        sqlDB = db.getWritableDatabase();
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(SYNC_DATA);
@@ -193,8 +196,6 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
     @Override
     protected void onDestroy() {
-        System.out.println(" on destroy usao..................");
-
         super.onDestroy();
     }
 
@@ -208,6 +209,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
     @Override
     protected void onStop() {
+        sqlDB.close();
 
         super.onStop();
     }
@@ -315,7 +317,7 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
 
                         waiting.setVisibility(View.VISIBLE);
-                        Cursor taskData = db.getTaskById(taskId);
+                        Cursor taskData = db.getTaskById(taskId, sqlDB);
                         while (taskData.moveToNext()) {
                             String mysqlId = taskData.getString(1);
                             taskMysqlId = mysqlId;

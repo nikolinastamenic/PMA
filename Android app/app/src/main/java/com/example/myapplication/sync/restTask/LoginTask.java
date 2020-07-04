@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -43,6 +44,8 @@ public class LoginTask extends AsyncTask<String, Void, ResponseEntity<UserAndTas
     private String email;
     private String password;
     private SqlHelper db;
+    SQLiteDatabase sqlDB;
+
 
     public static String RESULT_CODE = "RESULT_CODE";
 
@@ -87,17 +90,19 @@ public class LoginTask extends AsyncTask<String, Void, ResponseEntity<UserAndTas
     @SuppressLint("WrongThread")
     protected void onPostExecute(ResponseEntity<UserAndTaskDto> responseEntity) {
         db = new SqlHelper(context);
+        sqlDB = db.getWritableDatabase();
+
 
         if (responseEntity != null) {
             UserAndTaskDto userAndTaskDto = responseEntity.getBody();
 
-            db.dropTaskTable();
-            db.dropReportTable();
+            db.dropTaskTable(sqlDB);
+            db.dropReportTable(sqlDB);
             db.dropUserTable();
-            db.dropReportTable();
-            db.dropAddressTable();
-            db.dropApartmentTable();
-            db.dropBuildingTable();
+            db.dropReportTable(sqlDB);
+            db.dropAddressTable(sqlDB);
+            db.dropApartmentTable(sqlDB);
+            db.dropBuildingTable(sqlDB);
 
 
             if (userAndTaskDto != null) {
@@ -128,10 +133,10 @@ public class LoginTask extends AsyncTask<String, Void, ResponseEntity<UserAndTas
 
                             userId = userUri.split("/")[1];
 
-                            Cursor addressData = db.getAddressByMySqlId(String.valueOf(taskDto.getApartmentDto().getBuildingDto().getAddress().getId()));
-                            Cursor buildingData = db.getBuildingByMySqlId(String.valueOf(taskDto.getApartmentDto().getBuildingDto().getId()));
-                            Cursor taskData = db.getTaskByMySqlId(String.valueOf(mySqlId));
-                            Cursor apartmentData = db.getApartmentByMySqlId(String.valueOf(taskDto.getApartmentDto().getId()));
+                            Cursor addressData = db.getAddressByMySqlId(String.valueOf(taskDto.getApartmentDto().getBuildingDto().getAddress().getId()), sqlDB);
+                            Cursor buildingData = db.getBuildingByMySqlId(String.valueOf(taskDto.getApartmentDto().getBuildingDto().getId()), sqlDB);
+                            Cursor taskData = db.getTaskByMySqlId(String.valueOf(mySqlId), sqlDB);
+                            Cursor apartmentData = db.getApartmentByMySqlId(String.valueOf(taskDto.getApartmentDto().getId()), sqlDB);
 
                             System.out.println(addressData.getCount() + " COUNT");
                             if (!(addressData.moveToFirst()) || addressData.getCount() == 0) {
@@ -209,10 +214,12 @@ public class LoginTask extends AsyncTask<String, Void, ResponseEntity<UserAndTas
 
 
                     }
+                    sqlDB.close();
 
                 }
 
             } else {
+                sqlDB.close();
                 Toast.makeText(context,
                         "Email/Password is incorrect",
                         Toast.LENGTH_LONG).show();
@@ -220,6 +227,7 @@ public class LoginTask extends AsyncTask<String, Void, ResponseEntity<UserAndTas
 
 
         } else {
+            sqlDB.close();
             System.out.println("Problem sa serverom");
         }
     }

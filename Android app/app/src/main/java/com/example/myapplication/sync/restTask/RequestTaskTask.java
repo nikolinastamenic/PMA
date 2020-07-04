@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 
 import com.example.myapplication.DTO.ChangeTaskStateDto;
@@ -31,6 +32,8 @@ public class RequestTaskTask extends AsyncTask<String, Void, ResponseEntity<Chan
     private String userId = "";
     private AllTasksActivity.MyReceiver myReceiver;
     private String mySqlId;
+    SQLiteDatabase sqlDB;
+
 
     public RequestTaskTask(Context applicationContext) {
         this.context = applicationContext;
@@ -42,6 +45,8 @@ public class RequestTaskTask extends AsyncTask<String, Void, ResponseEntity<Chan
         //       UserSession userSession = new UserSession(context);
 
         db = new SqlHelper(context);
+        sqlDB = db.getWritableDatabase();
+
 
         final String url = params[0];
         email = params[1];
@@ -65,7 +70,7 @@ public class RequestTaskTask extends AsyncTask<String, Void, ResponseEntity<Chan
 
 //                Cursor requestedData = db.getTasksBySynchronizedAndUserId(0, userId);
 
-                Cursor requestedData = db.getTaskByMySqlId(mySqlId);
+                Cursor requestedData = db.getTaskByMySqlId(mySqlId, sqlDB);
                 ChangeTaskStateDto changeTaskStateDto = new ChangeTaskStateDto();
                 changeTaskStateDto.setEmail(email);
                 changeTaskStateDto.setState("IN_PROCESS");
@@ -105,7 +110,7 @@ public class RequestTaskTask extends AsyncTask<String, Void, ResponseEntity<Chan
 
                     ContentValues entryTask = new ContentValues();
 
-                    Cursor taskData = db.getTaskByMySqlId(mySqlTaskId);
+                    Cursor taskData = db.getTaskByMySqlId(mySqlTaskId, sqlDB);
                     while (taskData.moveToNext()) {
                         String state = "IN_PROCESS";
                         entryTask.put(SqlHelper.COLUMN_TASK_STATE, state);
@@ -121,8 +126,9 @@ public class RequestTaskTask extends AsyncTask<String, Void, ResponseEntity<Chan
                 intent.putExtra("success", "true");
                 context.sendBroadcast(intent);
 
+                sqlDB.close();
             } else {
-                Cursor forDelete = db.getTaskByMySqlId(mySqlId);
+                Cursor forDelete = db.getTaskByMySqlId(mySqlId,sqlDB);
 
                 if (forDelete.getCount() > 0) {
 
@@ -130,7 +136,7 @@ public class RequestTaskTask extends AsyncTask<String, Void, ResponseEntity<Chan
 
                     int taskId = forDelete.getInt(0);
                     context.getContentResolver().delete(DBContentProvider.CONTENT_URI_TASK, "id=" + taskId, null);
-
+                    sqlDB.close();
                     intent.putExtra("success", "false");
                     context.sendBroadcast(intent);
 
