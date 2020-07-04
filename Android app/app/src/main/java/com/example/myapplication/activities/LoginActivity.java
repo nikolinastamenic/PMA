@@ -21,6 +21,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.example.myapplication.R;
 
 import com.example.myapplication.sync.service.SyncService;
+import com.example.myapplication.util.AppConfig;
 import com.example.myapplication.util.NavBarUtil;
 import com.example.myapplication.util.UserSession;
 import com.google.android.material.navigation.NavigationView;

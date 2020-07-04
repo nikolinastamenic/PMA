@@ -30,7 +30,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 
 import com.example.myapplication.R;
@@ -76,9 +75,6 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
         super.onCreate(savedInstanceState);
         setContentView(R.layout.all_tasks);
 
-        System.out.println(" on create usao..................");
-
-
         taskIds = new ArrayList<>();
         taskWaitingList = new ArrayList<>();
         drawerLayout = findViewById(R.id.drawer_layout);
@@ -100,7 +96,6 @@ public class AllTasksActivity extends AppCompatActivity implements NavigationVie
 
         sync = new SyncReceiver();
         userSession = new UserSession(getApplicationContext());
-
 
 
     }

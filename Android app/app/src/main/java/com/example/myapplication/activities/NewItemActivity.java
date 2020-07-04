@@ -138,6 +138,9 @@ public class NewItemActivity extends AppCompatActivity implements NavigationView
             createReportItem.setEnabled(false);
         }
 
+        db = new SqlHelper(this);
+
+        sqlDB = db.getWritableDatabase();
         userSession = new UserSession(getApplicationContext());
 
         sync = new SyncReceiver();
@@ -155,9 +158,19 @@ public class NewItemActivity extends AppCompatActivity implements NavigationView
 
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
     public void getReportItemForUpdate(String id) {
 
-        Cursor reportItemData = db.getReportItemById(id);
+        Cursor reportItemData = db.getReportItemById(id, sqlDB);
         if (reportItemData.moveToFirst()) {
 
             faultNameET.setText(reportItemData.getString(2));
@@ -184,9 +197,7 @@ public class NewItemActivity extends AppCompatActivity implements NavigationView
     @Override
     protected void onResume() {
         super.onResume();
-        db = new SqlHelper(this);
 
-        sqlDB = db.getWritableDatabase();
         IntentFilter filter = new IntentFilter();
         filter.addAction(SYNC_DATA);
 
@@ -238,7 +249,7 @@ public class NewItemActivity extends AppCompatActivity implements NavigationView
 
                 if (!reportItemIdForUpdate.equals("")) {
 
-                    Cursor reportItemUpdateData = db.getReportItemById(reportItemIdForUpdate);
+                    Cursor reportItemUpdateData = db.getReportItemById(reportItemIdForUpdate, sqlDB);
                     if (reportItemUpdateData.moveToFirst()) {
 
                         ContentValues entryTask = new ContentValues();
@@ -290,7 +301,6 @@ public class NewItemActivity extends AppCompatActivity implements NavigationView
         });
 
 
-        sqlDB.close();
 
     }
 
