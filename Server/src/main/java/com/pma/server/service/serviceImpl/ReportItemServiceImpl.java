@@ -104,11 +104,13 @@ public class ReportItemServiceImpl implements ReportItemService {
         ReportItem reportItem = new ReportItem(newReportItemItemDto.getFaultName(), newReportItemItemDto.getDetails(), newReportItemItemDto.getPicture().getPictureName());
         this.reportItemRepository.save(reportItem);
 
-        try (FileOutputStream stream = new FileOutputStream(new File("").getAbsolutePath() + "/pictures/" + newReportItemItemDto.getPicture().getPictureName())) {
-            stream.write(newReportItemItemDto.getPicture().getPicture());
+        if (newReportItemItemDto.getPicture().getPicture() != null) {
+            try (FileOutputStream stream = new FileOutputStream(new File("").getAbsolutePath() + "/pictures/" + newReportItemItemDto.getPicture().getPictureName())) {
+                stream.write(newReportItemItemDto.getPicture().getPicture());
 
-        } catch (IOException e) {
-            e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         Long reportId;
