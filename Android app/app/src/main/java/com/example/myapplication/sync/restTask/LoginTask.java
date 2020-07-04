@@ -94,13 +94,13 @@ public class LoginTask extends AsyncTask<String, Void, ResponseEntity<UserAndTas
         if (responseEntity != null) {
             UserAndTaskDto userAndTaskDto = responseEntity.getBody();
 
-            db.dropTaskTable(sqlDB);
+            /*db.dropTaskTable(sqlDB);
             db.dropReportTable(sqlDB);
             db.dropUserTable();
             db.dropReportTable(sqlDB);
             db.dropAddressTable(sqlDB);
             db.dropApartmentTable(sqlDB);
-            db.dropBuildingTable(sqlDB);
+            db.dropBuildingTable(sqlDB); */
 
 
             if (userAndTaskDto != null) {
@@ -170,13 +170,15 @@ public class LoginTask extends AsyncTask<String, Void, ResponseEntity<UserAndTas
                                         String reportItemUri = NewEntry.newReportItemEntry(context, reportItemDto, false);
                                         ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
-                                        if (reportItemDto.getPicture().getPicture() != null) {
-                                            Bitmap photo = BitmapFactory.decodeByteArray(reportItemDto.getPicture().getPicture(), 0, reportItemDto.getPicture().getPicture().length);
+                                        if (reportItemDto.getPicture() != null) {
+                                            if (reportItemDto.getPicture().getPicture() != null) {
+                                                Bitmap photo = BitmapFactory.decodeByteArray(reportItemDto.getPicture().getPicture(), 0, reportItemDto.getPicture().getPicture().length);
 
 
-                                            photo.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                                            String picName = reportItemDto.getPicture().getPictureName();
-                                            SavePictureUtil.writeToFile(stream.toByteArray(), picName, context, context.getFilesDir());
+                                                photo.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                                                String picName = reportItemDto.getPicture().getPictureName();
+                                                SavePictureUtil.writeToFile(stream.toByteArray(), picName, context, context.getFilesDir());
+                                            }
                                         }
 
                                         String reportItemId = reportItemUri.split("/")[1];

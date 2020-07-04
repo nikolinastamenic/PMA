@@ -280,7 +280,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
             entryUser.put(SqlHelper.COLUMN_USER_EMAIL, userDto.getEmail());
             entryUser.put(SqlHelper.COLUMN_USER_PICTURE, userDto.getPictureName());
             SavePictureUtil.writeToFile(userDto.getPicture(), userDto.getPictureName(), getApplicationContext(), getFilesDir());
-            ProfileActivity.this.getContentResolver().update(DBContentProvider.CONTENT_URI_USER, entryUser, "id=" + userDto.getId(), null);
+            ProfileActivity.this.getContentResolver().update(DBContentProvider.CONTENT_URI_USER, entryUser, "email='" + userDto.getEmail() +"'", null);
             db.close();
             showUserProfile();
 
