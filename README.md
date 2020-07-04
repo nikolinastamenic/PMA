@@ -5,6 +5,7 @@
 QuickInpect je mobilna aplikacija namenjena radnicima kompanije zadužene za pregled i procenu stanja 
 stambenih jedinica. 
 
+Moguć je uvid u sve stambene jedinice, njihove osnovne informacije kao i prikaz njihove lokacije na mapi.
 Aplikacija omogućava korisnicima da preuzmu određenu stambenu jedinicu kako bi izvršili njen pregled.
 Nakon preuzimanja stambene jedinice moguce je kreiranje izveštaja pregleda.
 
